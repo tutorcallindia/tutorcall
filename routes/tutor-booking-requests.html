@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Tutor Booking Requests</title>
+
+  <style>
+
+    body {
+      margin: 0;
+      font-family: Arial;
+      background: #eef2f3;
+      padding: 20px;
+    }
+
+    .header {
+      font-size: 26px;
+      font-weight: bold;
+      text-align: center;
+      padding: 15px;
+      background: #007bff;
+      color: white;
+      margin-bottom: 20px;
+      border-radius: 10px;
+    }
+
+    .booking-card {
+      background: white;
+      margin-bottom: 15px;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    .title {
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .small {
+      font-size: 14px;
+      color: #555;
+      margin-top: 5px;
+    }
+
+    .btn {
+      padding: 8px 14px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      margin-top: 10px;
+      margin-right: 10px;
+      font-weight: bold;
+    }
+
+    .accept {
+      background: #27ae60;
+      color: white;
+    }
+
+    .reject {
+      background: #e74c3c;
+      color: white;
+    }
+
+    .complete {
+      background: #3498db;
+      color: white;
+    }
+
+  </style>
+</head>
+
+<body>
+
+<div class="header">
+  Tutor Booking Requests
+</div>
+
+<div id="bookingList">
+  Loading booking requests...
+</div>
+
+<script>
+
+const token = localStorage.getItem("tutorToken");
+
+if (!token) {
+
+  alert("Login required");
+  window.location.href = "tutor-login.html";
+
+}
+
+// =====================================
+// LOAD BOOKINGS
+// =====================================
+
+async function loadBookings() {
+
+  try {
+
+    const res = await fetch(
+      "http://127.0.0.1:3000/api/tutors/bookings",
+      {
+        headers: {
+          "Authorization": "Bearer " + token
+        }
+      }
+    );
+
+    const data = await res.json();
+
+    const box =
+      document.getElementById("bookingList");
+
+    if (!data.success) {
+
+      box.innerHTML =
+        "Unable to load bookings.";
+
+      return;
+
+    }
+
+    const list = data.list;
+
+    if (!list.length) {
+
+      box.innerHTML =
+        "<p class='small'>No booking requests yet.</p>";
+
+      return;
+
+    }
+
+    box.innerHTML = "";
+
+    list.forEach((b) => {
+
+      box.innerHTML += `
+
+        <div class="booking-card">
+
+          <div class="title">
+            ${b.studentId?.name || "Student"}
+
+            <span class="small">
+              (${b.studentId?.city || ""})
+            </span>
+          </div>
+
+          <div class="small">
+            Amount: ₹${b.amount}
+          </div>
+
+          <div class="small">
+            Status:
+            <b>${b.status}</b>
+          </div>
+
+          <div class="small">
+            Message:
+            ${b.message || "No message"}
+          </div>
+
+          <div class="small">
+            Schedule:
+            ${
+              b.schedule
+              ? new Date(b.schedule).toLocaleString()
+              : "Not provided"
+            }
+          </div>
+
+          <div class="small">
+            Requested:
+            ${new Date(b.createdAt).toLocaleString()}
+          </div>
+
+          <div style="margin-top:10px;">
+
+            ${
+              b.status === "Pending"
+              ? `
+                <button
+                  class="btn accept"
+                  onclick="acceptBooking('${b._id}')"
+                >
+                  Accept
+                </button>
+
+                <button
+                  class="btn reject"
+                  onclick="rejectBooking('${b._id}')"
+                >
+                  Reject
+                </button>
+              `
+              : ""
+            }
+
+            ${
+              b.status === "Accepted"
+              ? `
+                <button
+                  class="btn complete"
+                  onclick="completeBooking('${b._id}')"
+                >
+                  Mark Completed
+                </button>
+              `
+              : ""
+            }
+
+          </div>
+
+        </div>
+
+      `;
+
+    });
+
+  } catch (err) {
+
+    console.log(err);
+
+  }
+
+}
+
+// =====================================
+// ACCEPT BOOKING
+// =====================================
+
+async function acceptBooking(id) {
+
+  try {
+
+    const res = await fetch(
+      `http://127.0.0.1:3000/api/booking/accept/${id}`
+    );
+
+    const data = await res.json();
+
+    alert(data.message);
+
+    loadBookings();
+
+  } catch (err) {
+
+    console.log(err);
+
+    alert("Accept failed");
+
+  }
+
+}
+
+// =====================================
+// REJECT BOOKING
+// =====================================
+
+async function rejectBooking(id) {
+
+  try {
+
+    const res = await fetch(
+      "http://127.0.0.1:3000/api/tutors/booking/update",
+      {
+        method: "PUT",
+
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + token
+        },
+
+        body: JSON.stringify({
+          bookingId: id,
+          status: "Rejected"
+        })
+
+      }
+    );
+
+    const data = await res.json();
+
+    alert(data.message);
+
+    loadBookings();
+
+  } catch (err) {
+
+    console.log(err);
+
+  }
+
+}
+
+// =====================================
+// COMPLETE BOOKING
+// =====================================
+
+async function completeBooking(id) {
+
+  try {
+
+    const res = await fetch(
+      `http://127.0.0.1:3000/api/booking/mark-complete/${id}`
+    );
+
+    const data = await res.json();
+
+    alert(data.message);
+
+    loadBookings();
+
+  } catch (err) {
+
+    console.log(err);
+
+    alert("Complete failed");
+
+  }
+
+}
+
+loadBookings();
+
+setInterval(loadBookings, 20000);
+
+</script>
+
+</body>
+</html>

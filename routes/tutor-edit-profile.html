@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Edit Tutor Profile</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    body{font-family:Arial;background:#f4f6f8;margin:0;padding:18px}
+    .container{max-width:700px;margin:0 auto;background:#fff;padding:20px;border-radius:10px;box-shadow:0 6px 18px rgba(0,0,0,0.06)}
+    h2{text-align:center;margin-top:0}
+    label{display:block;margin-top:10px;font-weight:600}
+    input[type="text"], input[type="email"], input[type="number"], textarea, select {
+      width:100%;padding:10px;border-radius:6px;border:1px solid #ddd;margin-top:6px;box-sizing:border-box;
+    }
+    .row{display:flex;gap:10px}
+    .half{flex:1}
+    .avatar{width:110px;height:110px;border-radius:50%;object-fit:cover;border:2px solid #007bff;display:block;margin:10px 0}
+    .btn{padding:10px 14px;border:none;border-radius:8px;background:#007bff;color:#fff;cursor:pointer;margin-top:12px}
+    .msg{margin-top:12px;font-weight:600}
+    .small{font-size:13px;color:#666}
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h2>Edit Profile</h2>
+
+  <img id="preview" class="avatar" src="https://cdn-icons-png.flaticon.com/512/3177/3177440.png" alt="photo">
+
+  <label>Upload Photo</label>
+  <input id="photoFile" type="file" accept="image/*">
+
+  <label>Full Name</label>
+  <input id="name" type="text" placeholder="Full name">
+
+  <div class="row">
+    <div class="half">
+      <label>Phone</label>
+      <input id="phone" type="text" placeholder="Mobile number">
+    </div>
+    <div class="half">
+      <label>Email (readonly)</label>
+      <input id="email" type="email" readonly>
+    </div>
+  </div>
+
+  <label>City</label>
+  <input id="city" type="text" placeholder="City">
+
+  <label>Qualification</label>
+  <input id="qualification" type="text" placeholder="e.g., B.Sc, M.Sc, B.Ed">
+
+  <label>Experience</label>
+  <input id="experience" type="text" placeholder="e.g., 2 years">
+
+  <label>Classes (comma separated)</label>
+  <input id="classes" type="text" placeholder="e.g., Class 6-8, Class 9-10">
+
+  <label>Subjects (comma separated)</label>
+  <input id="subjects" type="text" placeholder="e.g., Maths, Physics">
+
+  <label>Mode</label>
+  <select id="mode">
+    <option value="">Select mode</option>
+    <option>Home Tuition</option>
+    <option>Online Tuition</option>
+    <option>Both</option>
+  </select>
+
+  <label>Fees (₹)</label>
+  <input id="fees" type="number" placeholder="Amount in INR">
+
+  <button id="saveBtn" class="btn">Save Changes</button>
+
+  <div id="msg" class="msg"></div>
+  <div style="margin-top:12px"><a href="tutor-dashboard.html" class="small">⬅ Back to Dashboard</a></div>
+</div>
+
+<script>
+(async () => {
+  const token = localStorage.getItem("tutorToken");
+  const tutorLS = localStorage.getItem("tutorData");
+  if (!token || !tutorLS) {
+    alert("Please login first");
+    window.location.href = "tutor-login.html";
+    return;
+  }
+
+  let tutor = JSON.parse(tutorLS);
+
+  // Elements
+  const preview = document.getElementById("preview");
+  const photoFile = document.getElementById("photoFile");
+  const nameInp = document.getElementById("name");
+  const phoneInp = document.getElementById("phone");
+  const emailInp = document.getElementById("email");
+  const cityInp = document.getElementById("city");
+  const qualInp = document.getElementById("qualification");
+  const expInp = document.getElementById("experience");
+  const classesInp = document.getElementById("classes");
+  const subjectsInp = document.getElementById("subjects");
+  const modeSel = document.getElementById("mode");
+  const feesInp = document.getElementById("fees");
+  const saveBtn = document.getElementById("saveBtn");
+  const msgDiv = document.getElementById("msg");
+
+  // Prefill
+  preview.src = tutor.photo || preview.src;
+  nameInp.value = tutor.name || "";
+  phoneInp.value = tutor.phone || "";
+  emailInp.value = tutor.email || "";
+  cityInp.value = tutor.city || "";
+  qualInp.value = tutor.qualification || "";
+  expInp.value = tutor.experience || "";
+  classesInp.value = tutor.classes || "";
+  subjectsInp.value = tutor.subjects || "";
+  modeSel.value = tutor.mode || "";
+  feesInp.value = tutor.fees || "";
+
+  // handle file -> base64
+  let base64Photo = tutor.photo || "";
+  photoFile.addEventListener("change", async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    // small preview
+    const reader = new FileReader();
+    reader.onload = () => {
+      preview.src = reader.result;
+      base64Photo = reader.result; // save base64
+    };
+    reader.readAsDataURL(file);
+  });
+
+  function setMsg(text, color="green") {
+    msgDiv.style.color = color;
+    msgDiv.innerText = text;
+  }
+
+  saveBtn.addEventListener("click", async () => {
+    const payload = {
+      name: nameInp.value.trim(),
+      phone: phoneInp.value.trim(),
+      email: emailInp.value.trim(),
+      city: cityInp.value.trim(),
+      qualification: qualInp.value.trim(),
+      experience: expInp.value.trim(),
+      classes: classesInp.value.trim(),
+      subjects: subjectsInp.value.trim(),
+      mode: modeSel.value,
+      fees: feesInp.value ? Number(feesInp.value) : undefined,
+      photo: base64Photo
+    };
+
+    setMsg("Saving...", "black");
+    try {
+      const res = await fetch("http://127.0.0.1:3000/api/tutors/update", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + token
+        },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await res.json();
+      if (!data.success) {
+        setMsg(data.message || "Update failed", "red");
+        return;
+      }
+
+      // update localStorage with returned tutor (if backend returns tutor)
+      if (data.tutor) {
+        localStorage.setItem("tutorData", JSON.stringify(data.tutor));
+        tutor = data.tutor;
+      } else {
+        // fallback: update fields locally
+        const updated = { ...tutor, ...payload };
+        localStorage.setItem("tutorData", JSON.stringify(updated));
+        tutor = updated;
+      }
+
+      setMsg("Profile updated successfully ✔", "green");
+      // optionally redirect back to dashboard after 1s
+      setTimeout(() => window.location.href = "tutor-dashboard.html", 900);
+    } catch (err) {
+      console.error(err);
+      setMsg("Server error", "red");
+    }
+  });
+
+})();
+</script>
+
+</body>
+</html>

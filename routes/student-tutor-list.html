@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Find Tutors</title>
+
+  <style>
+    body {
+      margin: 0;
+      background: #eef2f3;
+      font-family: Arial;
+      padding: 20px;
+    }
+
+    h2 { text-align: center }
+
+    .filter-box {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      width: 90%;
+      margin: auto;
+      margin-bottom: 20px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    input, select {
+      padding: 10px;
+      margin: 8px 0;
+      width: 100%;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .tutor-card {
+      background: white;
+      padding: 15px;
+      margin: 15px auto;
+      width: 90%;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    .photo {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid #007bff;
+    }
+
+    .row {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Find Home / Online Tutors</h2>
+
+  <div class="filter-box">
+    <input type="text" id="city" placeholder="Search by City">
+    <input type="text" id="subject" placeholder="Search by Subject (Maths, English...)">
+    <input type="text" id="classes" placeholder="Class (1-5, 6-8, 9-10...)">
+
+    <select id="mode">
+      <option value="">Select Mode</option>
+      <option>Home Tuition</option>
+      <option>Online Tuition</option>
+      <option>Both</option>
+    </select>
+
+    <button onclick="loadTutors()">Search Tutors</button>
+  </div>
+
+  <div id="tutorList"></div>
+
+  <script>
+
+let studentLat = null;
+let studentLng = null;
+
+/* =========================
+      GET STUDENT LOCATION
+========================= */
+
+function getStudentLocation() {
+
+  if (!navigator.geolocation) {
+
+    return;
+
+  }
+
+  navigator.geolocation.getCurrentPosition(
+
+    position => {
+
+      studentLat =
+        position.coords.latitude;
+
+      studentLng =
+        position.coords.longitude;
+
+      loadTutors();
+
+    },
+
+    err => {
+
+      console.log(err);
+
+      loadTutors();
+
+    }
+
+  );
+
+}
+
+/* =========================
+      CALCULATE DISTANCE
+========================= */
+
+function calculateDistance(
+
+  lat1,
+  lon1,
+  lat2,
+  lon2
+
+) {
+
+  const R = 6371;
+
+  const dLat =
+    (lat2-lat1) * Math.PI / 180;
+
+  const dLon =
+    (lon2-lon1) * Math.PI / 180;
+
+  const a =
+
+    Math.sin(dLat/2) *
+    Math.sin(dLat/2)
+
+    +
+
+    Math.cos(lat1 * Math.PI/180) *
+    Math.cos(lat2 * Math.PI/180)
+
+    *
+
+    Math.sin(dLon/2) *
+    Math.sin(dLon/2);
+
+  const c =
+    2 * Math.atan2(
+      Math.sqrt(a),
+      Math.sqrt(1-a)
+    );
+
+  return R * c;
+
+}
+
+/* =========================
+      LOAD TUTORS
+========================= */
+
+async function loadTutors() {
+
+  const city =
+    document.getElementById("city").value;
+
+  const subjects =
+    document.getElementById("subject").value;
+
+  const classes =
+    document.getElementById("classes").value;
+
+  const mode =
+    document.getElementById("mode").value;
+
+  try {
+
+    const url =
+
+`http://127.0.0.1:3000/api/tutors/list?city=${city}&subjects=${subjects}&classes=${classes}&mode=${mode}`;
+
+    const res =
+      await fetch(url);
+
+    const data =
+      await res.json();
+
+    const box =
+      document.getElementById("tutorList");
+
+    box.innerHTML = "";
+
+    if (
+
+      !data.success ||
+
+      data.tutors.length === 0
+
+    ) {
+
+      box.innerHTML =
+
+"<h3 style='text-align:center'>No Tutors Found</h3>";
+
+      return;
+
+    }
+
+    let tutors =
+      data.tutors;
+
+    /* =========================
+          DISTANCE
+    ========================= */
+
+    tutors = tutors.map(t => {
+
+      let distance = null;
+
+      if (
+
+        studentLat &&
+        studentLng &&
+        t.latitude &&
+        t.longitude
+
+      ) {
+
+        distance =
+          calculateDistance(
+
+            studentLat,
+            studentLng,
+
+            t.latitude,
+            t.longitude
+
+          );
+
+      }
+
+      return {
+
+        ...t,
+        distance
+
+      };
+
+    });
+
+    /* =========================
+          SORT NEAREST
+    ========================= */
+
+    tutors.sort((a,b)=>{
+
+      if (a.distance == null)
+        return 1;
+
+      if (b.distance == null)
+        return -1;
+
+      return a.distance - b.distance;
+
+    });
+
+    /* =========================
+          SHOW TUTORS
+    ========================= */
+
+    tutors.forEach(t => {
+
+      box.innerHTML += `
+
+      <div class="tutor-card">
+
+        <div class="row">
+
+          <img
+
+            class="photo"
+
+            src="${
+              t.photo ||
+
+'https://cdn-icons-png.flaticon.com/512/3177/3177440.png'
+
+            }"
+
+          >
+
+          <div style="width:100%">
+
+            <h3>
+
+              ${t.name}
+
+              ${
+                t.distance
+
+                ?
+
+`<span style="
+background:#28a745;
+color:white;
+padding:4px 8px;
+border-radius:20px;
+font-size:12px;
+margin-left:10px;
+">
+
+📍 ${t.distance.toFixed(1)} km away
+
+</span>`
+
+                :
+
+                ""
+
+              }
+
+            </h3>
+
+            <p>
+              <b>Qualification:</b>
+              ${t.qualification || 'N/A'}
+            </p>
+
+            <p>
+              <b>Subjects:</b>
+              ${t.subjects || 'N/A'}
+            </p>
+
+            <p>
+              <b>Classes:</b>
+              ${t.classes || 'N/A'}
+            </p>
+
+            <p>
+              <b>City:</b>
+              ${t.city || 'N/A'}
+            </p>
+
+            <p>
+              <b>Mode:</b>
+              ${t.mode || 'N/A'}
+            </p>
+
+            <p>
+              <b>Fees:</b>
+              ₹ ${t.fees || 'N/A'}
+            </p>
+
+            <p>
+              <b>Address:</b>
+              ${t.address || 'N/A'}
+            </p>
+
+            <button
+              onclick="openTutor('${t._id}')"
+            >
+              View Profile
+            </button>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      `;
+
+    });
+
+  } catch (err) {
+
+    console.log(err);
+
+    document.getElementById("tutorList").innerHTML =
+
+"<h3 style='color:red;text-align:center'>Failed to Load Tutors</h3>";
+
+  }
+
+}
+
+/* =========================
+      OPEN PROFILE
+========================= */
+
+function openTutor(id) {
+
+  window.location.href =
+
+`student-tutor-detail.html?id=${id}`;
+
+}
+
+/* =========================
+      AUTO LOAD
+========================= */
+
+getStudentLocation();
+
+</script>
+
+</body>
+</html>
+

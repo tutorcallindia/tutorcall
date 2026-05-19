@@ -1,0 +1,120 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Student Profile</title>
+  <style>
+    body {font-family: Arial; background:#f4f4f4; padding:30px}
+    .card { width:360px; margin:auto; background:#fff; padding:20px; border-radius:8px; box-shadow:0 6px 20px rgba(0,0,0,0.08) }
+    input{ width:100%; padding:10px; margin-top:10px; border-radius:6px; border:1px solid #ccc }
+    button{ width:100%; padding:12px; margin-top:14px; border:none; border-radius:6px; background:#4CAF50; color:#fff; cursor:pointer }
+    .danger{ background:#f44336 }
+    .msg{ margin-top:10px; text-align:center }
+    label{font-size:13px; color:#333; margin-top:8px; display:block}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2 style="text-align:center">Student Profile</h2>
+
+    <div id="status" class="msg"></div>
+
+    <label>Name</label>
+    <input id="name" type="text" />
+
+    <label>Phone</label>
+    <input id="phone" type="text" />
+
+    <label>Email</label>
+    <input id="email" type="email" />
+
+    <label>New Password (leave blank to keep old)</label>
+    <input id="password" type="password" />
+
+    <button id="saveBtn">Save Changes</button>
+    <button id="logoutBtn" class="danger">Logout</button>
+  </div>
+
+<script>
+(async function() {
+  const token = localStorage.getItem('studentToken');
+  const status = document.getElementById('status');
+
+  if (!token) {
+    alert('Please login first');
+    window.location.href = 'student-login-test.html';
+    return;
+  }
+
+  // LOAD PROFILE
+  try {
+    const res = await fetch('http://localhost:3000/student/profile', {
+      method: 'GET',
+      headers: { 'x-auth-token': token }
+    });
+    const data = await res.json();
+    if (!data.success) {
+      status.style.color = 'red';
+      status.innerText = data.message || 'Unable to load profile';
+      // if token invalid, redirect
+      if (data.message && data.message.toLowerCase().includes('token')) {
+        setTimeout(()=> window.location.href = 'student-login-test.html', 1000);
+      }
+      return;
+    }
+
+    const student = data.student;
+    document.getElementById('name').value = student.name || '';
+    document.getElementById('phone').value = student.phone || '';
+    document.getElementById('email').value = student.email || '';
+
+  } catch (err) {
+    status.style.color = 'red';
+    status.innerText = 'Network error: ' + err.message;
+  }
+
+  // SAVE CHANGES
+  document.getElementById('saveBtn').addEventListener('click', async () => {
+    const name = document.getElementById('name').value.trim();
+    const phone = document.getElementById('phone').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+
+    status.style.color = 'black';
+    status.innerText = 'Saving...';
+
+    try {
+      const res = await fetch('http://localhost:3000/student/profile', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'x-auth-token': token },
+        body: JSON.stringify({ name, phone, email, password })
+      });
+      const data = await res.json();
+      if (data.success) {
+        status.style.color = 'green';
+        status.innerText = data.message || 'Saved';
+        // update localStorage studentInfo so dashboard shows new data
+        if (data.student) localStorage.setItem('studentInfo', JSON.stringify(data.student));
+        // clear password field
+        document.getElementById('password').value = '';
+      } else {
+        status.style.color = 'red';
+        status.innerText = data.message || 'Save failed';
+      }
+    } catch (err) {
+      status.style.color = 'red';
+      status.innerText = 'Network error: ' + err.message;
+    }
+  });
+
+  // LOGOUT
+  document.getElementById('logoutBtn').addEventListener('click', () => {
+    localStorage.removeItem('studentToken');
+    localStorage.removeItem('studentInfo');
+    window.location.href = 'student-login-test.html';
+  });
+
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Tutor Earnings</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: #eef2f3;
+      font-family: Arial;
+    }
+
+    .header {
+      background: #007bff;
+      color: white;
+      padding: 18px;
+      text-align: center;
+      font-size: 22px;
+      font-weight: bold;
+    }
+
+    .container {
+      width: 90%;
+      margin: 20px auto;
+    }
+
+    .card {
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.15);
+      margin-bottom: 20px;
+    }
+
+    .big-number {
+      font-size: 36px;
+      font-weight: bold;
+      color: #007bff;
+      text-align: center;
+      margin: 10px 0;
+    }
+
+    .list-item {
+      padding: 12px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .list-item:last-child {
+      border-bottom: none;
+    }
+
+    .back-btn {
+      display: block;
+      text-align: center;
+      padding: 12px;
+      background: #007bff;
+      color: white;
+      margin-top: 20px;
+      border-radius: 8px;
+      text-decoration: none;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="header">Tutor Earnings</div>
+
+  <div class="container">
+
+    <div class="card">
+      <h3>Total Earnings</h3>
+      <div id="totalEarnings" class="big-number">₹0</div>
+
+      <h4>Completed Bookings: <span id="completedCount">0</span></h4>
+    </div>
+
+    <div class="card">
+      <h3>Completed Bookings History</h3>
+      <div id="earningsList">Loading...</div>
+    </div>
+
+    <a href="tutor-dashboard.html" class="back-btn">⬅ Back to Dashboard</a>
+  </div>
+
+<script>
+  const token = localStorage.getItem("tutorToken");
+  if (!token) {
+    alert("Please login first!");
+    window.location.href = "tutor-login.html";
+  }
+
+  async function loadEarnings() {
+    try {
+      const res = await fetch("http://127.0.0.1:3000/api/tutors/earnings", {
+        headers: { "x-auth-token": token }
+      });
+
+      const data = await res.json();
+      console.log(data);
+
+      if (!data.success) {
+        document.getElementById("earningsList").innerText = "Unable to load earnings";
+        return;
+      }
+
+      document.getElementById("totalEarnings").innerText = `₹${data.total}`;
+      document.getElementById("completedCount").innerText = data.count;
+
+      const listDiv = document.getElementById("earningsList");
+      listDiv.innerHTML = "";
+
+      if (data.completed.length === 0) {
+        listDiv.innerHTML = "<p>No completed bookings yet.</p>";
+        return;
+      }
+
+      data.completed.forEach(item => {
+        const date = new Date(item.createdAt).toLocaleDateString();
+        listDiv.innerHTML += `
+          <div class="list-item">
+            <strong>₹${item.amount}</strong>  
+            <span style="float:right;">${date}</span>
+          </div>
+        `;
+      });
+
+    } catch (err) {
+      console.error(err);
+      alert("Server Error");
+    }
+  }
+
+  loadEarnings();
+</script>
+
+</body>
+</html>
+

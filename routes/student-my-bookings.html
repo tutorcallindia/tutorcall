@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>My Bookings</title>
+
+  <style>
+    body { font-family: Arial; background:#f2f2f2; margin:0; padding:20px; }
+    h2 { text-align:center; }
+    .booking-card {
+      background:white;
+      padding:15px;
+      margin:10px auto;
+      width:90%;
+      border-radius:10px;
+      box-shadow:0 0 8px rgba(0,0,0,0.1);
+    }
+    .actions {
+      margin-top:10px;
+      display:flex;
+      gap:10px;
+    }
+    .btn {
+      padding:8px 12px;
+      border:none;
+      border-radius:6px;
+      cursor:pointer;
+      color:white;
+    }
+    .cancel { background:#e74c3c; }
+    .reschedule { background:#3498db; }
+  </style>
+</head>
+
+<body>
+
+<h2>📘 My Bookings</h2>
+<div id="list">Loading...</div>
+
+
+<script>
+const token = localStorage.getItem("studentToken");
+if (!token) window.location.href = "student-login-test.html";
+
+// -----------------------------
+// LOAD BOOKINGS
+// -----------------------------
+async function loadBookings() {
+  const res = await fetch("http://127.0.0.1:3000/api/student/my-bookings", {
+    headers: { "Authorization": "Bearer " + token }
+  });
+
+  const d = await res.json();
+  const box = document.getElementById("list");
+  box.innerHTML = "";
+
+  if (!d.success) return box.innerHTML = d.message;
+  if (!d.list.length) return box.innerHTML = "No bookings found.";
+
+  d.list.forEach(b => {
+    box.innerHTML += `
+      <div class="booking-card">
+        <b>${b.tutorId?.name || "Tutor"}</b>
+        <div>Amount: ₹${b.amount}</div>
+        <div>Status: <b>${b.status}</b></div>
+        <div>When: ${b.schedule ? new Date(b.schedule).toLocaleString() : "Not scheduled"}</div>
+
+        <div class="actions">
+        
+          <!-- Cancel -->
+          ${b.status === "Pending" || b.status === "Accepted" ? `
+          <button class="btn cancel" onclick="cancelBooking('${b._id}')">
+            Cancel Booking
+          </button>` : ""}
+
+          <!-- Reschedule -->
+          ${b.status === "Pending" || b.status === "Accepted" ? `
+          <button class="btn reschedule" onclick="rescheduleBooking('${b._id}')">
+            Reschedule
+          </button>` : ""}
+        
+        </div>
+      </div>
+    `;
+  });
+}
+
+loadBookings();
+
+
+// -----------------------------
+// CANCEL BOOKING
+// -----------------------------
+async function cancelBooking(id) {
+  if (!confirm("Are you sure to cancel this booking?")) return;
+
+  const res = await fetch("http://127.0.0.1:3000/api/students/booking/cancel", {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer " + token
+    },
+    body: JSON.stringify({ bookingId: id })
+  });
+
+  const d = await res.json();
+  alert(d.message);
+  loadBookings();
+}
+
+
+// -----------------------------
+// RESCHEDULE BOOKING
+// -----------------------------
+async function rescheduleBooking(id) {
+  const newTime = prompt("Enter new date & time (YYYY-MM-DD HH:MM):");
+
+  if (!newTime) return alert("Reschedule cancelled.");
+
+  // Convert to proper timestamp
+  const schedule = new Date(newTime);
+  if (schedule == "Invalid Date") return alert("Invalid date format!");
+
+  const res = await fetch("http://127.0.0.1:3000/api/students/booking/reschedule", {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer " + token
+    },
+    body: JSON.stringify({ bookingId: id, schedule })
+  });
+
+  const d = await res.json();
+  alert(d.message);
+  loadBookings();
+}
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Tutor Details</title>
+
+  <style>
+
+    body {
+      margin: 0;
+      background: #eef2f3;
+      font-family: Arial;
+      padding: 20px;
+    }
+
+    .card {
+      width: 90%;
+      max-width: 700px;
+      margin: auto;
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 0 12px rgba(0,0,0,0.2);
+    }
+
+    .avatar {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid #2196F3;
+      display: block;
+      margin: auto;
+    }
+
+    h2 {
+      text-align: center;
+      margin-top: 15px;
+    }
+
+    p {
+      font-size: 16px;
+      line-height: 1.8;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 12px;
+      background: #2196F3;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 15px;
+      font-size: 17px;
+    }
+
+    .btn-whatsapp {
+      background: #25d366;
+    }
+
+    .btn-cancel {
+      background: #ccc;
+      color: black;
+    }
+
+    #bookingForm {
+      display: none;
+      margin-top: 20px;
+      border-top: 1px solid #ddd;
+      padding-top: 15px;
+    }
+
+    input,
+    textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 8px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 90px;
+    }
+
+  </style>
+  <link
+rel="stylesheet"
+href="https://unpkg.com/leaflet/dist/leaflet.css"
+/>
+
+</head>
+
+<body>
+
+<div class="card">
+
+  <img id="photo" class="avatar" src="">
+
+  <h2 id="name">Loading...</h2>
+
+  <p><b>Qualification:</b> <span id="qualification"></span></p>
+
+  <p><b>Experience:</b> <span id="experience"></span></p>
+
+  <p><b>Subjects:</b> <span id="subjects"></span></p>
+
+  <p><b>Classes:</b> <span id="classes"></span></p>
+
+  <p><b>Mode:</b> <span id="mode"></span></p>
+
+  <p><b>City:</b> <span id="city"></span></p>
+
+  <p><b>Fees:</b> ₹ <span id="fees"></span></p>
+  <p>
+  <b>Address:</b>
+  <span id="address"></span>
+</p>
+
+<div
+  id="map"
+  style="
+    width:100%;
+    height:300px;
+    margin-top:15px;
+    border-radius:10px;
+  "
+></div>
+
+<button
+  class="btn"
+  onclick="openGoogleMap()"
+>
+  📍 Open In Google Maps
+</button>
+
+  <input type="hidden" id="phoneHidden">
+
+  <!-- BUTTONS -->
+
+  <button
+    class="btn btn-whatsapp"
+    onclick="whatsappTutor()"
+  >
+    WhatsApp Tutor
+  </button>
+
+  <button
+    class="btn"
+    onclick="requestTuition()"
+  >
+    Request Tuition
+  </button>
+
+  <button
+    class="btn"
+    onclick="openBookingForm()"
+  >
+    💼 Book Now
+  </button>
+
+  <!-- BOOKING FORM -->
+
+  <div id="bookingForm">
+
+    <h3>Book Tutor</h3>
+
+    <label>Preferred Date & Time</label>
+
+    <input
+      type="datetime-local"
+      id="bookSchedule"
+    >
+
+    <label>Amount (₹)</label>
+
+    <input
+      type="number"
+      id="bookAmount"
+      placeholder="Enter amount"
+    >
+
+    <label>Message</label>
+
+    <textarea
+      id="bookMessage"
+      placeholder="Message for tutor"
+    ></textarea>
+
+    <button
+      class="btn"
+      onclick="submitBooking()"
+    >
+      Send Booking Request
+    </button>
+
+    <button
+      class="btn btn-cancel"
+      onclick="closeBookingForm()"
+    >
+      Cancel
+    </button>
+
+  </div>
+
+</div>
+
+<script>
+
+/* =========================
+      GET TUTOR ID
+========================= */
+
+const urlParams =
+  new URLSearchParams(window.location.search);
+
+const tutorId =
+  urlParams.get("id");
+
+if (!tutorId) {
+
+  alert("Invalid Tutor");
+
+  window.location.href =
+    "student-tutor-list.html";
+
+}
+
+/* =========================
+      LOAD TUTOR
+========================= */
+
+async function loadTutor() {
+
+  try {
+
+    const res =
+      await fetch(
+        "http://127.0.0.1:3000/api/tutors/list"
+      );
+
+    const data =
+      await res.json();
+
+    const tutor =
+      data.tutors.find(
+        t => t._id === tutorId
+      );
+window.currentTutor = tutor;
+    if (!tutor) {
+
+      alert("Tutor not found");
+
+      return;
+    }
+
+    document.getElementById("photo").src =
+      tutor.photo ||
+      "https://cdn-icons-png.flaticon.com/512/3177/3177440.png";
+
+    document.getElementById("name").innerText =
+      tutor.name;
+
+    document.getElementById("qualification").innerText =
+      tutor.qualification;
+
+    document.getElementById("experience").innerText =
+      tutor.experience;
+
+    document.getElementById("subjects").innerText =
+      tutor.subjects;
+
+    document.getElementById("classes").innerText =
+      tutor.classes;
+
+    document.getElementById("mode").innerText =
+      tutor.mode;
+
+    document.getElementById("city").innerText =
+      tutor.city;
+      document.getElementById("address").innerText =
+  tutor.address || "No address";
+
+/* ======================
+        MAP
+====================== */
+
+if (
+  tutor.latitude &&
+  tutor.longitude
+) {
+
+  const map = L.map("map").setView(
+    [tutor.latitude, tutor.longitude],
+    13
+  );
+
+  L.tileLayer(
+    "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+    {
+      attribution: "© OpenStreetMap"
+    }
+  ).addTo(map);
+
+  L.marker([
+    tutor.latitude,
+    tutor.longitude
+  ])
+  .addTo(map)
+  .bindPopup(tutor.name)
+  .openPopup();
+
+}
+
+    document.getElementById("fees").innerText =
+      tutor.fees;
+
+    document.getElementById("phoneHidden").value =
+      tutor.phone;
+
+  } catch (err) {
+
+    console.log(err);
+
+    alert("Failed to load tutor");
+
+  }
+
+}
+
+loadTutor();
+
+/* =========================
+      WHATSAPP
+========================= */
+
+function whatsappTutor() {
+
+  const name =
+    document.getElementById("name").innerText;
+
+  const fees =
+    document.getElementById("fees").innerText;
+
+  const phone =
+    document.getElementById("phoneHidden").value;
+
+  const msg =
+
+`Hello Sir/Madam,
+I want tuition enquiry.
+
+Tutor Name: ${name}
+Fees: ₹${fees}`;
+
+  window.open(
+    `https://wa.me/91${phone}?text=${encodeURIComponent(msg)}`
+  );
+
+}
+
+/* =========================
+      REQUEST TUITION
+========================= */
+
+function requestTuition() {
+
+  document
+    .getElementById("bookingForm")
+    .scrollIntoView({
+      behavior: "smooth"
+    });
+
+  document.getElementById(
+    "bookingForm"
+  ).style.display = "block";
+
+}
+
+/* =========================
+      BOOKING FORM
+========================= */
+
+function openBookingForm() {
+
+  document.getElementById(
+    "bookingForm"
+  ).style.display = "block";
+
+  const fees =
+    document.getElementById(
+      "fees"
+    ).innerText;
+
+  document.getElementById(
+    "bookAmount"
+  ).value = fees;
+
+}
+
+function closeBookingForm() {
+
+  document.getElementById(
+    "bookingForm"
+  ).style.display = "none";
+
+}
+function openGoogleMap() {
+
+  const tutorLat =
+    window.currentTutor.latitude;
+
+  const tutorLng =
+    window.currentTutor.longitude;
+
+  window.open(
+
+    `https://www.google.com/maps?q=${tutorLat},${tutorLng}`
+
+  );
+
+}
+/* =========================
+      SUBMIT BOOKING
+========================= */
+
+async function submitBooking() {
+
+  const token =
+    localStorage.getItem("studentToken");
+
+  if (!token) {
+
+    alert("Please login as student");
+
+    return;
+
+  }
+
+  const schedule =
+    document.getElementById("bookSchedule").value;
+
+  const amount =
+    document.getElementById("bookAmount").value;
+
+  const message =
+    document.getElementById("bookMessage").value;
+
+  if (!amount) {
+
+    alert("Please enter amount");
+
+    return;
+
+  }
+
+  try {
+
+    // =========================
+    // CREATE BOOKING
+    // =========================
+
+    const bookingRes = await fetch(
+
+      "http://127.0.0.1:3000/api/booking/create",
+
+      {
+
+        method: "POST",
+
+        headers: {
+
+          "Content-Type": "application/json",
+
+          Authorization: "Bearer " + token
+
+        },
+
+        body: JSON.stringify({
+
+          tutorId,
+          schedule,
+          amount,
+          message
+
+        })
+
+      }
+
+    );
+
+    const bookingData =
+      await bookingRes.json();
+
+    if (!bookingData.success) {
+
+      alert(bookingData.message);
+
+      return;
+
+    }
+
+    // =========================
+    // CREATE RAZORPAY ORDER
+    // =========================
+
+    const orderRes = await fetch(
+
+      "http://127.0.0.1:3000/api/payment/create-order",
+
+      {
+
+        method: "POST",
+
+        headers: {
+
+          "Content-Type": "application/json"
+
+        },
+
+        body: JSON.stringify({
+
+          amount: amount * 100
+
+        })
+
+      }
+
+    );
+
+    const orderData =
+      await orderRes.json();
+
+    if (!orderData.success) {
+
+      alert("Payment Order Failed");
+
+      return;
+
+    }
+
+    // =========================
+    // OPEN RAZORPAY
+    // =========================
+
+    const options = {
+
+      key: orderData.key,
+
+      amount: orderData.order.amount,
+
+      currency: "INR",
+
+      name: "TutorCall",
+
+      description: "Tutor Booking Payment",
+
+      order_id: orderData.order.id,
+
+      handler: async function (response) {
+
+        // =========================
+        // VERIFY PAYMENT
+        // =========================
+
+        const verifyRes = await fetch(
+
+          "http://127.0.0.1:3000/api/payment/verify",
+
+          {
+
+            method: "POST",
+
+            headers: {
+
+              "Content-Type": "application/json"
+
+            },
+
+            body: JSON.stringify({
+
+              razorpay_order_id:
+                response.razorpay_order_id,
+
+              razorpay_payment_id:
+                response.razorpay_payment_id,
+
+              razorpay_signature:
+                response.razorpay_signature,
+
+              bookingId:
+                bookingData.booking._id,
+
+              tutorId,
+
+              amount
+
+            })
+
+          }
+
+        );
+
+        const verifyData =
+          await verifyRes.json();
+
+        if (verifyData.success) {
+
+          alert("Payment Successful ✅");
+
+          closeBookingForm();
+
+          window.location.href =
+            "student-dashboard.html";
+
+        } else {
+
+          alert("Payment Verification Failed");
+
+        }
+
+      },
+
+      theme: {
+
+        color: "#2196F3"
+
+      }
+
+    };
+
+    const rzp =
+      new Razorpay(options);
+
+    rzp.open();
+
+  } catch (err) {
+
+    console.log(err);
+
+    alert("Server Error");
+
+  }
+
+}
+</script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+</body>
+</html>
