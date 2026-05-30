@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const Tutor = require("../models/Tutor");
+const Tutor = require("../models/tutor");
 
 // ⚠️ MUST MATCH tutorRoutes.js
 const JWT_SECRET = "TUTOR_SECRET_KEY";
