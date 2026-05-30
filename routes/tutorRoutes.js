@@ -7,7 +7,7 @@ const jwt = require("jsonwebtoken");
 
 const bcrypt = require("bcryptjs");
 
-const Tutor = require("../models/Tutor");
+const Tutor = require("../models/tutor");
 
 /* =========================================
             REGISTER
