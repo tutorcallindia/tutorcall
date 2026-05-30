@@ -4,7 +4,7 @@ const router = express.Router();
 
 const Review = require("../models/review");
 
-const Booking = require("../models/Booking");
+const Booking = require("../models/booking");
 
 const authStudent =
 require("../middleware/authStudent");
