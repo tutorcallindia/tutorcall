@@ -167,4 +167,10 @@ router.put("/approve/:id", async(req,res)=>{
   }
 
 });
+router.get("/", (req, res) => {
+  res.json({
+    success: true,
+    message: "Admin API Working"
+  });
+});
 module.exports = router;
