@@ -65,17 +65,12 @@ new Book({
 
 title:req.body.title,
 
-author:req.body.author,
-
-publisher:req.body.publisher,
+category:req.body.category,
 
 price:req.body.price,
 
 city:req.body.city,
 
-pincode:req.body.pincode,
-
-delivery:req.body.delivery,
 
 description:req.body.description,
 
@@ -144,8 +139,7 @@ message:
 
 );
 
-module.exports =
-router;
+
 /* ===============================
       DELETE BOOK
 ================================ */
@@ -185,3 +179,6 @@ message:
 }
 
 );
+
+module.exports =
+router;

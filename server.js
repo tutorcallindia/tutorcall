@@ -1,4 +1,6 @@
 require("dotenv").config();
+console.log("SERVER STARTED");
+console.log("MONGO URI =", process.env.MONGO_URI ? "FOUND" : "NOT FOUND");
 
 const express =
   require("express");
@@ -100,6 +102,10 @@ app.use(
 app.use(
   "/api/review",
   reviewRoutes
+);
+app.use(
+"/uploads",
+express.static("uploads")
 );
 /* ===============================
             TEST

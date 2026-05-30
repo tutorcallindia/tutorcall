@@ -1,31 +1,45 @@
 const mongoose =
-  require("mongoose");
+require("mongoose");
 
 const bookSchema =
-  new mongoose.Schema({
+new mongoose.Schema({
 
-    title:String,
+title:{
+type:String,
+required:true
+},
 
-    author:String,
+price:{
+type:Number,
+required:true
+},
 
-    publisher:String,
+city:{
+type:String,
+required:true
+},
 
-    price:String,
+category:{
+type:String
+},
 
-    city:String,
+description:{
+type:String
+},
 
-    pincode:String,
+image:{
+type:String
+},
 
-    delivery:String,
+createdAt:{
+type:Date,
+default:Date.now
+}
 
-    description:String,
-
-    image:String
-
-  });
+});
 
 module.exports =
-  mongoose.model(
-    "Book",
-    bookSchema
-  );
+mongoose.model(
+"Book",
+bookSchema
+);
