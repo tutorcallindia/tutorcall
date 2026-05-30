@@ -4,14 +4,14 @@ const PDFDocument = require("pdfkit");
 const fs = require("fs");
 const path = require("path");
 const sendInvoiceEmail = require("../utils/emailInvoice");
-const Booking = require("../models/Booking");
-const Review = require("../models/Review");
+const Booking = require("../models/booking");
+const Review = require("../models/review");
 const authTutor = require("../middleware/authTutor");
 const sendBookingEmail =
 require("../utils/sendBookingEmail");
 
 const Tutor =
-require("../models/Tutor");
+require("../models/tutor");
 const sendWhatsApp =
 require("../utils/sendWhatsApp");
 // --------------------------------------------------
