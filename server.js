@@ -35,7 +35,7 @@ express.static("uploads")
 );
 app.use(
   express.static(
-    path.join(__dirname, "../")
+   path.join(__dirname)
   )
 );
 /* ===============================
@@ -115,10 +115,10 @@ app.get("/", (req,res)=>{
 
   res.sendFile(
 
-    path.join(
-      __dirname,
-      "../index.html"
-    )
+   path.join(
+  __dirname,
+  "index.html"
+)
 
   );
 
@@ -127,7 +127,7 @@ app.get("/", (req,res)=>{
 /* ===============================
           MONGODB
 ================================ */
-
+console.log("BEFORE MONGODB CONNECT");
 mongoose.connect(
 
   process.env.MONGO_URI,
@@ -138,8 +138,8 @@ mongoose.connect(
   }
 
 )
-
 .then(()=>{
+console.log("MONGODB CONNECTED");
 
   console.log(
     "✅ MongoDB Connected Successfully!"
@@ -148,7 +148,8 @@ mongoose.connect(
 })
 
 .catch(err=>{
-
+console.log("MONGODB ERROR");
+console.error(err);
   console.error(
     "❌ MongoDB Error:",
     err.message
