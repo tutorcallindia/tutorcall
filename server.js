@@ -1,4 +1,5 @@
 require("dotenv").config();
+console.log("VERSION TEST 31 MAY");
 console.log("SERVER STARTED");
 console.log("MONGO URI =", process.env.MONGO_URI ? "FOUND" : "NOT FOUND");
 
