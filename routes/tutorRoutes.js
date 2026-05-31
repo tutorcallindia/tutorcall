@@ -8,12 +8,33 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 
 const Tutor = require("../models/tutor");
+const multer = require("multer");
+
+const storage = multer.diskStorage({
+  destination: function(req, file, cb){
+    cb(null, "uploads/");
+  },
+  filename: function(req, file, cb){
+    cb(null, Date.now() + "-" + file.originalname);
+  }
+});
+
+const upload = multer({ storage });
 
 /* =========================================
             REGISTER
 ========================================= */
 
-router.post("/register", async (req, res) => {
+router.post(
+  "/register",
+
+  upload.fields([
+    { name: "aadhar", maxCount: 1 },
+    { name: "photo", maxCount: 1 },
+    { name: "resume", maxCount: 1 }
+  ]),
+
+  async (req, res) => {
   console.log("BODY =", req.body);
 console.log("FILES =", req.files);
 
@@ -36,6 +57,10 @@ longitude,
       photo
       
     } = req.body;
+    const photo =
+  req.files?.photo?.[0]
+    ? `/uploads/${req.files.photo[0].filename}`
+    : "";
 
     // REQUIRED CHECK
 
