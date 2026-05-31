@@ -14,6 +14,8 @@ const Tutor = require("../models/tutor");
 ========================================= */
 
 router.post("/register", async (req, res) => {
+  console.log("BODY =", req.body);
+console.log("FILES =", req.files);
 
   try {
 
