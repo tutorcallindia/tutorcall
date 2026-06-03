@@ -54,7 +54,7 @@ console.log("FILES =", req.files);
       fees,address,
 latitude,
 longitude,
-      photo
+     
       
     } = req.body;
     const photo =
@@ -122,7 +122,7 @@ longitude,
         address,
 latitude,
 longitude,
-        photo
+          photo
 
       });
 
