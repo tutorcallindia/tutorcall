@@ -197,10 +197,8 @@ async function loadTutors() {
 
   try {
 
-    const url =
-
-`http://127.0.0.1:3000/api/tutors/list?city=${city}&subjects=${subjects}&classes=${classes}&mode=${mode}`;
-
+   const url =
+`https://tutorcall.co.in/api/tutors/list?city=${city}&subjects=${subjects}&classes=${classes}&mode=${mode}`;
     const res =
       await fetch(url);
 
@@ -303,11 +301,10 @@ async function loadTutors() {
             class="photo"
 
             src="${
-              t.photo ||
-
-'https://cdn-icons-png.flaticon.com/512/3177/3177440.png'
-
-            }"
+  t.photo
+    ? `https://tutorcall.co.in${t.photo}`
+    : 'https://cdn-icons-png.flaticon.com/512/3177/3177440.png'
+}"
 
           >
 
