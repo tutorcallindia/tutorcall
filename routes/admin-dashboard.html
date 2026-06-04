@@ -373,21 +373,22 @@ function logoutAdmin(){
 }
 async function approveTutor(id){
 
-  const res = await fetch(
-    `https://tutorcall.co.in/api/tutors/approve/${id}`,
-    {
-      method:"PUT"
-    }
-  );
+  try {
 
-  const data = await res.json();
+    const res = await fetch(
+      `https://tutorcall.co.in/api/tutors/approve/${id}`,
+      {
+        method:"PUT"
+      }
+    );
 
-  alert(data.message);
+    const data = await res.json();
 
-  loadTutors();
-}
+    alert(data.message);
 
-  catch(err){
+    loadTutors();
+
+  } catch(err){
 
     console.log(err);
 
@@ -396,6 +397,8 @@ async function approveTutor(id){
   }
 
 }
+
+
 </script>
 
 </body>
