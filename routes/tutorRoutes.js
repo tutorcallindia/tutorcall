@@ -371,6 +371,36 @@ router.get("/all", async (req, res) => {
 });
 
 
+
+// ================================
+// GET TUTOR BOOKINGS
+// ================================
+router.get("/bookings", async (req, res) => {
+
+  try {
+
+    const bookings = await Booking.find()
+      .populate("studentId")
+      .sort({ createdAt: -1 });
+
+    res.json({
+      success: true,
+      list: bookings
+    });
+
+  } catch (err) {
+
+    console.log(err);
+
+    res.status(500).json({
+      success: false,
+      message: "Failed to load bookings"
+    });
+
+  }
+
+});
+
 router.get("/:id", async (req, res) => {
 
   try {
@@ -396,34 +426,6 @@ router.get("/:id", async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Server Error"
-    });
-
-  }
-
-});
-// ================================
-// GET TUTOR BOOKINGS
-// ================================
-router.get("/bookings", async (req, res) => {
-
-  try {
-
-    const bookings = await Booking.find()
-      .populate("studentId")
-      .sort({ createdAt: -1 });
-
-    res.json({
-      success: true,
-      list: bookings
-    });
-
-  } catch (err) {
-
-    console.log(err);
-
-    res.status(500).json({
-      success: false,
-      message: "Failed to load bookings"
     });
 
   }
