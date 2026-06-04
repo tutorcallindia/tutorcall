@@ -371,7 +371,36 @@ router.get("/all", async (req, res) => {
 });
 
 
+router.get("/:id", async (req, res) => {
 
+  try {
+
+    const tutor = await Tutor.findById(req.params.id);
+
+    if (!tutor) {
+      return res.json({
+        success: false,
+        message: "Tutor not found"
+      });
+    }
+
+    res.json({
+      success: true,
+      tutor
+    });
+
+  } catch (err) {
+
+    console.log(err);
+
+    res.status(500).json({
+      success: false,
+      message: "Server Error"
+    });
+
+  }
+
+});
 // ================================
 // GET TUTOR BOOKINGS
 // ================================
