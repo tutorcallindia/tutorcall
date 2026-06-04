@@ -142,8 +142,7 @@ Logout
 if(
   !localStorage.getItem("adminToken")
 ){
-  window.location.href =
-  "/admin-login.html";
+ window.location.href = "/routes/admin-login.html";
 }
 
 
@@ -367,8 +366,7 @@ function logoutAdmin(){
     "adminInfo"
   );
 
-  window.location.href =
-  "admin-login.html";
+ window.location.href = "/routes/admin-login.html";
 
 }
 async function approveTutor(id){
