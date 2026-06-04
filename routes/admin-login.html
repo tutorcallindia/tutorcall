@@ -75,7 +75,7 @@
 
 <script>
 
-function loginAdmin(){
+async function loginAdmin(){
 
   const username =
     document.getElementById("username").value;
@@ -85,52 +85,50 @@ function loginAdmin(){
 
   try{
 
-  const res = await fetch(
-  "https://tutorcall.co.in/api/admin/login",
-    {
-      method:"POST",
+    const res = await fetch(
+      "https://tutorcall.co.in/api/admin/login",
+      {
+        method:"POST",
+        headers:{
+          "Content-Type":"application/json"
+        },
+        body:JSON.stringify({
+          username,
+          password
+        })
+      }
+    );
 
-      headers:{
-        "Content-Type":"application/json"
-      },
+    const data = await res.json();
 
-      body:JSON.stringify({
-        username,
-        password
-      })
+    if(data.success){
+
+      localStorage.setItem(
+        "adminToken",
+        data.token
+      );
+
+      localStorage.setItem(
+        "adminInfo",
+        JSON.stringify(data.admin)
+      );
+
+      window.location.href =
+      "/routes/admin-dashboard.html";
+
+    }else{
+
+      alert(data.message);
+
     }
-  );
 
-  const data = await res.json();
+  }catch(err){
 
-  if(data.success){
+    console.log(err);
 
-    localStorage.setItem(
-      "adminToken",
-      data.token
-    );
-
-    localStorage.setItem(
-      "adminInfo",
-      JSON.stringify(data.admin)
-    );
-
-    window.location.href =
-    "admin-dashboard.html";
-
-  }else{
-
-    alert(data.message);
+    alert("Server Error");
 
   }
-
-}catch(err){
-
-  console.log(err);
-
-  alert("Server Error");
-
-}
 
 }
 
