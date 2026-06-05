@@ -276,16 +276,16 @@ window.currentTutor = tutor;
       tutor.experience;
 
     document.getElementById("subjects").innerText =
-      tutor.subjects;
+  tutor.subjects || "N/A";
 
     document.getElementById("classes").innerText =
-      tutor.classes;
+  tutor.classes || "N/A";
 
     document.getElementById("mode").innerText =
-      tutor.mode;
+  tutor.mode || "N/A";
 
-    document.getElementById("city").innerText =
-      tutor.city;
+   document.getElementById("city").innerText =
+  tutor.city || "N/A";
       document.getElementById("address").innerText =
   tutor.address || "No address";
 
