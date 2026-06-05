@@ -6,7 +6,7 @@ const path = require("path");
 const router = express.Router();
 
 /* ================= COMPLETE BOOKING + GENERATE INVOICE ================= */
-
+console.log("NEW INVOICE ROUTE RUNNING");
 router.post("/booking/complete-booking", async (req, res) => {
   try {
     const {
@@ -60,6 +60,8 @@ router.post("/booking/complete-booking", async (req, res) => {
     /* ================= HEADER ================= */
 
     const logoPath = path.join(__dirname, "../assets/logo.png");
+console.log("Logo Exists:", fs.existsSync(logoPath));
+console.log("Logo Path:", logoPath);
 
     if (fs.existsSync(logoPath)) {
       console.log("Logo Path:", logoPath);
