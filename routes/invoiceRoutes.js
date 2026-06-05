@@ -62,6 +62,9 @@ router.post("/booking/complete-booking", async (req, res) => {
     const logoPath = path.join(__dirname, "../assets/logo.png");
 
     if (fs.existsSync(logoPath)) {
+      console.log("Logo Path:", logoPath);
+console.log("Logo Exists:", fs.existsSync(logoPath));
+      
       doc.image(logoPath, 50, 40, {
         width: 70
       });
