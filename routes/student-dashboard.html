@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Student Dashboard</title>
+
+  <style>
+
+    body{
+      font-family:Arial;
+      background:#f4f4f4;
+      padding:30px;
+    }
+
+    .container{
+      width:600px;
+      background:white;
+      padding:25px;
+      margin:auto;
+      border-radius:10px;
+      box-shadow:0 0 10px rgba(0,0,0,0.2);
+    }
+
+    h2{
+      text-align:center;
+    }
+
+    .info{
+      margin-top:20px;
+      font-size:16px;
+      line-height:26px;
+    }
+
+    hr{
+      margin:25px 0;
+    }
+
+    table{
+      width:100%;
+      border-collapse:collapse;
+      margin-top:10px;
+      font-size:14px;
+    }
+
+    th,td{
+      padding:10px;
+      border-bottom:1px solid #ddd;
+      text-align:center;
+    }
+
+    th{
+      background:#f0f0f0;
+    }
+
+    .download-btn{
+      padding:6px 10px;
+      background:#2196F3;
+      color:white;
+      border:none;
+      border-radius:4px;
+      cursor:pointer;
+    }
+
+    .download-btn:hover{
+      background:#1976D2;
+    }
+
+    button.logout{
+      width:100%;
+      padding:12px;
+      margin-top:25px;
+      font-size:16px;
+      color:white;
+      border:none;
+      border-radius:6px;
+      background:#f44336;
+      cursor:pointer;
+    }
+
+    button.logout:hover{
+      background:#d32f2f;
+    }
+
+    .notification-box{
+      background:#fff3cd;
+      color:#856404;
+      padding:12px;
+      border-radius:8px;
+      margin-top:15px;
+      border:1px solid #ffeeba;
+    }
+
+    .status-pending{
+      color:orange;
+      font-weight:bold;
+    }
+
+    .status-accepted{
+      color:green;
+      font-weight:bold;
+    }
+
+    .status-rejected{
+      color:red;
+      font-weight:bold;
+    }
+
+    .status-completed{
+      color:#2196F3;
+      font-weight:bold;
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+  <h2>Welcome Student</h2>
+
+  <!-- STUDENT INFO -->
+  <div class="info" id="infoBox"></div>
+
+  <h3>My Bookings</h3>
+
+  <div id="notificationArea"></div>
+
+  <div id="myBookings">
+    Loading...
+  </div>
+
+  <hr>
+
+  <!-- INVOICE HISTORY -->
+  <h3>📄 Invoice History</h3>
+
+  <table>
+
+    <thead>
+
+      <tr>
+
+        <th>#</th>
+
+        <th>Invoice File</th>
+
+        <th>Date</th>
+
+        <th>Download</th>
+
+      </tr>
+
+    </thead>
+
+    <tbody id="invoiceTable">
+
+      <tr>
+
+        <td colspan="4">
+          Loading invoices...
+        </td>
+
+      </tr>
+
+    </tbody>
+
+  </table>
+
+  <button class="logout" id="logoutBtn">
+    Logout
+  </button>
+
+</div>
+
+<script>
+
+// CHECK LOGIN
+const token =
+  localStorage.getItem("studentToken");
+
+const studentInfo =
+  localStorage.getItem("studentInfo");
+
+if(!token || !studentInfo){
+
+  window.location.href =
+    "student-login-test.html";
+
+}
+
+// STUDENT DATA
+const data =
+  JSON.parse(studentInfo);
+
+document.getElementById(
+  "infoBox"
+).innerHTML = `
+
+  <b>Name:</b> ${data.name}<br>
+
+  <b>Phone:</b> ${data.phone}<br>
+
+  <b>Email:</b> ${data.email}<br>
+
+  <b>Student ID:</b>
+  ${data._id || "N/A"}
+
+`;
+
+
+// LOAD BOOKINGS
+async function loadMyBookings(){
+
+  try{
+
+    const res = await fetch(
+
+      "http://localhost:3000/api/students/bookings",
+
+      {
+        headers:{
+          Authorization:
+            "Bearer " + token
+        }
+      }
+
+    );
+
+    const result =
+      await res.json();
+
+    const box =
+      document.getElementById(
+        "myBookings"
+      );
+
+    const notificationBox =
+      document.getElementById(
+        "notificationArea"
+      );
+
+    box.innerHTML = "";
+
+    notificationBox.innerHTML = "";
+
+    if(
+      !result.success ||
+      !result.list ||
+      result.list.length === 0
+    ){
+
+      box.innerHTML =
+        "No bookings yet";
+
+      return;
+
+    }
+
+    result.list.forEach(b => {
+
+      let statusClass = "";
+
+      let notificationText = "";
+
+      if(b.status === "Pending"){
+
+        statusClass =
+          "status-pending";
+
+        notificationText =
+          "⏳ Your booking request is pending.";
+
+      }
+
+      if(b.status === "Accepted"){
+
+        statusClass =
+          "status-accepted";
+
+        notificationText =
+          "✅ Tutor accepted your booking.";
+
+      }
+
+      if(b.status === "Rejected"){
+
+        statusClass =
+          "status-rejected";
+
+        notificationText =
+          "❌ Tutor rejected your booking.";
+
+      }
+
+      if(b.status === "Completed"){
+
+        statusClass =
+          "status-completed";
+
+        notificationText =
+          "🎉 Class completed successfully.";
+
+      }
+
+      // NOTIFICATION
+      notificationBox.innerHTML += `
+
+        <div class="notification-box">
+
+          ${notificationText}
+
+        </div>
+
+      `;
+
+      // REVIEW SECTION
+      let reviewSection = "";
+
+      if(b.status === "Completed"){
+
+        reviewSection = `
+
+          <div style="margin-top:12px;">
+
+            <select
+
+              id="rating-${b._id}"
+
+              style="
+                width:100%;
+                padding:8px;
+                margin-bottom:8px;
+              "
+
+            >
+
+              <option value="5">
+                ⭐⭐⭐⭐⭐
+              </option>
+
+              <option value="4">
+                ⭐⭐⭐⭐
+              </option>
+
+              <option value="3">
+                ⭐⭐⭐
+              </option>
+
+              <option value="2">
+                ⭐⭐
+              </option>
+
+              <option value="1">
+                ⭐
+              </option>
+
+            </select>
+
+            <textarea
+
+              id="review-${b._id}"
+
+              placeholder="Write review"
+
+              style="
+                width:100%;
+                padding:10px;
+                border:1px solid #ccc;
+                border-radius:6px;
+              "
+
+            ></textarea>
+
+            <button
+
+              onclick="submitReview(
+                '${b._id}',
+                '${b.tutorId._id}'
+              )"
+
+              style="
+                margin-top:8px;
+                width:100%;
+                padding:10px;
+                background:#2196F3;
+                color:white;
+                border:none;
+                border-radius:6px;
+                cursor:pointer;
+              "
+
+            >
+
+              Submit Review
+
+            </button>
+
+          </div>
+
+        `;
+
+      }
+
+      // BOOKINGS UI
+      box.innerHTML += `
+
+        <div style="
+          margin-top:10px;
+          padding:10px;
+          background:#f9f9f9;
+          border-radius:8px;
+        ">
+
+          <b>Tutor:</b>
+
+          ${b.tutorId?.name || "N/A"}
+
+          <br>
+
+          <b>Status:</b>
+
+          <span class="${statusClass}">
+            ${b.status}
+          </span>
+
+          <br>
+
+          <b>Amount:</b>
+
+          ₹${b.amount || 0}
+
+          ${reviewSection}
+
+        </div>
+
+      `;
+
+    });
+
+  }catch(err){
+
+    console.log(err);
+
+    document.getElementById(
+      "myBookings"
+    ).innerHTML =
+      "Error loading bookings";
+
+  }
+
+}
+
+
+// LOAD INVOICES
+fetch(
+  `http://localhost:3000/api/booking/invoices?studentEmail=${data.email}`
+)
+
+.then(res => res.json())
+
+.then(res => {
+
+  const tbody =
+    document.getElementById(
+      "invoiceTable"
+    );
+
+  tbody.innerHTML = "";
+
+  if(
+    !res.success ||
+    res.invoices.length === 0
+  ){
+
+    tbody.innerHTML = `
+
+      <tr>
+
+        <td colspan="4">
+
+          No invoices found
+
+        </td>
+
+      </tr>
+
+    `;
+
+    return;
+
+  }
+
+  res.invoices.forEach((inv,index) => {
+
+    const date =
+      new Date(inv.date)
+      .toLocaleDateString();
+
+    tbody.innerHTML += `
+
+      <tr>
+
+        <td>${index + 1}</td>
+
+        <td>${inv.file}</td>
+
+        <td>${date}</td>
+
+        <td>
+
+          <button
+
+            class="download-btn"
+
+            onclick="
+              window.open(
+                'http://localhost:3000${inv.url}'
+              )
+            "
+
+          >
+
+            Download
+
+          </button>
+
+        </td>
+
+      </tr>
+
+    `;
+
+  });
+
+})
+
+.catch(err => {
+
+  document.getElementById(
+    "invoiceTable"
+  ).innerHTML = `
+
+    <tr>
+
+      <td colspan="4">
+
+        Error loading invoices
+
+      </td>
+
+    </tr>
+
+  `;
+
+});
+
+
+// LOAD BOOKINGS
+loadMyBookings();
+
+
+// SUBMIT REVIEW
+async function submitReview(
+  bookingId,
+  tutorId
+){
+
+  try{
+
+    const rating =
+
+      document.getElementById(
+        `rating-${bookingId}`
+      ).value;
+
+    const reviewText =
+
+      document.getElementById(
+        `review-${bookingId}`
+      ).value;
+
+    const res = await fetch(
+
+      "http://localhost:3000/api/review/add",
+
+      {
+
+        method:"POST",
+
+        headers:{
+
+          "Content-Type":
+            "application/json",
+
+          Authorization:
+            "Bearer " + token
+
+        },
+
+        body: JSON.stringify({
+
+          bookingId,
+          tutorId,
+          rating,
+          reviewText
+
+        })
+
+      }
+
+    );
+
+    const result =
+      await res.json();
+
+    alert(result.message);
+
+  }catch(err){
+
+    console.log(err);
+
+    alert("Review Failed");
+
+  }
+
+}
+
+
+// LOGOUT
+document.getElementById(
+  "logoutBtn"
+).onclick = () => {
+
+  localStorage.removeItem(
+    "studentToken"
+  );
+
+  localStorage.removeItem(
+    "studentInfo"
+  );
+
+  window.location.href =
+    "student-login-test.html";
+
+};
+setInterval(loadMyBookings, 15000);
+</script>
+
+</body>
+</html>
