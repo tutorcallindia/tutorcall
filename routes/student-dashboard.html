@@ -185,9 +185,11 @@ const studentInfo =
 
 if(!token || !studentInfo){
 
-  window.location.href =
-    "student-login-test.html";
+ window.location.href =
+"/routes/student-dashboard.html";
 
+if(!token || !studentInfo){
+  window.location.href = "/routes/student-login-test.html";
 }
 
 // STUDENT DATA
@@ -217,7 +219,7 @@ async function loadMyBookings(){
 
     const res = await fetch(
 
-      "http://localhost:3000/api/students/bookings",
+      "https://tutorcall.co.in/api/students/bookings",
 
       {
         headers:{
@@ -455,7 +457,7 @@ async function loadMyBookings(){
 
 // LOAD INVOICES
 fetch(
-  `http://localhost:3000/api/booking/invoices?studentEmail=${data.email}`
+  `https://tutorcall.co.in/api/booking/invoices?studentEmail=${data.email}`
 )
 
 .then(res => res.json())
@@ -516,7 +518,7 @@ fetch(
 
             onclick="
               window.open(
-                'http://localhost:3000${inv.url}'
+                'https://tutorcall.co.in${inv.url}'
               )
             "
 
@@ -583,7 +585,7 @@ async function submitReview(
 
     const res = await fetch(
 
-      "http://localhost:3000/api/review/add",
+      "https://tutorcall.co.in/api/review/add",
 
       {
 
@@ -641,8 +643,7 @@ document.getElementById(
     "studentInfo"
   );
 
-  window.location.href =
-    "student-login-test.html";
+  window.location.href = "/routes/student-login-test.html";
 
 };
 setInterval(loadMyBookings, 15000);
