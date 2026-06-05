@@ -82,11 +82,9 @@
 </div>
 
 <script>
-  if(localStorage.getItem("studentToken")){
-
+ if(localStorage.getItem("studentToken")){
   window.location.href =
-  "student-dashboard.html";
-
+  "/student-dashboard.html";
 }
 document.getElementById("loginForm").addEventListener("submit", async (e) => {
   e.preventDefault();
