@@ -239,7 +239,7 @@ async function loadTutor() {
 
     const res =
       await fetch(
-        "http://127.0.0.1:3000/api/tutors/list"
+        "https://tutorcall.co.in/api/tutors/list"
       );
 
     const data =
@@ -465,7 +465,7 @@ async function submitBooking() {
 
     const bookingRes = await fetch(
 
-      "http://127.0.0.1:3000/api/booking/create",
+      "https://tutorcall.co.in/api/booking/create",
 
       {
 
@@ -509,7 +509,7 @@ async function submitBooking() {
 
     const orderRes = await fetch(
 
-      "http://127.0.0.1:3000/api/payment/create-order",
+      "https://tutorcall.co.in/api/payment/create-order",
 
       {
 
@@ -568,7 +568,7 @@ async function submitBooking() {
 
         const verifyRes = await fetch(
 
-          "http://127.0.0.1:3000/api/payment/verify",
+          "https://tutorcall.co.in/api/payment/verify",
 
           {
 
