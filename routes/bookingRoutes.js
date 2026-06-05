@@ -25,6 +25,7 @@ router.get("/complete-booking", (req, res) => {
 // COMPLETE BOOKING + GENERATE INVOICE + EMAIL
 // --------------------------------------------------
 router.post("/complete-booking", async (req, res) => {
+   console.log("BOOKING PDF ROUTE RUNNING");
   try {
     const {
       bookingId,
@@ -53,6 +54,9 @@ router.post("/complete-booking", async (req, res) => {
 
     /* ========== HEADER LOGO ========== */
     const logoPath = path.join(__dirname, "../assets/logo.png");
+    console.log("Logo Path:", logoPath);
+console.log("Logo Exists:", fs.existsSync(logoPath));
+    
     if (fs.existsSync(logoPath)) {
       doc.image(logoPath, 50, 40, { width: 80 });
     }
