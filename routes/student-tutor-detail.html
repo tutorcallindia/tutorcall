@@ -219,6 +219,8 @@ const urlParams =
 
 const tutorId =
   urlParams.get("id");
+  console.log("URL Tutor ID =", tutorId);
+  
 
 if (!tutorId) {
 
@@ -244,11 +246,14 @@ async function loadTutor() {
 
     const data =
       await res.json();
+      console.log("API DATA =", data);
 
-    const tutor =
-      data.tutors.find(
-        t => t._id === tutorId
-      );
+   const tutor =
+  data.tutors.find(
+    t => String(t._id) === String(tutorId)
+  );
+
+console.log("FOUND TUTOR =", tutor);
 window.currentTutor = tutor;
     if (!tutor) {
 
