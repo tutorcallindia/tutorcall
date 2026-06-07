@@ -50,7 +50,7 @@ console.log("AFTER EXPRESS");
 
 console.log("LOAD tutorRoutes");
 const tutorRoutes =
-  require("./routes/tutorRoutes-broken");
+  require("./routes/tutorRoutes");
   console.log("tutorRoutes loaded successfully");
 
   console.log("LOAD bookingRoutes");
@@ -103,6 +103,7 @@ app.get("/test123", (req,res)=>{
 });
 
 console.log("AFTER TEST ROUTE");
+app.use("/api/tutors", tutorRoutes);
 
 console.log("TUTOR ROUTE ENABLED");
 
