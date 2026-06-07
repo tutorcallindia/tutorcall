@@ -92,13 +92,9 @@ console.log("AFTER ALL ROUTES 3");
 ================================ */
 console.log("BEFORE API ROUTES");
 
-try {
-  app.use("/api/tutors", tutorRoutes);
-  console.log("AFTER TUTOR ROUTE");
-} catch (err) {
-  console.error("TUTOR ROUTE ERROR");
-  console.error(err);
-}
+// app.use("/api/tutors", tutorRoutes);
+
+console.log("TUTOR ROUTE SKIPPED");
 
 app.use(
   "/api/booking",
