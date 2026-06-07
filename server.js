@@ -92,9 +92,9 @@ console.log("AFTER ALL ROUTES 3");
 ================================ */
 console.log("BEFORE API ROUTES");
 
-// app.use("/api/tutors", tutorRoutes);
+app.use("/api/tutors", tutorRoutes);
 
-console.log("TUTOR ROUTE SKIPPED");
+console.log("TUTOR ROUTE ENABLED");
 
 app.use(
   "/api/booking",
