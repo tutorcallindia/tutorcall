@@ -96,7 +96,13 @@ console.log("TYPE =", typeof tutorRoutes);
 console.log("ROUTER KEYS =", Object.keys(tutorRoutes));
 
 
-app.use("/api/tutors", tutorRoutes);
+console.log("IS ROUTER =", typeof tutorRoutes, tutorRoutes);
+
+app.get("/test123", (req,res)=>{
+  res.send("TEST OK");
+});
+
+console.log("AFTER TEST ROUTE");
 
 console.log("TUTOR ROUTE ENABLED");
 
