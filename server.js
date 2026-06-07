@@ -141,35 +141,19 @@ app.get("/", (req, res) => {
           MONGODB
 ================================ */
 console.log("BEFORE MONGODB CONNECT");
-mongoose.connect(
 
-  process.env.MONGO_URI,
-
-  {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-  }
-
-)
-.then(()=>{
-console.log("MONGODB CONNECTED");
-
-  console.log(
-    "✅ MongoDB Connected Successfully!"
-  );
-
+mongoose.connect(process.env.MONGO_URI)
+.then(() => {
+  console.log("MONGODB CONNECTED");
 })
-
-.catch(err=>{
-console.log("MONGODB ERROR");
-console.error(err);
-  console.error(
-    "❌ MongoDB Error:",
-    err.message
-  );
-
+.catch(err => {
+  console.log("MONGODB ERROR");
+  console.error(err);
 });
-
+console.log("BEFORE APP LISTEN");
+app.listen(PORT, () => {
+  console.log("SERVER LISTENING");
+});
 /* ===============================
             SERVER
 ================================ */
