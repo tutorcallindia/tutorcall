@@ -84,10 +84,13 @@ const adminRoutes =
 require("./routes/reviewRoutes");
 
 console.log("ALL ROUTES LOADED");
+console.log("AFTER ALL ROUTES 1");
+console.log("AFTER ALL ROUTES 2");
+console.log("AFTER ALL ROUTES 3");
 /* ===============================
           API ROUTES
 ================================ */
-
+console.log("BEFORE API ROUTES");
 app.use(
   "/api/tutors",
   tutorRoutes
