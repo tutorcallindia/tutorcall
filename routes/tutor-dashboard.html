@@ -66,7 +66,7 @@
 const token = localStorage.getItem("tutorToken");
 
 const tutor =
-JSON.parse(localStorage.getItem("tutorInfo"));
+JSON.parse(localStorage.getItem("tutorData"));
 
 if (!token || !tutor) {
 
@@ -105,7 +105,7 @@ async function loadReviews() {
 
     const res = await fetch(
 
-      "http://127.0.0.1:3000/api/booking/my-reviews",
+      "https://tutorcall.co.in/api/booking/my-reviews",
 
       {
 
@@ -194,7 +194,7 @@ async function loadBookingsAndEarnings() {
 
     const res = await fetch(
 
-      "http://127.0.0.1:3000/api/booking/tutor-bookings",
+      "https://tutorcall.co.in/api/booking/tutor-bookings",
 
       {
 
@@ -343,7 +343,7 @@ async function loadBookingsAndEarnings() {
 
     const resE = await fetch(
 
-      `http://127.0.0.1:3000/api/booking/earnings/${tutor._id}`,
+      `https://tutorcall.co.in/api/booking/earnings/${tutor._id}`,
 
       {
 
@@ -386,7 +386,7 @@ async function updateBooking(id, status) {
 
     const res = await fetch(
 
-      `http://127.0.0.1:3000/api/booking/update-status/${id}`,
+      `https://tutorcall.co.in/api/booking/update-status/${id}`,
 
       {
 
