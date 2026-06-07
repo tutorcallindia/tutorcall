@@ -46,7 +46,7 @@ app.use(
 /* ===============================
             ROUTES
 ================================ */
-
+console.log("AFTER EXPRESS");
 const tutorRoutes =
   require("./routes/tutorRoutes");
 
