@@ -51,6 +51,7 @@ console.log("AFTER EXPRESS");
 console.log("LOAD tutorRoutes");
 const tutorRoutes =
   require("./routes/tutorRoutes");
+  console.log("tutorRoutes loaded successfully");
 
   console.log("LOAD bookingRoutes");
 const bookingRoutes =
