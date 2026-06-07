@@ -47,26 +47,42 @@ app.use(
             ROUTES
 ================================ */
 console.log("AFTER EXPRESS");
+
+console.log("LOAD tutorRoutes");
 const tutorRoutes =
   require("./routes/tutorRoutes");
 
+  console.log("LOAD bookingRoutes");
 const bookingRoutes =
   require("./routes/bookingRoutes");
 
+  console.log("LOAD invoiceRoutes");
 const invoiceRoutes =
   require("./routes/invoiceRoutes");
 
+  console.log("LOAD paymentRoutes");
 const paymentRoutes =
   require("./routes/paymentRoutes");
 
+  console.log("LOAD books");
 const bookRoutes =
   require("./routes/books");
- const studentRoutes =
+ 
+ 
+console.log("LOAD studentRoutes");
+  const studentRoutes =
   require("./routes/studentRoutes");
+
+
+console.log("LOAD adminRoutes");
 const adminRoutes =
   require("./routes/adminRoutes");
+
+  console.log("LOAD reviewRoutes");
   const reviewRoutes =
 require("./routes/reviewRoutes");
+
+console.log("ALL ROUTES LOADED");
 /* ===============================
           API ROUTES
 ================================ */
