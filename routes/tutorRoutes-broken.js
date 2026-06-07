@@ -23,6 +23,3 @@ console.log("Multer loading");
 const multer = require("multer");
 
 console.log("ALL TUTOR ROUTES DEPENDENCIES LOADED");
-
-
-
