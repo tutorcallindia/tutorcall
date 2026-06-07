@@ -50,7 +50,7 @@ console.log("AFTER EXPRESS");
 
 console.log("LOAD tutorRoutes");
 const tutorRoutes =
-  require("./routes/tutorRoutes");
+  require("./routes/tutorRoutes-broken");
   console.log("tutorRoutes loaded successfully");
 
   console.log("LOAD bookingRoutes");
@@ -160,10 +160,9 @@ console.log("BEFORE APP LISTEN");
             SERVER
 ================================ */
 
-const PORT =
-  process.env.PORT || 3000;
+const PORT = process.env.PORT || 3000;
 
-app.listen(PORT, ()=>{
+app.listen(PORT, () => {
 
   console.log(
     `🚀 Server running at http://localhost:${PORT}`
