@@ -92,6 +92,10 @@ console.log("AFTER ALL ROUTES 3");
 ================================ */
 console.log("BEFORE API ROUTES");
 
+console.log("TYPE =", typeof tutorRoutes);
+console.log("ROUTER KEYS =", Object.keys(tutorRoutes));
+
+
 app.use("/api/tutors", tutorRoutes);
 
 console.log("TUTOR ROUTE ENABLED");
