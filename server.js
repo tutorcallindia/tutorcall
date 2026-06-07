@@ -151,9 +151,8 @@ mongoose.connect(process.env.MONGO_URI)
   console.error(err);
 });
 console.log("BEFORE APP LISTEN");
-app.listen(PORT, () => {
-  console.log("SERVER LISTENING");
-});
+
+
 /* ===============================
             SERVER
 ================================ */
