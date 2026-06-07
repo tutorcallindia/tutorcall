@@ -98,7 +98,7 @@ document
 async function loginTutor() {
 
   const phone =
-  document.getElementById("phone").value
+  document.getElementById("phone").value;
 
   const password =
   document.getElementById("password").value;
@@ -118,7 +118,7 @@ async function loginTutor() {
 
   try {
 
-    const res = await fetch(
+    const res = await 
       fetch(
   "https://tutorcall.co.in/api/tutors/login",
       {
