@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tutor Login</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f2f2;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .login-box {
+      width: 350px;
+      background: white;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 15px;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      margin-top: 10px;
+    }
+
+    #msg {
+      margin-top: 10px;
+      text-align: center;
+      font-size: 14px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="login-box">
+    <h2>Tutor Login</h2>
+    <input
+id="phone"
+type="text"
+placeholder="Enter Phone Number"
+>
+    <input id="password" type="password" placeholder="Enter Password" />
+    <script>
+
+document
+.getElementById("password")
+.addEventListener("keypress", function(e){
+
+  if(e.key === "Enter"){
+    loginTutor();
+  }
+
+});
+
+</script>
+    <button onclick="loginTutor()">Login</button>
+
+    <p id="msg"></p>
+  </div>
+
+  <!-- JS File -->
+ <script>
+  if(localStorage.getItem("tutorToken")){
+
+  window.location.href =
+  "tutor-dashboard.html";
+
+}
+
+async function loginTutor() {
+
+  const phone =
+  document.getElementById("phone").value
+
+  const password =
+  document.getElementById("password").value;
+
+  const msg =
+  document.getElementById("msg");
+
+  if (!phone || !password) {
+
+    msg.style.color = "red";
+
+    msg.innerText =
+    "Please fill all fields";
+
+    return;
+  }
+
+  try {
+
+    const res = await fetch(
+      fetch(
+  "https://tutorcall.co.in/api/tutors/login",
+      {
+
+        method: "POST",
+
+        headers: {
+          "Content-Type":
+          "application/json"
+        },
+
+        body: JSON.stringify({
+          phone,
+          password
+        })
+
+      }
+    );
+
+    const data =
+    await res.json();
+
+    console.log(data);
+
+    if (data.success) {
+
+      msg.style.color = "green";
+
+      msg.innerText =
+      "Login Successful";
+
+      localStorage.setItem(
+        "tutorToken",
+        data.token
+      );
+localStorage.setItem(
+  "tutorId",
+  data.tutor._id
+);
+      localStorage.setItem(
+        "tutorData",
+        JSON.stringify(data.tutor)
+      );
+
+     window.open(
+"tutor-dashboard.html",
+"_self"
+);
+
+    } else {
+
+      msg.style.color = "red";
+
+      msg.innerText =
+      data.message;
+    }
+
+  } catch (error) {
+
+    console.log(error);
+
+    msg.style.color = "red";
+
+    msg.innerText =
+    "Server Error";
+  }
+
+}
+
+</script>
+
+
+</body>
+</html>

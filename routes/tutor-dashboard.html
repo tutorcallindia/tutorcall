@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Tutor Dashboard</title>
+  <style>
+    body { margin:0; font-family:Arial; background:#eef2f3; padding:24px; }
+    .wrap { max-width:900px; margin:auto; display:grid; grid-template-columns: 1fr 1fr; gap:20px; }
+    .card { background:#fff; padding:18px; border-radius:12px; box-shadow:0 0 10px rgba(0,0,0,.08); }
+    .avatar { width:110px; height:110px; border-radius:50%; object-fit:cover; border:3px solid #007bff; display:block; margin:auto; }
+    h2 { text-align:center; margin:8px 0; }
+    .info p { margin:6px 0; }
+    .btn { padding:10px 12px; border-radius:8px; border:none; cursor:pointer; }
+    .accept { background:#2ecc71; color:#fff; }
+    .reject { background:#e74c3c; color:#fff; }
+    .complete { background:#3498db; color:#fff; }
+    .small { font-size:13px; color:#666; }
+    .booking-item { padding:10px; border-radius:8px; background:#f9f9f9; margin-top:10px; }
+  </style>
+</head>
+<body>
+
+  <div style="max-width:1000px;margin:auto;">
+    <div class="card" style="margin-bottom:16px;">
+      <img id="photo" class="avatar" src="">
+      <h2 id="name">Loading...</h2>
+      <div class="info" style="text-align:center;">
+        <p id="qualification"></p>
+        <p id="experience"></p>
+        <p id="city"></p>
+        <p><strong>Fees:</strong> ₹ <span id="fees"></span></p>
+      </div>
+    </div>
+
+    <div class="wrap">
+
+      <!-- LEFT: REVIEWS & RATINGS -->
+      <div class="card" id="reviewsCard">
+        <h3>Student Reviews</h3>
+        <div id="ratingSummary" class="small">Loading ratings...</div>
+        <div id="reviewList"></div>
+      </div>
+
+      <!-- RIGHT: BOOKINGS & EARNINGS -->
+      <div class="card" id="bookingsCard">
+        <h3>Bookings & Earnings</h3>
+        <div style="display:flex;gap:12px;align-items:center;margin-bottom:10px;">
+          <div>
+            <div class="small">Total Earnings</div>
+            <div style="font-size:20px;font-weight:bold">₹ <span id="earningsTotal">0</span></div>
+          </div>
+          <div style="margin-left:auto;">
+            <div class="small">Completed</div>
+            <div style="font-size:18px" id="earningsCount">0</div>
+          </div>
+        </div>
+
+        <div id="bookingList">Loading bookings...</div>
+      </div>
+
+    </div>
+  </div>
+
+ <script>
+
+const token = localStorage.getItem("tutorToken");
+
+const tutor =
+JSON.parse(localStorage.getItem("tutorInfo"));
+
+if (!token || !tutor) {
+
+  window.location.href =
+  "tutor-login.html";
+
+}
+
+// PROFILE
+
+document.getElementById("photo").src =
+  tutor.photo ||
+  "https://cdn-icons-png.flaticon.com/512/3177/3177440.png";
+
+document.getElementById("name").innerText =
+  tutor.name;
+
+document.getElementById("qualification").innerText =
+  tutor.qualification || "";
+
+document.getElementById("experience").innerText =
+  "Experience: " + (tutor.experience || "N/A");
+
+document.getElementById("city").innerText =
+  "City: " + (tutor.city || "N/A");
+
+document.getElementById("fees").innerText =
+  tutor.fees || "0";
+
+
+// REVIEWS
+
+async function loadReviews() {
+
+  try {
+
+    const res = await fetch(
+
+      "http://127.0.0.1:3000/api/booking/my-reviews",
+
+      {
+
+        headers: {
+
+          Authorization: "Bearer " + token
+
+        }
+
+      }
+
+    );
+
+    const data = await res.json();
+
+    const listBox =
+      document.getElementById("reviewList");
+
+    const summary =
+      document.getElementById("ratingSummary");
+
+    listBox.innerHTML = "";
+
+    if (!data.success || !data.reviews.length) {
+
+      summary.innerText =
+        "No reviews yet";
+
+      return;
+
+    }
+
+    const avg =
+
+      data.reviews.reduce(
+        (s, r) => s + r.rating,
+        0
+      ) / data.reviews.length;
+
+    summary.innerHTML =
+
+      `⭐ ${avg.toFixed(1)} / 5`;
+
+    data.reviews.forEach(r => {
+
+      listBox.innerHTML += `
+
+        <div class="booking-item">
+
+          <b>
+            ${r.studentId?.name || "Student"}
+          </b>
+
+          <div style="color:gold">
+
+            ${"★".repeat(r.rating)}
+
+          </div>
+
+          <div class="small">
+
+            ${r.reviewText || ""}
+
+          </div>
+
+        </div>
+
+      `;
+
+    });
+
+  } catch (err) {
+
+    console.log(err);
+
+  }
+
+}
+
+
+// BOOKINGS
+
+async function loadBookingsAndEarnings() {
+
+  try {
+
+    const res = await fetch(
+
+      "http://127.0.0.1:3000/api/booking/tutor-bookings",
+
+      {
+
+        headers: {
+
+          Authorization: "Bearer " + token
+
+        }
+
+      }
+
+    );
+
+    const data = await res.json();
+
+    const box =
+      document.getElementById("bookingList");
+
+    box.innerHTML = "";
+
+    if (!data.success || !data.list.length) {
+
+      box.innerHTML =
+        "<div>No bookings yet</div>";
+
+    } else {
+
+      data.list.forEach(b => {
+
+  let buttons = "";
+
+  // PENDING
+  if (b.status === "Pending") {
+
+    buttons = `
+
+      <button
+        class="btn accept"
+        onclick="updateBooking('${b._id}','Accepted')">
+
+        Accept
+
+      </button>
+
+      <button
+        class="btn reject"
+        onclick="updateBooking('${b._id}','Rejected')">
+
+        Reject
+
+      </button>
+
+    `;
+
+  }
+
+  // ACCEPTED
+  else if (b.status === "Accepted") {
+
+    buttons = `
+
+      <button
+        class="btn complete"
+        onclick="updateBooking('${b._id}','Completed')">
+
+        Complete
+
+      </button>
+
+    `;
+
+  }
+
+  // COMPLETED
+  else if (b.status === "Completed") {
+
+    buttons = `
+
+      <div style="
+        color:green;
+        font-weight:bold;
+      ">
+
+        ✅ Completed
+
+      </div>
+
+    `;
+
+  }
+
+  // REJECTED
+  else if (b.status === "Rejected") {
+
+    buttons = `
+
+      <div style="
+        color:red;
+        font-weight:bold;
+      ">
+
+        ❌ Rejected
+
+      </div>
+
+    `;
+
+  }
+
+  box.innerHTML += `
+
+    <div class="booking-item">
+
+      <b>
+
+        ${b.studentId?.name || "Student"}
+
+      </b>
+
+      <div class="small">
+
+        ₹${b.amount}
+        •
+        ${b.status}
+
+      </div>
+
+      <div style="
+        margin-top:10px;
+        display:flex;
+        gap:8px;
+        flex-wrap:wrap;
+      ">
+
+        ${buttons}
+
+      </div>
+
+    </div>
+
+  `;
+
+});
+
+    }
+
+    const resE = await fetch(
+
+      `http://127.0.0.1:3000/api/booking/earnings/${tutor._id}`,
+
+      {
+
+        headers: {
+
+          Authorization: "Bearer " + token
+
+        }
+
+      }
+
+    );
+
+    const e = await resE.json();
+
+    if (e.success) {
+
+      document.getElementById("earningsTotal").innerText =
+        e.totalEarnings;
+
+      document.getElementById("earningsCount").innerText =
+        e.bookings.length;
+
+    }
+
+  } catch (err) {
+
+    console.log(err);
+
+  }
+
+}
+
+
+// UPDATE BOOKING
+
+async function updateBooking(id, status) {
+
+  try {
+
+    const res = await fetch(
+
+      `http://127.0.0.1:3000/api/booking/update-status/${id}`,
+
+      {
+
+        method: "PUT",
+
+        headers: {
+
+          "Content-Type": "application/json",
+
+          Authorization: "Bearer " + token
+
+        },
+
+        body: JSON.stringify({
+
+          status
+
+        })
+
+      }
+
+    );
+
+    const data = await res.json();
+
+    if (data.success) {
+
+      alert("Booking Updated");
+
+      loadBookingsAndEarnings();
+
+    } else {
+
+      alert(data.message);
+
+    }
+
+  } catch (err) {
+
+    console.log(err);
+
+    alert("Server Error");
+
+  }
+
+}
+
+
+// LOAD
+
+loadReviews();
+
+loadBookingsAndEarnings();
+
+</script>
+  
+
+</body>
+</html>
