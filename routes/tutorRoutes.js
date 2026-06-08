@@ -1,8 +1,11 @@
 console.log("TUTOR ROUTES FILE START 111");
+console.log("STUDENT ROUTES START");
 const express = require("express");
 
 const router = express.Router();
+
 const StudentRequest = require("../models/studentRequest");
+console.log("StudentRequest loaded");
 
 console.log("BEFORE Booking");
 const Booking = require("../models/booking");
@@ -516,4 +519,6 @@ router.get("/requests", async (req, res) => {
   }
 
 });
+console.log("STUDENT ROUTES END");
+
 module.exports = router;
