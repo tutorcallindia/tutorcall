@@ -190,33 +190,32 @@ async function loadRequests(){
       document.getElementById(
         "requestList"
       );
+box.innerHTML = "";
 
-    box.innerHTML = "";
+data.requests.forEach(r => {
 
-    data.requests.forEach(r => {
+   box.innerHTML += `
+<div class="tutor">
 
-      box.innerHTML += `
+  <div>
+    <b>${r.name}</b><br>
+    ${r.className || ""}<br>
+    ${r.district || ""}<br>
+    ${r.state || ""}<br>
+    ${r.email || ""}
+  </div>
 
-      <div class="tutor">
+  <div>
+    <button
+      class="approve"
+      onclick="assignTutor('${r._id}')"
+    >
+      Assign Tutor
+    </button>
+  </div>
 
-        <div>
-
-          <b>${r.name}</b><br>
-
-          ${r.className || ""}<br>
-
-          ${r.district || ""}<br>
-
-          ${r.state || ""}<br>
-
-          ${r.email || ""}
-
-        </div>
-
-      </div>
-
-      `;
-
+</div>
+`;
     });
 
   }catch(err){
@@ -224,6 +223,21 @@ async function loadRequests(){
     console.log(err);
 
   }
+
+}
+
+async function assignTutor(requestId){
+
+  const tutorId = prompt(
+    "Enter Tutor ID"
+  );
+
+  if(!tutorId) return;
+
+  alert(
+    "Request ID = " + requestId +
+    "\nTutor ID = " + tutorId
+  );
 
 }
 // LOAD TUTORS
