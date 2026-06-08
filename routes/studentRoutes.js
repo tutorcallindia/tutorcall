@@ -7,8 +7,7 @@ const authStudent = require("../middleware/authStudent");
 const Review = require("../models/review");
 const Booking = require("../models/booking");
 const StudentRequest = require("../models/studentRequest");
-const StudentRequest =
-require("../models/studentRequest");
+
 
 const JWT_SECRET = "MY_SECRET_KEY";
 
@@ -386,48 +385,7 @@ router.get("/requests", async (req, res) => {
 
 });
 
-/* ======================================
-      STUDENT TUTOR REQUEST
-====================================== */
 
-router.post("/request", async (req, res) => {
-
-  try {
-
-    const request = await StudentRequest.create({
-
-      name: req.body.name,
-      father: req.body.father,
-      age: req.body.age,
-      dob: req.body.dob,
-      school: req.body.school,
-      className: req.body.className,
-      district: req.body.district,
-      state: req.body.state,
-      address: req.body.address,
-      email: req.body.email,
-      gps: req.body.gps
-
-    });
-
-    res.json({
-      success: true,
-      message: "Request Submitted Successfully",
-      request
-    });
-
-  } catch (err) {
-
-    console.log(err);
-
-    res.status(500).json({
-      success: false,
-      message: err.message
-    });
-
-  }
-
-});
 
 /* ======================================
       GET ALL REQUESTS
