@@ -133,6 +133,21 @@ Logout
     Loading...
   </div>
 
+  <div class="section">
+
+  <h2>Student Requests</h2>
+
+  <div id="requestList">
+    Loading...
+  </div>
+
+</div>
+
+  <div class="card">
+  <div>Student Requests</div>
+  <div class="big" id="requestCount">0</div>
+</div>
+
 </div>
 
 <script>
@@ -146,6 +161,63 @@ if(
 }
 
 
+async function loadRequests(){
+
+  try{
+
+    const res = await fetch(
+      "https://tutorcall.co.in/api/students/requests"
+    );
+
+    const data = await res.json();
+
+    if(!data.success) return;
+
+    document.getElementById(
+      "requestCount"
+    ).innerText =
+      data.requests.length;
+
+    const box =
+      document.getElementById(
+        "requestList"
+      );
+
+    box.innerHTML = "";
+
+    data.requests.forEach(r => {
+
+      box.innerHTML += `
+
+      <div class="tutor">
+
+        <div>
+
+          <b>${r.name}</b><br>
+
+          ${r.className || ""}<br>
+
+          ${r.district || ""}<br>
+
+          ${r.state || ""}<br>
+
+          ${r.email || ""}
+
+        </div>
+
+      </div>
+
+      `;
+
+    });
+
+  }catch(err){
+
+    console.log(err);
+
+  }
+
+}
 // LOAD TUTORS
 
 async function loadTutors(){
@@ -354,6 +426,7 @@ async function toggleBlock(id){
 loadTutors();
 
 loadStudents();
+loadRequests();
 
 loadBookings();
 function logoutAdmin(){

@@ -360,4 +360,28 @@ router.post("/request", async (req, res) => {
   }
 
 });
+
+router.get("/requests", async (req, res) => {
+
+  try {
+
+    const requests =
+      await StudentRequest.find()
+      .sort({ createdAt: -1 });
+
+    res.json({
+      success: true,
+      requests
+    });
+
+  } catch (err) {
+
+    res.status(500).json({
+      success: false,
+      message: err.message
+    });
+
+  }
+
+});
 module.exports = router;
