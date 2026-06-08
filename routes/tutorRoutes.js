@@ -2,6 +2,7 @@ console.log("TUTOR ROUTES FILE START 111");
 const express = require("express");
 
 const router = express.Router();
+const StudentRequest = require("../models/studentRequest");
 
 console.log("BEFORE Booking");
 const Booking = require("../models/booking");
@@ -438,6 +439,78 @@ router.get("/:id", async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Server Error"
+    });
+
+  }
+
+});
+
+/* ======================================
+      STUDENT TUTOR REQUEST
+====================================== */
+
+router.post("/request", async (req, res) => {
+
+  try {
+
+    const request = await StudentRequest.create({
+
+      name: req.body.name,
+      father: req.body.father,
+      age: req.body.age,
+      dob: req.body.dob,
+      school: req.body.school,
+      className: req.body.className,
+      district: req.body.district,
+      state: req.body.state,
+      address: req.body.address,
+      email: req.body.email,
+      gps: req.body.gps
+
+    });
+
+    res.json({
+      success: true,
+      message: "Request Submitted Successfully",
+      request
+    });
+
+  } catch (err) {
+
+    console.log(err);
+
+    res.status(500).json({
+      success: false,
+      message: err.message
+    });
+
+  }
+
+});
+
+/* ======================================
+      GET ALL REQUESTS
+====================================== */
+
+router.get("/requests", async (req, res) => {
+
+  try {
+
+    const requests =
+      await StudentRequest.find()
+      .sort({ createdAt: -1 });
+
+    res.json({
+      success: true,
+      requests
+    });
+
+  } catch (err) {
+
+    console.log(err);
+
+    res.status(500).json({
+      success: false
     });
 
   }
