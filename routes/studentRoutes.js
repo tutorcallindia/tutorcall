@@ -387,32 +387,5 @@ router.get("/requests", async (req, res) => {
 
 
 
-/* ======================================
-      GET ALL REQUESTS
-====================================== */
 
-router.get("/requests", async (req, res) => {
-
-  try {
-
-    const requests =
-      await StudentRequest.find()
-      .sort({ createdAt: -1 });
-
-    res.json({
-      success: true,
-      requests
-    });
-
-  } catch (err) {
-
-    console.log(err);
-
-    res.status(500).json({
-      success: false
-    });
-
-  }
-
-});
 module.exports = router;
