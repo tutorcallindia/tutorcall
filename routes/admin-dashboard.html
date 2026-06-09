@@ -207,12 +207,16 @@ ${r.assignedTutor?.name || "Not Assigned"}
   </div>
 
   <div>
-    <button
-      class="approve"
-      onclick="assignTutor('${r._id}')"
-    >
-      Assign Tutor
-    </button>
+   <button
+  class="approve"
+  onclick="assignTutor('${r._id}')"
+>
+  ${
+    r.assignedTutor
+      ? "Reassign Tutor"
+      : "Assign Tutor"
+  }
+</button>
   </div>
 
 </div>
