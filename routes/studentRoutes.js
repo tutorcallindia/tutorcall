@@ -365,9 +365,10 @@ router.get("/requests", async (req, res) => {
 
   try {
 
-    const requests =
-      await StudentRequest.find()
-      .sort({ createdAt: -1 });
+   const requests =
+  await StudentRequest.find()
+  .populate("assignedTutor")
+  .sort({ createdAt: -1 });
 
     res.json({
       success: true,

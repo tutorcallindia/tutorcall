@@ -200,6 +200,10 @@ data.requests.forEach(r => {
     ${r.district || ""}<br>
     ${r.state || ""}<br>
     ${r.email || ""}
+
+    <br>
+Assigned Tutor:
+${r.assignedTutor?.name || "Not Assigned"}
   </div>
 
   <div>
