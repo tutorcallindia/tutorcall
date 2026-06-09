@@ -31,6 +31,17 @@
         <p><strong>Fees:</strong> ₹ <span id="fees"></span></p>
       </div>
     </div>
+    <div class="card" style="margin-bottom:20px;">
+
+  <h3>Assigned Students</h3>
+
+  <div id="assignedStudents">
+
+    Loading assigned students...
+
+  </div>
+
+</div>
 
     <div class="wrap">
 
@@ -434,12 +445,72 @@ async function updateBooking(id, status) {
 
 }
 
+async function loadAssignedStudents(){
+
+  try{
+
+    const res = await fetch(
+
+      `https://tutorcall.co.in/api/admin/assigned-students/${tutor._id}`
+
+    );
+
+    const data = await res.json();
+
+    const box =
+      document.getElementById(
+        "assignedStudents"
+      );
+
+    box.innerHTML = "";
+
+    if(
+      !data.success ||
+      !data.students.length
+    ){
+
+      box.innerHTML =
+        "No assigned students";
+
+      return;
+
+    }
+
+    data.students.forEach(s => {
+
+      box.innerHTML += `
+
+        <div class="booking-item">
+
+          <b>${s.name}</b><br>
+
+          ${s.className || ""}<br>
+
+          ${s.address || ""}<br>
+
+          ${s.email || ""}
+
+        </div>
+
+      `;
+
+    });
+
+  }catch(err){
+
+    console.log(err);
+
+  }
+
+}
 
 // LOAD
 
 loadReviews();
 
 loadBookingsAndEarnings();
+
+loadAssignedStudents();
 
 </script>
   

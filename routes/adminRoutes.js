@@ -219,4 +219,42 @@ router.post("/assign-tutor", async (req, res) => {
   }
 
 });
+
+
+/* =========================================
+      ASSIGNED STUDENTS FOR TUTOR
+========================================= */
+
+router.get("/assigned-students/:tutorId", async (req, res) => {
+
+  try {
+
+    const students =
+      await StudentRequest.find({
+
+        assignedTutor: req.params.tutorId
+
+      });
+
+    res.json({
+
+      success: true,
+      students
+
+    });
+
+  } catch (err) {
+
+    console.log(err);
+
+    res.status(500).json({
+
+      success: false,
+      message: "Server Error"
+
+    });
+
+  }
+
+});
 module.exports = router;
