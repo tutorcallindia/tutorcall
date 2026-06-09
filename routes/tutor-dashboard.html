@@ -486,10 +486,13 @@ async function loadAssignedStudents(){
 
           ${s.className || ""}<br>
 
-          ${s.address || ""}<br>
-
-          ${s.email || ""}
-
+          <div style="
+  color:red;
+  font-weight:bold;
+  margin-top:8px;
+">
+  🔒 Contact details available for subscribed tutors only
+</div>
         </div>
 
       `;
