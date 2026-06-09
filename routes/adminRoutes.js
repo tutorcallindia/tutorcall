@@ -312,4 +312,87 @@ router.put("/activate-subscription/:id", async (req, res) => {
   }
 
 });
+
+/* =========================================
+      ACTIVATE SUBSCRIPTION
+========================================= */
+
+router.put("/activate-subscription/:id", async (req, res) => {
+
+  try {
+
+    const tutor =
+      await Tutor.findById(req.params.id);
+
+    if (!tutor) {
+
+      return res.json({
+        success: false,
+        message: "Tutor not found"
+      });
+
+    }
+
+    const { plan } = req.body;
+
+    let days = 30;
+    let amount = 29;
+    let planName = "Monthly";
+
+    if (plan === "2") {
+
+      days = 180;
+      amount = 59;
+      planName = "6 Months";
+
+    }
+
+    if (plan === "3") {
+
+      days = 365;
+      amount = 101;
+      planName = "Yearly";
+
+    }
+
+    tutor.isSubscribed = true;
+
+    tutor.subscriptionPlan =
+      planName;
+
+    tutor.subscriptionAmount =
+      amount;
+
+    tutor.subscriptionExpiry =
+      new Date(
+        Date.now() +
+        days * 24 * 60 * 60 * 1000
+      );
+
+    await tutor.save();
+
+    res.json({
+
+      success: true,
+
+      message:
+        `${planName} Subscription Activated`
+
+    });
+
+  } catch (err) {
+
+    console.log(err);
+
+    res.status(500).json({
+
+      success: false,
+
+      message: "Server Error"
+
+    });
+
+  }
+
+});
 module.exports = router;

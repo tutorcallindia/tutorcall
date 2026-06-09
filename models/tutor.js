@@ -98,6 +98,15 @@ subscriptionExpiry: {
   type: Date,
   default: null
 },
+subscriptionPlan: {
+  type: String,
+  default: "Free"
+},
+
+subscriptionAmount: {
+  type: Number,
+  default: 0
+}
 
   rating: {
     type: Number,

@@ -566,12 +566,34 @@ async function activateSubscription(id){
 
   try{
 
+    const plan = prompt(
+
+`Select Plan
+
+1 = Monthly ₹29
+2 = 6 Months ₹59
+3 = Yearly ₹101`
+
+    );
+
+    if(!plan) return;
+
     const res = await fetch(
 
       `https://tutorcall.co.in/api/admin/activate-subscription/${id}`,
 
       {
-        method:"PUT"
+
+        method:"PUT",
+
+        headers:{
+          "Content-Type":"application/json"
+        },
+
+        body: JSON.stringify({
+          plan
+        })
+
       }
 
     );
