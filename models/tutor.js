@@ -89,6 +89,15 @@ fees: {
     type: String,
     default: ""
   },
+  isSubscribed: {
+  type: Boolean,
+  default: false
+},
+
+subscriptionExpiry: {
+  type: Date,
+  default: null
+},
 
   rating: {
     type: Number,

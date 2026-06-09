@@ -257,4 +257,59 @@ router.get("/assigned-students/:tutorId", async (req, res) => {
   }
 
 });
+
+/* =========================================
+      ACTIVATE SUBSCRIPTION
+========================================= */
+
+router.put("/activate-subscription/:id", async (req, res) => {
+
+  try {
+
+    const tutor =
+      await Tutor.findById(req.params.id);
+
+    if (!tutor) {
+
+      return res.json({
+        success: false,
+        message: "Tutor not found"
+      });
+
+    }
+
+    tutor.isSubscribed = true;
+
+    const expiry = new Date();
+
+    expiry.setMonth(
+      expiry.getMonth() + 1
+    );
+
+    tutor.subscriptionExpiry =
+      expiry;
+
+    await tutor.save();
+
+    res.json({
+
+      success: true,
+      message: "Subscription Activated"
+
+    });
+
+  } catch (err) {
+
+    console.log(err);
+
+    res.status(500).json({
+
+      success: false,
+      message: "Server Error"
+
+    });
+
+  }
+
+});
 module.exports = router;
