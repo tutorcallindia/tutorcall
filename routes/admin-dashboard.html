@@ -229,15 +229,43 @@ ${r.assignedTutor?.name || "Not Assigned"}
 
 async function assignTutor(requestId){
 
-  const tutorId = prompt(
-    "Enter Tutor ID"
-  );
-
-  if(!tutorId) return;
-
   try{
 
     const res = await fetch(
+      "https://tutorcall.co.in/api/tutors/all"
+    );
+
+    const data = await res.json();
+
+    if(!data.success){
+      alert("Tutors not found");
+      return;
+    }
+
+    let list = "";
+
+    data.tutors.forEach((t,index)=>{
+
+      list +=
+      `${index+1}. ${t.name}\n`;
+
+    });
+
+    const choice = prompt(
+      "Select Tutor Number:\n\n" + list
+    );
+
+    if(!choice) return;
+
+    const tutor =
+      data.tutors[Number(choice)-1];
+
+    if(!tutor){
+      alert("Invalid Choice");
+      return;
+    }
+
+    const assignRes = await fetch(
       "https://tutorcall.co.in/api/admin/assign-tutor",
       {
         method:"POST",
@@ -246,14 +274,15 @@ async function assignTutor(requestId){
         },
         body: JSON.stringify({
           requestId,
-          tutorId
+          tutorId: tutor._id
         })
       }
     );
 
-    const data = await res.json();
+    const result =
+      await assignRes.json();
 
-    alert(data.message);
+    alert(result.message);
 
     loadRequests();
 
