@@ -24,6 +24,11 @@ const studentRequestSchema = new mongoose.Schema({
 
   gps: String,
 
+  assignedTutor: {
+  type: mongoose.Schema.Types.ObjectId,
+  ref: "Tutor"
+},
+
   createdAt: {
     type: Date,
     default: Date.now

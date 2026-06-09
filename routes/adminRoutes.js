@@ -4,6 +4,7 @@ const express = require("express");
 const router = express.Router();
 
 const Tutor = require("../models/tutor");
+const StudentRequest = require("../models/studentRequest");
 /* =========================================
               ADMIN LOGIN
 ========================================= */
@@ -172,5 +173,50 @@ router.get("/", (req, res) => {
     success: true,
     message: "Admin API Working"
   });
+});
+
+
+/* =========================================
+          ASSIGN TUTOR
+========================================= */
+
+router.post("/assign-tutor", async (req, res) => {
+
+  try {
+
+    const { requestId, tutorId } = req.body;
+
+    const request =
+      await StudentRequest.findById(requestId);
+
+    if (!request) {
+
+      return res.json({
+        success: false,
+        message: "Request not found"
+      });
+
+    }
+
+    request.assignedTutor = tutorId;
+
+    await request.save();
+
+    res.json({
+      success: true,
+      message: "Tutor Assigned Successfully"
+    });
+
+  } catch (err) {
+
+    console.log(err);
+
+    res.status(500).json({
+      success: false,
+      message: "Server Error"
+    });
+
+  }
+
 });
 module.exports = router;
