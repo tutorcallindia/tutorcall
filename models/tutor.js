@@ -106,7 +106,7 @@ subscriptionPlan: {
 subscriptionAmount: {
   type: Number,
   default: 0
-}
+},
 
   rating: {
     type: Number,
