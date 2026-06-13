@@ -370,17 +370,16 @@ router.get("/all", async (req, res) => {
 
     });
 
-  } catch (err) {
+  } catch(err){
 
-    console.log(err);
+  console.log("TUTOR ALL ERROR =", err);
 
-    res.status(500).json({
+  res.json({
+    success:false,
+    error: err.message
+  });
 
-      success: false
-
-    });
-
-  }
+}
 
 });
 
