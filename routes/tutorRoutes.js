@@ -358,28 +358,33 @@ router.get("/list", async (req, res) => {
 
 router.get("/all", async (req, res) => {
 
-  console.log("DB NAME =", mongoose.connection.name);
+  console.log("ALL ROUTE HIT");
 
   try {
 
-    const tutors = await Tutor.find();
+    console.log("BEFORE FIND");
+
+    const tutors = await Tutor.find({});
+
+    console.log("AFTER FIND");
+    console.log("COUNT =", tutors.length);
 
     res.json({
       success: true,
       tutors
     });
 
-  } catch(err) {
+  } catch (err) {
 
+    console.log("TUTOR ALL ERROR =");
     console.log(err);
 
-    res.json({
-      success:false,
+    res.status(500).json({
+      success: false,
       error: err.message
     });
 
   }
-
 });
 
 
