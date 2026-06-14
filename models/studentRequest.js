@@ -22,6 +22,8 @@ const studentRequestSchema = new mongoose.Schema({
 
   email: String,
 
+phone: String,
+
   gps: String,
 
   assignedTutor: {

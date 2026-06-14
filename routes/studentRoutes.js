@@ -324,19 +324,20 @@ router.post("/request", async (req, res) => {
     const request =
       await StudentRequest.create({
 
-        name: req.body.name,
-        father: req.body.father,
-        age: req.body.age,
-        dob: req.body.dob,
-        school: req.body.school,
-        className: req.body.class,
-        district: req.body.district,
-        state: req.body.state,
-        address: req.body.address,
-        email: req.body.email,
-        gps: req.body.gps
+  name: req.body.name,
+  father: req.body.father,
+  age: req.body.age,
+  dob: req.body.dob,
+  school: req.body.school,
+  className: req.body.class,
+  district: req.body.district,
+  state: req.body.state,
+  address: req.body.address,
+  email: req.body.email,
+  phone: req.body.phone,
+  gps: req.body.gps
 
-      });
+});
 
     res.json({
 

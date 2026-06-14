@@ -5,7 +5,7 @@ const router = express.Router();
 
 const Payment = require("../models/payment");
 const Booking = require("../models/booking");
-
+const Tutor = require("../models/tutor");
 const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
   key_secret: process.env.RAZORPAY_KEY_SECRET
@@ -61,6 +61,8 @@ router.post("/verify", async (req, res) => {
       return res.json({ success: false, message: "Invalid signature" });
     }
 
+
+
     // ✅ SAVE PAYMENT
     await Payment.create({
       tutorId,
@@ -71,6 +73,42 @@ router.post("/verify", async (req, res) => {
       status: "PAID"
     });
 
+
+
+   if (tutorId) {
+
+  const tutor = await Tutor.findById(tutorId);
+
+  if (tutor) {
+
+    let days = 30;
+    let planName = "Monthly";
+
+    if (amount == 5900) {
+      days = 180;
+      planName = "6 Months";
+    }
+
+    if (amount == 10100) {
+      days = 365;
+      planName = "Yearly";
+    }
+
+    tutor.isSubscribed = true;
+
+    tutor.subscriptionPlan = planName;
+
+    tutor.subscriptionAmount = amount / 100;
+
+    tutor.subscriptionExpiry = new Date(
+      Date.now() + days * 24 * 60 * 60 * 1000
+    );
+
+    await tutor.save();
+
+  }
+
+}
     // ✅ UPDATE BOOKING
     const booking =
 await Booking.findById(bookingId);

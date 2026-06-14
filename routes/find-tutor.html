@@ -410,6 +410,16 @@ cursor:pointer;
           </div>
 
           <div>
+  <label for="phone">Phone</label>
+  <input
+    id="phone"
+    name="phone"
+    type="text"
+    placeholder="Mobile Number"
+  />
+</div>
+
+          <div>
             <label for="gps">Current Location (GPS Auto-Fill)</label>
             <div class="gps">
               <input id="gps" name="gps" readonly placeholder="Latitude, Longitude" />
@@ -474,21 +484,22 @@ id="status">
 
   e.preventDefault();
 
-  const data = {
+ const data = {
 
-    name: document.getElementById("name").value,
-    father: document.getElementById("father").value,
-    age: document.getElementById("age").value,
-    dob: document.getElementById("dob").value,
-    school: document.getElementById("school").value,
-    className: document.getElementById("class").value,
-    district: document.getElementById("district").value,
-    state: document.getElementById("state").value,
-    address: document.getElementById("address").value,
-    email: document.getElementById("email").value,
-    gps: document.getElementById("gps").value
+  name: document.getElementById("name").value,
+  father: document.getElementById("father").value,
+  age: document.getElementById("age").value,
+  dob: document.getElementById("dob").value,
+  school: document.getElementById("school").value,
+  className: document.getElementById("class").value,
+  district: document.getElementById("district").value,
+  state: document.getElementById("state").value,
+  address: document.getElementById("address").value,
+  email: document.getElementById("email").value,
+  phone: document.getElementById("phone").value,
+  gps: document.getElementById("gps").value
 
-  };
+};
 
   try {
 

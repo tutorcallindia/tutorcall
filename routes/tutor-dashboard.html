@@ -478,26 +478,47 @@ async function loadAssignedStudents(){
 
     data.students.forEach(s => {
 
-      box.innerHTML += `
+  box.innerHTML += `
 
-        <div class="booking-item">
+    <div class="booking-item">
 
-          <b>${s.name}</b><br>
+      <b>${s.name}</b><br>
 
-          ${s.className || ""}<br>
+      ${s.className || ""}<br>
 
-          <div style="
-  color:red;
-  font-weight:bold;
-  margin-top:8px;
-">
-  🔒 Contact details available for subscribed tutors only
-</div>
+      ${
+        tutor.isSubscribed
+
+        ? `
+
+        <div style="margin-top:8px">
+
+          📞 ${s.phone || "N/A"} <br>
+          📧 ${s.email || "N/A"} <br>
+          📍 ${s.address || "N/A"}
+
         </div>
 
-      `;
+        `
 
-    });
+        : `
+
+        <div style="
+          color:red;
+          font-weight:bold;
+          margin-top:8px;
+        ">
+          🔒 Contact details available for subscribed tutors only
+        </div>
+
+        `
+      }
+
+    </div>
+
+  `;
+
+});
 
   }catch(err){
 
