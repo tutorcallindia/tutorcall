@@ -1,4 +1,5 @@
 console.log("BOOKING ROUTE VERSION 15 JUNE");
+console.log("BOOKING ROUTES FILE STARTED");
 const express = require("express");
 const router = express.Router();
 const PDFDocument = require("pdfkit");
@@ -733,5 +734,6 @@ router.get(
 
   }
 );
-
+console.log("BOOKING ROUTES FILE ENDED");
 module.exports = router;
+
