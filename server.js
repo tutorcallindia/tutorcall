@@ -53,10 +53,27 @@ const tutorRoutes =
   require("./routes/tutorRoutes");
   console.log("tutorRoutes loaded successfully");
 
-  console.log("LOAD bookingRoutes");
-const bookingRoutes =
-  require("./routes/bookingRoutes");
-  console.log("BOOKING ROUTES LOADED SUCCESSFULLY");
+ console.log("LOAD bookingRoutes");
+
+try {
+
+  const bookingRoutes =
+    require("./routes/bookingRoutes");
+
+  console.log(
+    "BOOKING ROUTES LOADED SUCCESSFULLY"
+  );
+
+  
+} catch (err) {
+
+  console.log(
+    "BOOKING ROUTES ERROR"
+  );
+
+  console.error(err);
+
+}
 
   console.log("LOAD invoiceRoutes");
 const invoiceRoutes =
