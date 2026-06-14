@@ -265,6 +265,10 @@ router.get("/assigned-students/:tutorId", async (req, res) => {
 
 router.put("/activate-subscription/:id", async (req, res) => {
 
+console.log("ACTIVATE ROUTE HIT");
+  console.log("ID =", req.params.id);
+  console.log("BODY =", req.body);
+
   try {
 
     const tutor =
