@@ -575,4 +575,162 @@ router.get("/mark-complete/:id", async (req, res) => {
 
 });
 
+
+/* ======================================
+      TUTOR BOOKINGS
+====================================== */
+
+router.get(
+  "/tutor-bookings",
+  authTutor,
+  async (req, res) => {
+
+    try {
+
+      const list =
+        await Booking.find({
+
+          tutorId: req.tutor._id
+
+        })
+
+        .populate(
+          "studentId",
+          "name"
+        )
+
+        .sort({
+          createdAt: -1
+        });
+
+      res.json({
+
+        success: true,
+        list
+
+      });
+
+    } catch (err) {
+
+      console.log(err);
+
+      res.status(500).json({
+
+        success: false
+
+      });
+
+    }
+
+  }
+);
+
+/* ======================================
+      UPDATE STATUS
+====================================== */
+
+router.put(
+  "/update-status/:id",
+  authTutor,
+  async (req, res) => {
+
+    try {
+
+      const booking =
+        await Booking.findById(
+          req.params.id
+        );
+
+      if (!booking) {
+
+        return res.json({
+
+          success: false,
+          message: "Booking not found"
+
+        });
+
+      }
+
+      booking.status =
+        req.body.status;
+
+      await booking.save();
+
+      res.json({
+
+        success: true
+
+      });
+
+    } catch (err) {
+
+      console.log(err);
+
+      res.status(500).json({
+
+        success: false
+
+      });
+
+    }
+
+  }
+);
+
+/* ======================================
+      EARNINGS
+====================================== */
+
+router.get(
+  "/earnings/:id",
+  authTutor,
+  async (req, res) => {
+
+    try {
+
+      const bookings =
+        await Booking.find({
+
+          tutorId: req.params.id,
+
+          status: "Completed"
+
+        });
+
+      const totalEarnings =
+        bookings.reduce(
+
+          (sum, b) =>
+            sum + (b.amount || 0),
+
+          0
+
+        );
+
+      res.json({
+
+        success: true,
+
+        totalEarnings,
+
+        bookings
+
+      });
+
+    } catch (err) {
+
+      console.log(err);
+
+      res.status(500).json({
+
+        success: false
+
+      });
+
+    }
+
+  }
+);
+
 module.exports = router;
