@@ -1,3 +1,4 @@
+console.log("BOOKING ROUTE VERSION 15 JUNE");
 const express = require("express");
 const router = express.Router();
 const PDFDocument = require("pdfkit");
