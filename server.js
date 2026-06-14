@@ -56,6 +56,7 @@ const tutorRoutes =
   console.log("LOAD bookingRoutes");
 const bookingRoutes =
   require("./routes/bookingRoutes");
+  console.log("BOOKING ROUTES LOADED SUCCESSFULLY");
 
   console.log("LOAD invoiceRoutes");
 const invoiceRoutes =
