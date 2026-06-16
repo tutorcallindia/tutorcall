@@ -53,18 +53,19 @@ const tutorRoutes =
   require("./routes/tutorRoutes");
   console.log("tutorRoutes loaded successfully");
 
- console.log("LOAD bookingRoutes");
+console.log("LOAD bookingRoutes");
+
+let bookingRoutes;
 
 try {
 
-  const bookingRoutes =
+  bookingRoutes =
     require("./routes/bookingRoutes");
 
   console.log(
     "BOOKING ROUTES LOADED SUCCESSFULLY"
   );
 
-  
 } catch (err) {
 
   console.log(
@@ -74,7 +75,6 @@ try {
   console.error(err);
 
 }
-
   console.log("LOAD invoiceRoutes");
 const invoiceRoutes =
   require("./routes/invoiceRoutes");
@@ -125,11 +125,14 @@ app.use("/api/tutors", tutorRoutes);
 
 console.log("TUTOR ROUTE ENABLED");
 
-app.use(
-  "/api/booking",
-  bookingRoutes
-);
+if (bookingRoutes) {
 
+  app.use(
+    "/api/booking",
+    bookingRoutes
+  );
+
+}
 app.use(
   "/api/invoice",
   invoiceRoutes
