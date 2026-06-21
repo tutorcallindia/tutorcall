@@ -142,29 +142,44 @@ console.log("Logo Exists:", fs.existsSync(logoPath));
 // --------------------------------------------------
 // GET ALL INVOICES FOR A STUDENT (by email)
 // --------------------------------------------------
+
 router.get("/invoices", async (req, res) => {
   try {
-    const { studentEmail } = req.query;
 
     const invoiceDir = path.join(__dirname, "../invoices");
+
     if (!fs.existsSync(invoiceDir)) {
-      return res.json({ success: true, invoices: [] });
+      return res.json({
+        success: true,
+        invoices: []
+      });
     }
 
-    // Simple demo: filename se list
     const files = fs.readdirSync(invoiceDir)
       .filter(f => f.endsWith(".pdf"))
       .map(f => ({
         file: f,
         url: `/api/booking/download-invoice/${f}`,
-        date: fs.statSync(path.join(invoiceDir, f)).mtime
+        date: fs.statSync(
+          path.join(invoiceDir, f)
+        ).mtime
       }))
       .sort((a,b) => b.date - a.date);
 
-    res.json({ success: true, invoices: files });
+    res.json({
+      success: true,
+      invoices: files
+    });
+
   } catch (err) {
+
     console.error(err);
-    res.status(500).json({ success: false, message: "Failed to load invoices" });
+
+    res.status(500).json({
+      success: false,
+      message: "Failed to load invoices"
+    });
+
   }
 });
 
@@ -639,10 +654,11 @@ router.put(
     try {
 
       const booking =
-        await Booking.findById(
-          req.params.id
-        );
-
+  await Booking.findById(
+    req.params.id
+  )
+  .populate("studentId")
+  .populate("tutorId");
       if (!booking) {
 
         return res.json({
@@ -658,7 +674,62 @@ router.put(
         req.body.status;
 
       await booking.save();
+if(req.body.status === "Completed"){
 
+  const invoiceDir =
+    path.join(__dirname,"../invoices");
+
+  if(!fs.existsSync(invoiceDir)){
+    fs.mkdirSync(invoiceDir);
+  }
+
+  const invoiceFileName =
+    `invoice_${booking._id}.pdf`;
+
+  const invoicePath =
+    path.join(
+      invoiceDir,
+      invoiceFileName
+    );
+
+  const doc =
+    new PDFDocument();
+
+  doc.pipe(
+    fs.createWriteStream(
+      invoicePath
+    )
+  );
+
+  doc.fontSize(20)
+     .text("TutorCall Invoice");
+
+  doc.moveDown();
+
+  doc.text(
+    `Student: ${booking.studentId.name}`
+  );
+
+  doc.text(
+    `Tutor: ${booking.tutorId.name}`
+  );
+
+  doc.text(
+    `Amount: ₹${booking.amount}`
+  );
+
+  doc.text(
+    `Date: ${new Date().toLocaleDateString()}`
+  );
+
+  doc.end();
+
+  console.log(
+    "INVOICE CREATED:",
+    invoiceFileName
+  );
+
+}
       res.json({
 
         success: true
