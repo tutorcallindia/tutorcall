@@ -519,8 +519,13 @@ id="status">
     alert(result.message);
 
     if(result.success){
-      document.getElementById("tutorForm").reset();
-    }
+
+  alert("Request Submitted Successfully");
+
+  window.location.href =
+  "/routes/student-dashboard.html";
+
+}
 
   } catch(err){
 
