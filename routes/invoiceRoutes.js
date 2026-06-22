@@ -237,10 +237,10 @@ router.get("/booking/download-invoice/:file", (req, res) => {
   try {
 
     const filePath = path.join(
-      __dirname,
-      "../invoices",
-      req.params.file
-    );
+  __dirname,
+  "../uploads/invoices",
+  req.params.file
+);
 
     if (!fs.existsSync(filePath)) {
       return res.status(404).json({
@@ -271,9 +271,9 @@ router.get("/booking/invoices", (req, res) => {
   try {
 
     const invoiceFolder = path.join(
-      __dirname,
-      "../invoices"
-    );
+  __dirname,
+  "../uploads/invoices"
+);
 
     console.log("Invoice Folder:", invoiceFolder);
 
