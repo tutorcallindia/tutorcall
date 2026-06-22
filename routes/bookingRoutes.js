@@ -676,12 +676,12 @@ router.put(
       await booking.save();
 if(req.body.status === "Completed"){
 
-  const invoiceDir =
-    path.join(__dirname,"../invoices");
+ const invoiceDir =
+  path.join(__dirname,"../uploads/invoices");
 
   if(!fs.existsSync(invoiceDir)){
-    fs.mkdirSync(invoiceDir);
-  }
+  fs.mkdirSync(invoiceDir,{ recursive:true });
+}
 
   const invoiceFileName =
     `invoice_${booking._id}.pdf`;
