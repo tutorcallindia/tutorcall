@@ -675,7 +675,7 @@ router.put(
 
       await booking.save();
 if(req.body.status === "Completed"){
-
+console.log("INVOICE BLOCK ENTERED");
  const invoiceDir =
   path.join(__dirname,"../uploads/invoices");
 
@@ -892,7 +892,7 @@ align:"center"
 );
 
 doc.end();
-
+console.log("PDF CREATED:", invoiceFileName);
   console.log(
     "INVOICE CREATED:",
     invoiceFileName
