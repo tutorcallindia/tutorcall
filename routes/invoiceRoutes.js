@@ -262,4 +262,78 @@ router.get("/booking/download-invoice/:file", (req, res) => {
   }
 });
 
+/* ================= INVOICE LIST ================= */
+
+/* ================= INVOICE LIST ================= */
+
+router.get("/booking/invoices", (req, res) => {
+
+  try {
+
+    const invoiceFolder = path.join(
+      __dirname,
+      "../invoices"
+    );
+
+    console.log("Invoice Folder:", invoiceFolder);
+
+    if (!fs.existsSync(invoiceFolder)) {
+
+      return res.json({
+        success: true,
+        invoices: []
+      });
+
+    }
+
+    const files = fs.readdirSync(invoiceFolder);
+
+    console.log("Files Found:", files);
+
+    const invoices = files
+      .filter(file => file.endsWith(".pdf"))
+      .map(file => {
+
+        const fullPath =
+          path.join(invoiceFolder, file);
+
+        return {
+
+          file,
+
+          url:
+            `/api/booking/download-invoice/${file}`,
+
+          date:
+            fs.statSync(fullPath).mtime
+
+        };
+
+      });
+
+    return res.json({
+
+      success: true,
+
+      invoices
+
+    });
+
+  } catch (err) {
+
+    console.log("Invoice List Error:", err);
+
+    return res.status(500).json({
+
+      success: false,
+
+      invoices: []
+
+    });
+
+  }
+
+});
+
+
 module.exports = router;
