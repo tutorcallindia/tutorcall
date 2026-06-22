@@ -58,7 +58,25 @@ router.post("/booking/complete-booking", async (req, res) => {
     doc.pipe(fs.createWriteStream(invoicePath));
 
     /* ================= HEADER ================= */
+doc.rect(0,0,612,110)
+.fill("#1a73e8");
 
+if(fs.existsSync(logoPath)){
+  doc.image(logoPath,40,15,{
+    width:80
+  });
+}
+
+doc.fillColor("white")
+.fontSize(26)
+.text("TutorCall",140,30);
+
+doc.fontSize(12)
+.text(
+  "Professional Home Tutor Services",
+  140,
+  65
+);
     const logoPath = path.join(__dirname, "../assets/logo.png");
 console.log("Logo Exists:", fs.existsSync(logoPath));
 console.log("Logo Path:", logoPath);
@@ -67,9 +85,9 @@ console.log("Logo Path:", logoPath);
       console.log("Logo Path:", logoPath);
 console.log("Logo Exists:", fs.existsSync(logoPath));
       
-      doc.image(logoPath, 50, 40, {
-        width: 70
-      });
+      doc.image(logoPath, 50, 35, {
+  width: 100
+});
     }
 
     doc
@@ -109,7 +127,21 @@ console.log("Logo Exists:", fs.existsSync(logoPath));
       .text(`Invoice ID : ${bookingId}`)
       .text(`Invoice Date : ${new Date().toLocaleDateString()}`)
       .text(`Invoice Time : ${new Date().toLocaleTimeString()}`);
+doc.save();
 
+doc.rotate(-45,{
+  origin:[300,350]
+});
+
+doc.fillColor("#eeeeee")
+.fontSize(70)
+.text(
+  "TUTORCALL",
+  120,
+  320
+);
+
+doc.restore();
     /* ================= STUDENT DETAILS ================= */
 
     doc.moveDown(2);
@@ -147,43 +179,35 @@ console.log("Logo Exists:", fs.existsSync(logoPath));
 
     /* ================= PAYMENT DETAILS ================= */
 
-    doc.moveDown(1.5);
+  const y = doc.y;
 
-    doc
-      .fontSize(15)
-      .fillColor("#1a73e8")
-      .text("Payment Summary");
+doc.roundedRect(
+  50,
+  y,
+  500,
+  60,
+  10
+)
+.fillAndStroke(
+  "#e8f5e9",
+  "#4caf50"
+);
 
-    doc.moveDown(0.8);
+doc.fillColor("#000")
+.fontSize(15)
+.text(
+  `Amount Paid : ₹${amount}`,
+  70,
+  y + 18
+);
 
-    doc
-      .rect(50, doc.y, 500, 35)
-      .fillAndStroke("#f5f9ff", "#1a73e8");
-
-    doc
-      .fillColor("#000")
-      .fontSize(13)
-      .text(`Amount Paid : ₹ ${amount}`, 70, doc.y - 27);
-
-    doc
-      .fillColor("green")
-      .fontSize(13)
-      .text("✔ PAYMENT SUCCESSFUL", 350, doc.y - 15);
-
-    /* ================= FOOTER ================= */
-
-    doc.moveDown(5);
-
-    doc
-      .fontSize(10)
-      .fillColor("#777")
-      .text(
-        "Thank you for choosing TutorCall.\nThis is a computer generated invoice and does not require signature.",
-        {
-          align: "center"
-        }
-      );
-
+doc.fillColor("#2e7d32")
+.fontSize(15)
+.text(
+  "✔ PAYMENT SUCCESSFUL",
+  320,
+  y + 18
+);
     /* ================= END PDF ================= */
 
     doc.end();
