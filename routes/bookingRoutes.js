@@ -140,6 +140,57 @@ console.log("Logo Exists:", fs.existsSync(logoPath));
     });
   }
 });
+
+router.post("/generate-invoice/:id", async (req, res) => {
+  try {
+
+    const booking = await Booking.findById(req.params.id)
+      .populate("studentId")
+      .populate("tutorId");
+
+    if (!booking) {
+      return res.status(404).json({
+        success: false,
+        message: "Booking not found"
+      });
+    }
+
+    const invoiceDir = path.join(__dirname, "../uploads/invoices");
+
+    if (!fs.existsSync(invoiceDir)) {
+      fs.mkdirSync(invoiceDir, { recursive: true });
+    }
+
+    const invoiceFileName = `invoice_${booking._id}.pdf`;
+    const invoicePath = path.join(invoiceDir, invoiceFileName);
+
+    // Agar PDF pehle se hai to wahi return kar do
+    if (fs.existsSync(invoicePath)) {
+      return res.json({
+        success: true,
+        invoice: `/api/booking/download-invoice/${invoiceFileName}`
+      });
+    }
+
+    // ===== Yahan tum wahi PDFDocument wala code paste karna =====
+    // const doc = new PDFDocument(...)
+    // doc.pipe(fs.createWriteStream(invoicePath))
+    // ...
+    // doc.end();
+
+    return res.json({
+      success: true,
+      invoice: `/api/booking/download-invoice/${invoiceFileName}`
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      success: false,
+      message: err.message
+    });
+  }
+});
 // --------------------------------------------------
 // GET ALL INVOICES FOR A STUDENT (by email)
 // --------------------------------------------------
