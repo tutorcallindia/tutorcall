@@ -198,7 +198,8 @@ router.post("/generate-invoice/:id", async (req, res) => {
 router.get("/invoices", async (req, res) => {
   try {
 
-    const invoiceDir = path.join(__dirname, "../invoices");
+   const invoiceDir =
+path.join(__dirname,"../uploads/invoices");
 
     if (!fs.existsSync(invoiceDir)) {
       return res.json({
@@ -239,7 +240,8 @@ router.get("/invoices", async (req, res) => {
 // DOWNLOAD INVOICE
 // --------------------------------------------------
 router.get("/download-invoice/:file", (req, res) => {
-  const filePath = path.join(__dirname, "../invoices", req.params.file);
+ const filePath =
+path.join(__dirname,"../uploads/invoices",req.params.file);
   res.download(filePath);
 });
 const authStudent = require("../middleware/authStudent");
@@ -750,9 +752,10 @@ margin: 50,
 size: "A4"
 });
 
-doc.pipe(
-fs.createWriteStream(invoicePath)
-);
+const stream =
+fs.createWriteStream(invoicePath);
+
+doc.pipe(stream);
 
 /* HEADER */
 
@@ -945,7 +948,40 @@ align:"center"
 );
 
 doc.end();
-console.log("PDF CREATED:", invoiceFileName);
+
+stream.on("finish",async()=>{
+
+console.log("PDF SAVED");
+
+try{
+
+await sendInvoiceEmail({
+
+to:booking.studentId.email,
+
+studentName:booking.studentId.name,
+
+invoicePath,
+
+bookingId:booking._id
+
+});
+
+}catch(err){
+
+console.log(err);
+
+}
+
+console.log("EMAIL DONE");
+
+});
+
+stream.on("error",(err)=>{
+
+console.log("PDF ERROR",err);
+
+});
   console.log(
     "INVOICE CREATED:",
     invoiceFileName
