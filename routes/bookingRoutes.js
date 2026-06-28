@@ -1,3 +1,4 @@
+console.log("BOOKING ROUTES VERSION 23 JUNE 01:50");
 console.log("BOOKING ROUTE VERSION 15 JUNE");
 console.log("BOOKING ROUTES FILE STARTED");
 const express = require("express");
@@ -650,7 +651,8 @@ router.put(
   "/update-status/:id",
   authTutor,
   async (req, res) => {
-
+console.log("UPDATE STATUS ROUTE HIT");
+console.log(req.body);
     try {
 
       const booking =
