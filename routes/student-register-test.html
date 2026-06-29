@@ -109,58 +109,80 @@
 document.getElementById("regForm").addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  const name = document.getElementById("name").value;
-  const phone = document.getElementById("phone").value;
-  const email = document.getElementById("email").value;
+  const name = document.getElementById("name").value.trim();
+  const phone = document.getElementById("phone").value.trim();
+  const email = document.getElementById("email").value.trim();
   const password = document.getElementById("password").value;
 
-  const res = await fetch("http://localhost:3000/api/students/register", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ name, phone, email, password })
-  });
+  try {
 
-  const data = await res.json();
+    // REGISTER
+    const res = await fetch("https://tutorcall.co.in/api/students/register", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        name,
+        phone,
+        email,
+        password
+      })
+    });
 
-  if (data.success) {
+    const data = await res.json();
 
-    // FORM CLEAR
-    document.getElementById("regForm").reset();
-
-    // SHOW POPUP
-    document.getElementById("popupBackground").style.display = "flex";
-
-    // AUTO-LOGIN
-    try {
-      const loginRes = await fetch("http://localhost:3000/api/students/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-       body: JSON.stringify({ email, password })
-      });
-
-      const loginData = await loginRes.json();
-
-      if (loginData.success && loginData.token) {
-        localStorage.setItem("studentToken", loginData.token);
-        localStorage.setItem("studentInfo", JSON.stringify(loginData.student));
-
-        setTimeout(() => {
-          window.location.href = "student-dashboard.html";
-        }, 1500);
-      }
-
-    } catch {
-      setTimeout(() => {
-        window.location.href = "student-login-test.html";
-      }, 1500);
+    if (!data.success) {
+      alert(data.message || "Registration failed");
+      return;
     }
 
-  } else {
-    alert(data.message);
+    // FORM RESET
+    document.getElementById("regForm").reset();
+
+    // POPUP
+    document.getElementById("popupBackground").style.display = "flex";
+
+    // LOGIN
+    const loginRes = await fetch("https://tutorcall.co.in/api/students/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        phone,
+        password
+      })
+    });
+
+    const loginData = await loginRes.json();
+
+    if (loginData.success) {
+
+      localStorage.setItem("studentToken", loginData.token);
+      localStorage.setItem("studentInfo", JSON.stringify(loginData.student));
+
+      setTimeout(() => {
+        window.location.href = "/routes/student-dashboard.html";
+      }, 1500);
+
+    } else {
+
+      setTimeout(() => {
+        window.location.href = "/routes/student-login.html";
+      }, 1500);
+
+    }
+
+  } catch (err) {
+
+    console.error(err);
+    alert("Server Error");
+
   }
+
 });
 
-// NEXT BUTTON
 document.getElementById("nextBtn").onclick = () => {
   document.getElementById("popupBackground").style.display = "none";
 };
