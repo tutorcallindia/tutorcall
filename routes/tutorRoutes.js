@@ -34,7 +34,7 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({ storage });
-
+const authTutor = require("../middleware/authTutor");
 /* =========================================
             REGISTER
 ========================================= */
@@ -391,32 +391,49 @@ router.get("/all", async (req, res) => {
 // ================================
 // GET TUTOR BOOKINGS
 // ================================
-router.get("/bookings", async (req, res) => {
+router.get("/bookings", authTutor, async (req, res) => {
 
-  try {
+    try {
 
-    const bookings = await Booking.find()
-      .populate("studentId")
-      .sort({ createdAt: -1 });
+        const bookings = await Booking.find({
 
-    res.json({
-      success: true,
-      list: bookings
-    });
+            tutorId: req.tutor._id
 
-  } catch (err) {
+        })
 
-    console.log(err);
+        .populate("studentId")
 
-    res.status(500).json({
-      success: false,
-      message: "Failed to load bookings"
-    });
+        .sort({
 
-  }
+            createdAt: -1
+
+        });
+
+        res.json({
+
+            success: true,
+
+            list: bookings
+
+        });
+
+    }
+
+    catch(err){
+
+        console.log(err);
+
+        res.status(500).json({
+
+            success:false,
+
+            message:"Failed to load bookings"
+
+        });
+
+    }
 
 });
-
 router.get("/:id", async (req, res) => {
 
   try {
