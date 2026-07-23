@@ -91,7 +91,7 @@ document
   if(localStorage.getItem("tutorToken")){
 
   window.location.href =
-  "tutor-dashboard.html";
+  "tutor-dashboard-v2.html";
 
 }
 
@@ -159,14 +159,11 @@ localStorage.setItem(
   data.tutor._id
 );
       localStorage.setItem(
-        "tutorData",
-        JSON.stringify(data.tutor)
-      );
-
-     window.open(
-"tutor-dashboard.html",
-"_self"
+    "tutorInfo",
+    JSON.stringify(data.tutor)
 );
+    window.location.href =
+"/routes/tutor-dashboard-v2.html";
 
     } else {
 
