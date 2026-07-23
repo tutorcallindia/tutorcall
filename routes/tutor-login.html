@@ -88,13 +88,15 @@ document
 
   <!-- JS File -->
  <script>
-  if(localStorage.getItem("tutorToken")){
+  /*
+if(localStorage.getItem("tutorToken")){
 
   window.location.href =
   "tutor-dashboard-v2.html";
 
 }
-
+*/
+  
 async function loginTutor() {
 
   const phone =
@@ -158,8 +160,8 @@ localStorage.setItem(
   "tutorId",
   data.tutor._id
 );
-      localStorage.setItem(
-    "tutorInfo",
+     localStorage.setItem(
+    "tutorData",
     JSON.stringify(data.tutor)
 );
     window.location.href =

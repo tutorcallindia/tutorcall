@@ -7,12 +7,16 @@ const tutorInfo = localStorage.getItem("tutorData");
 
 if (!token || !tutorInfo) {
 
+    localStorage.removeItem("tutorToken");
+    localStorage.removeItem("tutorData");
+    localStorage.removeItem("tutorId");
+
     alert("Please login first");
 
-    window.location.href = "/routes/tutor-login.html";
+    window.location.replace("/routes/tutor-login.html");
 
+    throw new Error("Not Logged In");
 }
-
 // ===============================
 // TUTOR INFO
 // ===============================
