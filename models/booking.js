@@ -36,10 +36,11 @@ const bookingSchema = new mongoose.Schema(
 
     schedule: {
 
-      type: Date // scheduled date/time
+  type: String,
 
-    },
+  default: ""
 
+},
     message: {
 
       type: String // optional student message
