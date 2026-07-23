@@ -1,643 +1,456 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Find Tutor — Quick Form</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
- <style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Find Tutor | TutorCall</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
 
 *{
 margin:0;
 padding:0;
 box-sizing:border-box;
-font-family:'Inter',sans-serif;
-
+font-family:'Poppins',sans-serif;
 }
 
 body{
+background:#f6f8fc;
+}
 
-background:#fdf2f8;
-padding:30px;
-padding-top:40px;
+header{
+background:linear-gradient(90deg,#ff4fa3,#7b5cff);
+padding:18px 40px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+color:#fff;
+}
+
+.logo{
+font-size:28px;
+font-weight:700;
+}
+
+nav a{
+color:#fff;
+text-decoration:none;
+margin-left:25px;
+font-weight:500;
+}
+
+.hero{
+
+padding:60px 20px;
+text-align:center;
+background:white;
+}
+
+.hero h1{
+
+font-size:42px;
+margin-bottom:10px;
 
 }
 
-.wrap{
+.hero p{
 
-max-width:950px;
+color:#666;
+margin-bottom:30px;
+
+}
+
+.search-box{
+
+max-width:1100px;
 margin:auto;
+display:grid;
+grid-template-columns:repeat(5,1fr);
+gap:15px;
+
+}
+
+.search-box select,
+.search-box input{
+
+padding:14px;
+border-radius:10px;
+border:1px solid #ddd;
+font-size:15px;
+
+}
+
+.search-btn{
+
+background:#ff4fa3;
+color:white;
+border:none;
+border-radius:10px;
+cursor:pointer;
+font-size:16px;
+font-weight:600;
+
+}
+
+.search-btn:hover{
+
+background:#ff2d8a;
+
+}
+
+.container{
+
+max-width:1200px;
+margin:40px auto;
+padding:20px;
+
+}
+
+#tutorResults{
+
+display:grid;
+grid-template-columns:repeat(auto-fill,minmax(320px,1fr));
+gap:25px;
 
 }
 
 .card{
 
 background:white;
-padding:40px;
-border-radius:30px;
-backdrop-filter:blur(10px);
-box-shadow:
-0 15px 40px rgba(255,0,150,0.08);
-
-border:1px solid #ffd3ea;
+border-radius:18px;
+padding:20px;
+box-shadow:0 8px 25px rgba(0,0,0,.08);
+transition:.3s;
 
 }
 
-h1{
+.card:hover{
 
-font-size:42px;
-font-weight:800;
-
-background:linear-gradient(
-135deg,
-#ff4fa3,
-#7b5cff
-);
-
--webkit-background-clip:text;
--webkit-text-fill-color:transparent;
-
-margin-bottom:10px;
+transform:translateY(-6px);
 
 }
 
-.sub{
+.photo{
 
-font-size:17px;
-color:#666;
-margin-bottom:35px;
-
-}
-
-.grid{
-
-display:grid;
-
-grid-template-columns:
-repeat(auto-fit,minmax(250px,1fr));
-
-gap:22px;
-
-}
-
-label{
-
+width:90px;
+height:90px;
+border-radius:50%;
+object-fit:cover;
 display:block;
-margin-bottom:8px;
-
-font-weight:600;
-color:#111827;
+margin:auto;
 
 }
 
-input,
-textarea,
-select{
+.name{
 
-width:100%;
-
-padding:15px;
-
-border-radius:16px;
-
-border:2px solid #ffd3ea;
-
-font-size:15px;
-
-background:#fff;
-
-outline:none;
-
-transition:0.3s;
+text-align:center;
+font-size:22px;
+font-weight:700;
+margin-top:15px;
 
 }
 
-input:focus,
-textarea:focus,
-select:focus{
+.info{
 
-border-color:#ff4fa3;
-
-box-shadow:
-0 0 0 4px rgba(255,79,163,0.12);
+margin-top:15px;
+line-height:28px;
+color:#555;
 
 }
 
-textarea{
+.price{
 
-resize:none;
+font-size:28px;
+font-weight:bold;
+color:#ff4fa3;
+text-align:center;
+margin-top:15px;
 
 }
 
-.gps{
+.btns{
 
 display:flex;
 gap:10px;
+margin-top:20px;
 
 }
 
 .btn{
 
-padding:14px 22px;
-
+flex:1;
+padding:12px;
 border:none;
-
-border-radius:14px;
-
+border-radius:10px;
+cursor:pointer;
 font-size:15px;
-font-weight:700;
-
-cursor:pointer;
-
-transition:0.3s;
+font-weight:600;
 
 }
 
-.btn-main{
+.profile{
 
-background:linear-gradient(
-135deg,
-#ff4fa3,
-#7b5cff
-);
-
+background:#7b5cff;
 color:white;
 
 }
 
-.btn-main:hover{
+.book{
 
-transform:translateY(-2px);
-
-box-shadow:
-0 10px 20px rgba(123,92,255,0.25);
+background:#ff4fa3;
+color:white;
 
 }
 
-.btn-light{
+.lock{
 
-background:white;
-
-border:2px solid #ffd3ea;
-
-color:#ff4fa3;
-
-font-weight:700;
-
-}
-
-.btn-light:hover{
-
-background:#fff0f7;
-
-}
-
-
-
-.button-row{
-
-display:flex;
-gap:12px;
-margin-top:25px;
-
-flex-wrap:wrap;
-
-}
-
-#status{
-
-margin-top:15px;
+margin-top:12px;
+background:#fff3cd;
+padding:10px;
+border-radius:8px;
+text-align:center;
 font-size:14px;
-color:#666;
+color:#856404;
 
 }
 
-@media(max-width:700px){
+footer{
 
-.card{
-
+margin-top:60px;
 padding:25px;
-
-}
-
-h1{
-
-font-size:32px;
-
-}
-
-}
-/* ===============================
-        TUTOR RESULTS
-================================ */
-
-#tutorResults{
-
-margin-top:40px;
-
-display:grid;
-
-grid-template-columns:
-repeat(auto-fit,minmax(280px,1fr));
-
-gap:25px;
-
-}
-
-/* TUTOR CARD */
-
-.tutor-card{
-
-background:white;
-
-padding:22px;
-
-border-radius:24px;
-
-border:1px solid #ffd3ea;
-
-box-shadow:
-0 10px 25px rgba(255,0,140,0.08);
-
-transition:0.3s;
-
-}
-
-.tutor-card:hover{
-
-transform:translateY(-6px);
-
-box-shadow:
-0 18px 35px rgba(255,0,140,0.16);
-
-}
-
-.tutor-photo{
-
-width:90px;
-height:90px;
-
-border-radius:50%;
-
-object-fit:cover;
-
-border:4px solid #ffd3ea;
-
-margin-bottom:15px;
-
-}
-
-.tutor-name{
-
-font-size:22px;
-
-font-weight:700;
-
-color:#111827;
-
-margin-bottom:10px;
-
-}
-
-.tutor-info{
-
-font-size:14px;
-
-color:#555;
-
-margin-top:6px;
-
-line-height:1.5;
-
-}
-
-.tutor-fees{
-
-margin-top:14px;
-
-font-size:26px;
-
-font-weight:800;
-
-color:#ff1493;
-
-}
-
-.contact-btn{
-
-width:100%;
-
-margin-top:18px;
-
-padding:14px;
-
-border:none;
-
-border-radius:14px;
-
-background:linear-gradient(
-135deg,
-#ff4fa3,
-#7b5cff
-);
-
+background:#222;
 color:white;
+text-align:center;
 
-font-weight:700;
+}
 
-cursor:pointer;
+@media(max-width:900px){
+
+.search-box{
+
+grid-template-columns:1fr;
+
+}
 
 }
 
 </style>
+
 </head>
+
 <body>
-  <div class="wrap">
-    <div class="card">
-      <h1>Find Tutor — Short Form</h1>
-      <p class="sub">Fill the details below. Current location can be auto-filled using your device GPS.</p>
 
-      <form id="tutorForm" onsubmit="return handleSubmit(event)">
-        <div class="grid">
-          <div>
-            <label for="name">Name</label>
-            <input id="name" name="name" required placeholder="Full name" />
-          </div>
+<header>
 
-          <div>
-            <label for="father">Father Name</label>
-            <input id="father" name="father" placeholder="Father / Guardian name" />
-          </div>
+<div class="logo">
 
-          <div>
-            <label for="age">Age</label>
-            <input id="age" name="age" type="number" min="16" max="100" placeholder="Age" />
-          </div>
+TutorCall
 
-          <div>
-            <label for="dob">Date of Birth</label>
-            <input id="dob" name="dob" type="date" />
-          </div>
-
-          <div>
-            <label for="school">School</label>
-            <input id="school" name="school" placeholder="School name (if any)" />
-          </div>
-
-          <div>
-            <label for="class">Class</label>
-            <input id="class" name="class" placeholder="Class (eg. 8, 10, 12)" />
-          </div>
-
-          <div>
-            <label for="district">District</label>
-            <input id="district" name="district" placeholder="District" />
-          </div>
-
-          <div>
-            <label for="state">State</label>
-            <input id="state" name="state" placeholder="State" />
-          </div>
-        </div>
-
-        <label for="address">Full Address</label>
-        <textarea id="address" name="address" placeholder="House no, street, area, landmark" rows="3"></textarea>
-
-        <div class="grid">
-          <div>
-            <label for="email">Email</label>
-            <input id="email" name="email" type="email" placeholder="your@email.com" />
-          </div>
-
-          <div>
-  <label for="phone">Phone</label>
-  <input
-    id="phone"
-    name="phone"
-    type="text"
-    placeholder="Mobile Number"
-  />
 </div>
 
-          <div>
-            <label for="gps">Current Location (GPS Auto-Fill)</label>
-            <div class="gps">
-              <input id="gps" name="gps" readonly placeholder="Latitude, Longitude" />
-              <button type="button"
-class="btn btn-main"
-onclick="fillGPS()">
+<nav>
 
-Use GPS
+<a href="/">Home</a>
 
-</button>
-            </div>
-          </div>
-        </div>
+<a href="/routes/student-dashboard.html">Dashboard</a>
 
-        <div class="button-row">
+<a href="#">Bookings</a>
 
-<button type="submit"
-class="btn btn-main">
+<a href="#">Profile</a>
 
-Submit Request
+</nav>
+
+</header>
+
+<section class="hero">
+
+<h1>Find Your Perfect Tutor</h1>
+
+<p>
+
+Search experienced Home & Online Tutors near you.
+
+</p>
+
+<div class="search-box">
+
+<select id="class">
+
+<option value="">Class</option>
+
+<option>1</option>
+<option>2</option>
+<option>3</option>
+<option>4</option>
+<option>5</option>
+<option>6</option>
+<option>7</option>
+<option>8</option>
+<option>9</option>
+<option>10</option>
+<option>11</option>
+<option>12</option>
+
+</select>
+
+<input
+id="subject"
+placeholder="Subject">
+
+<input
+id="city"
+placeholder="City">
+
+<select id="mode">
+
+<option value="">Mode</option>
+
+<option>Home</option>
+
+<option>Online</option>
+
+</select>
+
+<button
+class="search-btn"
+onclick="loadTutors()">
+
+Search
 
 </button>
 
-<button type="button"
-class="btn btn-light"
-onclick="resetForm()">
+</div>
 
-Reset
+</section>
 
-</button>
+<div class="container">
 
-<div class="muted"
-id="status">
+<div id="tutorResults">
+
+Loading Tutors...
 
 </div>
 
 </div>
 
-      </form>
-      <div id="tutorResults">
+<footer>
 
-</div>
-    </div>
-  </div>
+© TutorCall 2026
 
-  <script>
-    function fillGPS(){
-      if(!navigator.geolocation){ alert('Geolocation not supported by this browser'); return; }
-      const status = document.getElementById('status'); status.textContent = 'Getting location...';
-      navigator.geolocation.getCurrentPosition(pos =>{
-        const lat = pos.coords.latitude.toFixed(6);
-        const lon = pos.coords.longitude.toFixed(6);
-        document.getElementById('gps').value = lat + ', ' + lon;
-        status.textContent = 'Location set';
-      }, err =>{
-        console.error(err);
-        status.textContent = 'Unable to fetch location (permission denied or unavailable)';
-      }, {timeout:10000});
-    }
+</footer>
 
-    async function handleSubmit(e){
+<script>
 
-  e.preventDefault();
-
- const data = {
-
-  name: document.getElementById("name").value,
-  father: document.getElementById("father").value,
-  age: document.getElementById("age").value,
-  dob: document.getElementById("dob").value,
-  school: document.getElementById("school").value,
-  className: document.getElementById("class").value,
-  district: document.getElementById("district").value,
-  state: document.getElementById("state").value,
-  address: document.getElementById("address").value,
-  email: document.getElementById("email").value,
-  phone: document.getElementById("phone").value,
-  gps: document.getElementById("gps").value
-
-};
-
-  try {
-
-    const res = await fetch(
-      "https://tutorcall.co.in/api/students/request",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(data)
-      }
-    );
-
-    const result = await res.json();
-
-    alert(result.message);
-
-    if(result.success){
-
-  alert("Request Submitted Successfully");
-
-  window.location.href =
-  "/routes/student-dashboard.html";
-
-}
-
-  } catch(err){
-
-    console.log(err);
-
-    alert("Server Error");
-
-  }
-
-  return false;
-}
-    function resetForm(){
-      document.getElementById('tutorForm').reset();
-      document.getElementById('gps').value = '';
-      document.getElementById('status').textContent = '';
-    }
-    /* ===============================
-      LOAD REAL TUTORS
-================================ */
-
-async function loadTutors(){
+  async function loadTutors(){
 
 try{
 
-const response =
-await fetch(
-"https://tutorcall.co.in/api/tutors/list"
-);
+const cls=document.getElementById("class").value;
+const subject=document.getElementById("subject").value;
+const city=document.getElementById("city").value;
+const mode=document.getElementById("mode").value;
 
-const data =
-await response.json();
+let url="https://tutorcall.co.in/api/tutors/list?";
 
-const container =
-document.getElementById(
-"tutorResults"
-);
+if(cls) url+="classes="+encodeURIComponent(cls)+"&";
+if(subject) url+="subjects="+encodeURIComponent(subject)+"&";
+if(city) url+="city="+encodeURIComponent(city)+"&";
+if(mode) url+="mode="+encodeURIComponent(mode);
 
-container.innerHTML = "";
+const res=await fetch(url);
 
-if(!data.tutors.length){
+const data=await res.json();
 
-container.innerHTML = `
+const box=document.getElementById("tutorResults");
 
-<h3>No tutors found</h3>
+box.innerHTML="";
 
+if(!data.success || !data.tutors.length){
+
+box.innerHTML=`
+<div style="
+background:white;
+padding:40px;
+border-radius:15px;
+text-align:center;
+grid-column:1/-1;
+">
+<h2>No Tutors Found</h2>
+</div>
 `;
 
 return;
 
 }
 
-data.tutors.forEach(tutor=>{
+data.tutors.forEach(t=>{
 
-container.innerHTML += `
+box.innerHTML+=`
 
-<div class="tutor-card">
+<div class="card">
 
-<img
+<img class="photo"
 src="${
- tutor.photo
- ? `https://tutorcall.co.in${tutor.photo}`
- : 'https://cdn-icons-png.flaticon.com/512/3177/3177440.png'
-}"
-class="tutor-photo"
->
-<div class="tutor-name">
+t.photo
+? "https://tutorcall.co.in"+t.photo
+: "https://cdn-icons-png.flaticon.com/512/3177/3177440.png"
+}">
 
-${tutor.name}
+<div class="name">
 
-</div>
-
-<div class="tutor-info">
-
-📍 ${tutor.city}
+${t.name}
 
 </div>
 
-<div class="tutor-info">
+<div class="info">
 
-📘 ${tutor.subjects}
+<b>Qualification :</b> ${t.qualification||"N/A"}<br>
 
-</div>
+<b>Experience :</b> ${t.experience||"N/A"}<br>
 
-<div class="tutor-info">
+<b>Subjects :</b> ${t.subjects||"N/A"}<br>
 
-🎓 ${tutor.classes}
+<b>Classes :</b> ${t.classes||"N/A"}<br>
 
-</div>
+<b>Mode :</b> ${t.mode||"N/A"}<br>
 
-<div class="tutor-info">
-
-💻 ${tutor.mode}
+<b>City :</b> ${t.city||"N/A"}
 
 </div>
 
-<div class="tutor-info">
+<div class="price">
 
-⭐ ${tutor.experience}
-
-</div>
-
-<div class="tutor-fees">
-
-₹${tutor.fees}/month
+₹${t.fees||0}/Month
 
 </div>
 
-<button class="contact-btn">
+<div class="lock">
 
-Contact Tutor
+🔒 Contact details will be available after booking approval.
+
+</div>
+
+<div class="btns">
+
+<button
+class="btn profile"
+onclick="viewProfile('${t._id}')">
+
+View Profile
 
 </button>
+
+<button
+class="btn book"
+onclick="bookTutor('${t._id}')">
+
+Book Tutor
+
+</button>
+
+</div>
 
 </div>
 
@@ -645,15 +458,100 @@ Contact Tutor
 
 });
 
-}catch(error){
+}catch(err){
 
-console.log(error);
+console.log(err);
+
+alert("Unable to load tutors");
 
 }
 
 }
 
+function viewProfile(id){
+
+alert("Tutor profile page coming soon.");
+
+}
+async function bookTutor(tutorId){
+
+const token = localStorage.getItem("studentToken");
+
+if(!token){
+
+alert("Please Login First");
+
+window.location.href="/routes/student-login.html";
+
+return;
+
+}
+
+const schedule = prompt(
+"Preferred Class Timing (Example: Evening 6 PM)"
+);
+
+if(schedule===null) return;
+
+const message = prompt(
+"Any message for tutor?"
+) || "";
+
+const amount = 0;
+
+try{
+
+const res = await fetch(
+"https://tutorcall.co.in/api/booking/create",
+{
+method:"POST",
+headers:{
+"Content-Type":"application/json",
+Authorization:"Bearer "+token
+},
+body:JSON.stringify({
+
+tutorId,
+
+schedule,
+
+message,
+
+amount
+
+})
+}
+);
+
+const data = await res.json();
+
+if(data.success){
+
+alert("Booking Request Sent Successfully.");
+
+window.location.href=
+"/routes/student-dashboard.html";
+
+}else{
+
+alert(data.message);
+
+}
+
+}catch(err){
+
+console.log(err);
+
+alert("Server Error");
+
+}
+
+}
+
+// AUTO LOAD TUTORS
 loadTutors();
-  </script>
+
+</script>
+
 </body>
 </html>
