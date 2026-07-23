@@ -3,7 +3,7 @@
 // ===============================
 
 const token = localStorage.getItem("tutorToken");
-const tutorInfo = localStorage.getItem("tutorInfo");
+const tutorInfo = localStorage.getItem("tutorData");
 
 if (!token || !tutorInfo) {
 
