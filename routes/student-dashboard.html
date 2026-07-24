@@ -109,7 +109,30 @@
       color:#2196F3;
       font-weight:bold;
     }
+.dashboard-cards{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:20px;
+    margin:20px 0;
+}
 
+.card{
+    background:#fff;
+    border-radius:12px;
+    padding:20px;
+    box-shadow:0 3px 10px rgba(0,0,0,.1);
+}
+
+.card h3{
+    margin:0;
+    color:#666;
+}
+
+.card h2{
+    margin-top:15px;
+    color:#ff4fa3;
+    font-size:34px;
+}
   </style>
 <link rel="icon" type="image/x-icon" href="/favicon.ico">
 </head>
@@ -119,6 +142,29 @@
 <div class="container">
 
   <h2>Welcome Student</h2>
+  <div class="dashboard-cards">
+
+  <div class="card">
+      <h3>Total Bookings</h3>
+      <h2 id="totalCount">0</h2>
+  </div>
+
+  <div class="card">
+      <h3>Pending</h3>
+      <h2 id="pendingCount">0</h2>
+  </div>
+
+  <div class="card">
+      <h3>Accepted</h3>
+      <h2 id="acceptedCount">0</h2>
+  </div>
+
+  <div class="card">
+      <h3>Completed</h3>
+      <h2 id="completedCount">0</h2>
+  </div>
+
+</div>
   <div style="text-align:center;margin:20px 0;">
   <button
     onclick="window.location.href='/routes/find-tutor.html'"
@@ -272,8 +318,16 @@ async function loadMyBookings(){
       return;
 
     }
-
+let total = result.list.length;
+let pending = 0;
+let accepted = 0;
+let completed = 0;
     result.list.forEach(b => {
+if(b.status=="Pending") pending++;
+if(b.status=="Accepted") accepted++;
+if(b.status=="Completed") completed++;
+
+    
 
       let statusClass = "";
 
@@ -453,6 +507,10 @@ async function loadMyBookings(){
       `;
 
     });
+      document.getElementById("totalCount").innerText = total;
+document.getElementById("pendingCount").innerText = pending;
+document.getElementById("acceptedCount").innerText = accepted;
+document.getElementById("completedCount").innerText = completed;
 
   }catch(err){
 
@@ -657,7 +715,7 @@ document.getElementById(
     "studentInfo"
   );
 
-  window.location.href = "/routes/student-login-test.html";
+  window.location.href = "/routes/student-login.html";
 
 };
 setInterval(loadMyBookings, 15000);
