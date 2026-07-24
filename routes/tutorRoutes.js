@@ -393,48 +393,34 @@ router.get("/all", async (req, res) => {
 // ================================
 router.get("/bookings", authTutor, async (req, res) => {
 
-console.log("BOOKINGS ROUTE HIT");
+    console.log("BOOKINGS ROUTE HIT");
     console.log("Tutor =", req.tutor);
 
     try {
 
         const bookings = await Booking.find({
-
             tutorId: req.tutor._id
-
         })
-
-console.log("BOOKINGS FOUND =", bookings.length);
-console.log(bookings);
-
         .populate("studentId")
-
         .sort({
-
             createdAt: -1
-
         });
+
+        console.log("BOOKINGS FOUND =", bookings.length);
+        console.log(bookings);
 
         res.json({
-
             success: true,
-
             list: bookings
-
         });
 
-    }
-
-    catch(err){
+    } catch(err){
 
         console.log(err);
 
         res.status(500).json({
-
             success:false,
-
             message:"Failed to load bookings"
-
         });
 
     }
