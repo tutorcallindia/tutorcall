@@ -87,7 +87,8 @@ console.log("Loading bookings...");
 
            
 
-            if(b.status=="Pending") pending++;
+            if (b.status == "Pending") pending++;
+  
             if(b.status=="Accepted") accepted++;
             if(b.status=="Completed") completed++;
 
@@ -104,24 +105,32 @@ console.log("Loading bookings...");
 
                 <td>
 
-                    ${
-                        b.status=="Pending"
-                        ?
-                        `
-                        <button class="btn accept"
-                        onclick="acceptBooking('${b._id}')">
-                        Accept
-                        </button>
+                  ${
+b.status=="Pending"
+?
+`
+<button class="btn accept"
+onclick="acceptBooking('${b._id}')">
+Accept
+</button>
 
-                        <button class="btn reject"
-                        onclick="rejectBooking('${b._id}')">
-                        Reject
-                        </button>
-                        `
-                        :
-                        "-"
-                    }
-
+<button class="btn reject"
+onclick="rejectBooking('${b._id}')">
+Reject
+</button>
+`
+:
+b.status=="Accepted"
+?
+`
+<button class="btn complete"
+onclick="completeBooking('${b._id}')">
+Complete
+</button>
+`
+:
+"-"
+}
                 </td>
 
             </tr>
@@ -170,6 +179,23 @@ async function rejectBooking(id){
     );
 
     const data=await res.json();
+
+    alert(data.message);
+
+    loadBookings();
+
+}
+
+async function completeBooking(id){
+
+    const res = await fetch(
+        "https://tutorcall.co.in/api/booking/mark-complete/" + id,
+        {
+            method: "POST"
+        }
+    );
+
+    const data = await res.json();
 
     alert(data.message);
 
