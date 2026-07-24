@@ -22,8 +22,12 @@ module.exports = async (req, res, next) => {
     // 🔑 VERIFY TOKEN
     const decoded = jwt.verify(token, JWT_SECRET);
 
+    console.log("DECODED =", decoded);
+console.log("TUTOR ID =", decoded.tutorId);
+
     // 🔴 decoded.tutorId (NOT decoded.id)
     const tutor = await Tutor.findById(decoded.tutorId).select("-password");
+    console.log("FOUND TUTOR =", tutor);
 
     if (!tutor) {
       return res.status(401).json({

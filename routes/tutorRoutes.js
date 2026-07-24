@@ -393,6 +393,9 @@ router.get("/all", async (req, res) => {
 // ================================
 router.get("/bookings", authTutor, async (req, res) => {
 
+console.log("BOOKINGS ROUTE HIT");
+    console.log("Tutor =", req.tutor);
+
     try {
 
         const bookings = await Booking.find({
@@ -400,6 +403,9 @@ router.get("/bookings", authTutor, async (req, res) => {
             tutorId: req.tutor._id
 
         })
+
+console.log("BOOKINGS FOUND =", bookings.length);
+console.log(bookings);
 
         .populate("studentId")
 
