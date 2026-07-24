@@ -3,6 +3,8 @@
 // ===============================
 
 const token = localStorage.getItem("tutorToken");
+console.log("TOKEN =", token);
+
 const tutorInfo = localStorage.getItem("tutorData");
 
 if (!token || !tutorInfo) {
