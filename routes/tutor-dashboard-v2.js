@@ -44,6 +44,8 @@ async function loadBookings() {
 
     try {
 
+console.log("Loading bookings...");
+
         const res = await fetch(
             "https://tutorcall.co.in/api/tutors/bookings",
             {
@@ -53,9 +55,12 @@ async function loadBookings() {
             }
         );
 
+        console.log("Status =", res.status);
         const data = await res.json();
 
         console.log(data);
+
+        console.log("Bookings =", data.list);
 
         const tbody = document.getElementById("bookingTable");
 
@@ -78,9 +83,7 @@ async function loadBookings() {
 
         data.list.forEach(b=>{
 
-            if(b.tutorId && b.tutorId._id!=tutor._id){
-                return;
-            }
+           
 
             if(b.status=="Pending") pending++;
             if(b.status=="Accepted") accepted++;
