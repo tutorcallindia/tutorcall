@@ -498,10 +498,49 @@ if(b.status=="Completed") completed++;
 
           <b>Amount:</b>
 
-          ₹${b.amount || 0}
+₹${b.amount || 0}
 
-          ${reviewSection}
+<br><br>
 
+${
+b.status=="Pending"
+?
+`
+<button
+onclick="cancelBooking('${b._id}')"
+style="
+background:#dc3545;
+color:white;
+padding:8px 15px;
+border:none;
+border-radius:6px;
+cursor:pointer;
+">
+Cancel Booking
+</button>
+`
+:
+b.status=="Accepted"
+?
+`
+<button
+onclick="rescheduleBooking('${b._id}')"
+style="
+background:#ff9800;
+color:white;
+padding:8px 15px;
+border:none;
+border-radius:6px;
+cursor:pointer;
+">
+Reschedule
+</button>
+`
+:
+""
+}
+
+${reviewSection}
         </div>
 
       `;
@@ -701,7 +740,75 @@ async function submitReview(
 
 }
 
+async function cancelBooking(id){
 
+    if(!confirm("Cancel this booking?")) return;
+
+    console.log("Cancel Booking ID =", id);
+
+    const res = await fetch(
+        "https://tutorcall.co.in/api/students/booking/cancel",
+        {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + token
+            },
+            body: JSON.stringify({
+                bookingId: id
+            })
+        }
+    );
+
+    console.log("Response Status =", res.status);
+
+    const data = await res.json();
+
+    console.log(data);
+
+    alert(data.message);
+
+    loadMyBookings();
+}
+async function rescheduleBooking(id){
+
+    const newDate = prompt(
+
+        "Enter new schedule (Example: 2026-08-10 5:00 PM)"
+
+    );
+
+    if(!newDate) return;
+
+    const res = await fetch(
+
+        "https://tutorcall.co.in/api/students/booking/reschedule/"+id,
+
+        {
+            method:"PUT",
+
+            headers:{
+                "Content-Type":"application/json",
+                Authorization:"Bearer "+token
+            },
+
+            body:JSON.stringify({
+
+                schedule:newDate
+
+            })
+
+        }
+
+    );
+
+    const data = await res.json();
+
+    alert(data.message);
+
+    loadMyBookings();
+
+}
 // LOGOUT
 document.getElementById(
   "logoutBtn"
