@@ -39,6 +39,7 @@ app.use(
 express.static("uploads")
 );
 app.use(express.static(path.join(__dirname, "..")));
+app.use("/routes", express.static(path.join(__dirname, "routes")));
 /* ===============================
             ROUTES
 ================================ */
