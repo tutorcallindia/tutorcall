@@ -38,11 +38,7 @@ app.use(
 "/uploads",
 express.static("uploads")
 );
-app.use(
-  express.static(
-   path.join(__dirname)
-  )
-);
+app.use(express.static(path.join(__dirname, "..")));
 /* ===============================
             ROUTES
 ================================ */
@@ -169,7 +165,7 @@ express.static("uploads")
 ================================ */
 
 app.get("/", (req, res) => {
-  res.send("TutorCall Backend Running Successfully");
+    res.sendFile(path.join(__dirname, "..", "index.html"));
 });
 
 /* ===============================
