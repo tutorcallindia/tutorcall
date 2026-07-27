@@ -104,7 +104,7 @@ try {
 const response =
 await fetch(
 
-"http://localhost:3000/api/tutors/register",
+https://tutorcall.co.in/api/routes/tutors/register",
 
 {
 

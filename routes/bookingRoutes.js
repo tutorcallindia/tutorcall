@@ -1063,6 +1063,37 @@ router.get(
 
   }
 );
+router.put("/reschedule/:id", async (req, res) => {
+
+  try {
+
+    const booking = await Booking.findById(req.params.id);
+
+    if (!booking)
+      return res.status(404).json({
+        message: "Booking not found"
+      });
+
+    booking.demoDate = req.body.demoDate;
+    booking.status = "Pending";
+
+    await booking.save();
+
+    res.json({
+      message: "Booking Rescheduled Successfully"
+    });
+
+  } catch (err) {
+
+    console.log(err);
+
+    res.status(500).json({
+      message: "Server Error"
+    });
+
+  }
+
+});
 console.log("BOOKING ROUTES FILE ENDED");
 module.exports = router;
 

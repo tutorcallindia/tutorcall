@@ -501,8 +501,21 @@ if(b.status=="Completed") completed++;
 ₹${b.amount || 0}
 
 <br><br>
+<b>Demo Date:</b>
+${b.demoDate
+  ? new Date(b.demoDate).toLocaleString("en-IN", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit"
+    })
+  : "Not Scheduled"}
+
+<br><br>
 
 ${
+
 b.status=="Pending"
 ?
 `
@@ -520,7 +533,7 @@ Cancel Booking
 </button>
 `
 :
-b.status=="Accepted"
+b.status=="Cancelled"
 ?
 `
 <button
@@ -539,7 +552,6 @@ Reschedule
 :
 ""
 }
-
 ${reviewSection}
         </div>
 
@@ -780,9 +792,9 @@ async function rescheduleBooking(id){
 
     if(!newDate) return;
 
-    const res = await fetch(
+    const res = await 
 
-        "https://tutorcall.co.in/api/students/booking/reschedule/"+id,
+      fetch("/api/booking/reschedule/" + id,
 
         {
             method:"PUT",
@@ -792,11 +804,9 @@ async function rescheduleBooking(id){
                 Authorization:"Bearer "+token
             },
 
-            body:JSON.stringify({
-
-                schedule:newDate
-
-            })
+            body: JSON.stringify({
+    demoDate: newDate
+})
 
         }
 
@@ -804,10 +814,9 @@ async function rescheduleBooking(id){
 
     const data = await res.json();
 
-    alert(data.message);
+alert(data.message);
 
-    loadMyBookings();
-
+location.reload();
 }
 // LOGOUT
 document.getElementById(

@@ -175,6 +175,10 @@ app.get("/", (req, res) => {
 /* ===============================
           MONGODB
 ================================ */
+const dns = require("dns");
+
+dns.setServers(["8.8.8.8", "1.1.1.1"]);
+
 console.log("BEFORE MONGODB CONNECT");
 
 mongoose.connect(process.env.MONGO_URI)

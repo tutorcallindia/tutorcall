@@ -24,7 +24,7 @@ window.loginTutor = async function () {
   try {
 
     const res = await fetch(
-      "http://localhost:3000/api/tutors/login",
+      https://tutorcall.co.in/api/routes/tutors/login",
       {
         method: "POST",
 
