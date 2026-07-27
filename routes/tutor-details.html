@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Tutor Details</title>
+
+  <style>
+    body {
+      margin: 0;
+      background: #eef2f3;
+      font-family: Arial;
+      padding: 20px;
+    }
+
+    .card {
+      width: 90%;
+      max-width: 500px;
+      margin: auto;
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 0 12px rgba(0,0,0,0.2);
+    }
+
+    .avatar {
+      width: 130px;
+      height: 130px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid #2196F3;
+      display: block;
+      margin: auto;
+    }
+
+    h2 {
+      text-align: center;
+      margin-top: 10px;
+    }
+
+    p { margin: 6px 0; }
+
+    .icons {
+      text-align: center;
+      margin: 20px 0;
+    }
+
+    .icon-btn {
+      font-size: 34px;
+      margin: 0 15px;
+      cursor: pointer;
+      color: #2196F3;
+    }
+
+    .icon-btn:hover { color: green; }
+
+    .pay-btn {
+      width: 100%;
+      padding: 15px;
+      margin-top: 20px;
+      background: #2ecc71;
+      color: white;
+      font-size: 18px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    .pay-btn:hover {
+      background: #27ae60;
+    }
+  </style>
+</head>
+
+<body>
+
+<h2 style="text-align:center;color:#e74c3c">Tutor Details</h2>
+
+<div class="card">
+
+  <img id="photo" class="avatar" />
+  <h2 id="name">Loading...</h2>
+
+  <p><b>Qualification:</b> <span id="qualification"></span></p>
+  <p><b>Experience:</b> <span id="experience"></span></p>
+  <p><b>Subjects:</b> <span id="subjects"></span></p>
+  <p><b>Classes:</b> <span id="classes"></span></p>
+  <p><b>Mode:</b> <span id="mode"></span></p>
+  <p><b>City:</b> <span id="city"></span></p>
+  <p><b>Fees:</b> ₹ <span id="fees"></span></p>
+
+  <input type="hidden" id="phoneHidden">
+
+  <div class="icons">
+    <span class="icon-btn" onclick="whatsappTutor()">💬</span>
+    <span class="icon-btn" onclick="callTutor()">📞</span>
+  </div>
+
+  <button class="pay-btn" onclick="startPayment()">Pay Fees Now</button>
+
+  <h3>About Tutor</h3>
+  <p id="bioText">No bio added by tutor.</p>
+
+</div>
+
+<!-- Razorpay -->
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<script>
+const params = new URLSearchParams(window.location.search);
+const tutorId = params.get("id");
+
+if (!tutorId) {
+  alert("Tutor ID missing in URL");
+}
+
+// 🔹 LOAD TUTOR
+async function loadTutor() {
+  try {
+    const res = await fetch(`https://tutorcall.co.in/api/tutors/${tutorId}`);
+    const data = await res.json();
+
+    if (!data.success && !data.tutor) {
+      alert("Tutor not found");
+      return;
+    }
+
+    const t = data.tutor || data;
+
+    document.getElementById("photo").src =
+      t.photo || "https://cdn-icons-png.flaticon.com/512/3177/3177440.png";
+
+    name.innerText = t.name || "";
+    qualification.innerText = t.qualification || "";
+    experience.innerText = t.experience || "";
+    subjects.innerText = t.subjects || "";
+    classes.innerText = t.classes || "";
+    mode.innerText = t.mode || "";
+    city.innerText = t.city || "";
+    fees.innerText = t.fees || "";
+    phoneHidden.value = t.phone || "";
+    bioText.innerText = t.bio || "No bio added";
+
+  } catch (err) {
+    console.error(err);
+    alert("Server error");
+  }
+}
+
+// 🔹 WHATSAPP
+function whatsappTutor() {
+  window.open(`https://wa.me/91${phoneHidden.value}`);
+}
+
+// 🔹 CALL
+function callTutor() {
+  window.location.href = `tel:+91${phoneHidden.value}`;
+}
+
+// 🔥 PAYMENT
+async function startPayment() {
+  try {
+    const feesAmount = Number(document.getElementById("fees").innerText);
+
+    if (!feesAmount) {
+      alert("Invalid fees amount");
+      return;
+    }
+
+    // 1️⃣ Create Order
+    const res = await fetch("https://tutorcall.co.in/api/payment/create-order", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        amount: feesAmount * 100   // paise
+      })
+    });
+
+    const data = await res.json();
+
+    if (!data.success) {
+      alert("Order create failed");
+      return;
+    }
+
+    // 2️⃣ Razorpay popup
+    const options = {
+      key: data.key,
+      amount: data.order.amount,
+      currency: "INR",
+      name: "TutorCall",
+      description: "Tutor Fees Payment",
+      order_id: data.order.id,
+      handler: async function (response) {
+  alert("✅ Payment Successful!");
+
+  // 🔥 CALL BOOKING COMPLETE API
+  await fetch("https://tutorcall.co.in/api/booking/complete-booking", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      bookingId: tutorId,           // abhi tutorId use kar rahe
+      studentName: "Test Student",
+      studentPhone: "9999999999",
+      tutorName: document.getElementById("name").innerText,
+      subject: document.getElementById("subjects").innerText,
+      mode: document.getElementById("mode").innerText,
+      amount: Number(document.getElementById("fees").innerText)
+    })
+  });
+
+  alert("📄 Invoice Generated Successfully!");
+}
+,
+      theme: { color: "#2ecc71" }
+    };
+
+    new Razorpay(options).open();
+
+  } catch (err) {
+    console.error(err);
+    alert("Payment error");
+  }
+}
+
+loadTutor();
+</script>
+
+</body>
+</html>
