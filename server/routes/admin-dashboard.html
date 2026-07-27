@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <title>Admin Dashboard</title>
+
+  <style>
+
+    body{
+      margin:0;
+      font-family:Arial;
+      background:#eef2f3;
+      padding:20px;
+    }
+
+    h1{
+      text-align:center;
+    }
+
+    .top{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:15px;
+      margin-bottom:20px;
+    }
+
+    .card{
+      background:white;
+      padding:20px;
+      border-radius:12px;
+      box-shadow:0 0 10px rgba(0,0,0,.08);
+      text-align:center;
+    }
+
+    .big{
+      font-size:28px;
+      font-weight:bold;
+      margin-top:10px;
+    }
+
+    .section{
+      background:white;
+      padding:20px;
+      border-radius:12px;
+      margin-top:20px;
+      box-shadow:0 0 10px rgba(0,0,0,.08);
+    }
+
+    .tutor{
+      padding:12px;
+      border-bottom:1px solid #eee;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+    }
+
+    button{
+      padding:8px 12px;
+      border:none;
+      border-radius:6px;
+      cursor:pointer;
+      color:white;
+    }
+
+    .approve{
+      background:#2ecc71;
+    }
+
+    .block{
+      background:#e74c3c;
+    }
+
+    .status-active{
+      color:green;
+      font-weight:bold;
+    }
+
+    .status-blocked{
+      color:red;
+      font-weight:bold;
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+<h1>Admin Dashboard</h1>
+<button
+onclick="logoutAdmin()"
+style="
+float:right;
+background:red;
+padding:10px;
+border:none;
+border-radius:8px;
+color:white;
+cursor:pointer;
+">
+
+Logout
+
+</button>
+
+<div class="top">
+
+  <div class="card">
+    <div>Total Tutors</div>
+    <div class="big" id="tutorCount">0</div>
+  </div>
+
+  <div class="card">
+    <div>Total Students</div>
+    <div class="big" id="studentCount">0</div>
+  </div>
+
+  <div class="card">
+    <div>Total Bookings</div>
+    <div class="big" id="bookingCount">0</div>
+  </div>
+
+  <div class="card">
+    <div>Student Requests</div>
+    <div class="big" id="requestCount">0</div>
+  </div>
+
+</div>
+
+<div class="section">
+
+  <h2>Manage Tutors</h2>
+
+  <div id="tutorList">
+    Loading...
+  </div>
+
+</div>
+
+<div class="section">
+
+  <h2>Student Requests</h2>
+
+  <div id="requestList">
+    Loading...
+  </div>
+
+
+</div>
+
+ 
+
+</div>
+
+<script>
+
+// CHECK LOGIN
+
+if(
+  !localStorage.getItem("adminToken")
+){
+ window.location.href = "/routes/admin-login.html";
+}
+
+
+async function loadRequests(){
+
+  try{
+
+    const res = await fetch(
+      "https://tutorcall.co.in/api/students/requests"
+    );
+
+    const data = await res.json();
+
+    if(!data.success) return;
+
+    document.getElementById(
+      "requestCount"
+    ).innerText =
+      data.requests.length;
+
+    const box =
+      document.getElementById(
+        "requestList"
+      );
+box.innerHTML = "";
+
+data.requests.forEach(r => {
+
+   box.innerHTML += `
+<div class="tutor">
+
+  <div>
+    <b>${r.name}</b><br>
+    ${r.className || ""}<br>
+    ${r.district || ""}<br>
+    ${r.state || ""}<br>
+    ${r.email || ""}
+
+    <br>
+Assigned Tutor:
+${r.assignedTutor?.name || "Not Assigned"}
+  </div>
+
+  <div>
+   <button
+  class="approve"
+  onclick="assignTutor('${r._id}')"
+>
+  ${
+    r.assignedTutor
+      ? "Reassign Tutor"
+      : "Assign Tutor"
+  }
+</button>
+  </div>
+
+</div>
+`;
+    });
+
+  }catch(err){
+
+    console.log(err);
+
+  }
+
+}
+
+async function assignTutor(requestId){
+
+  try{
+
+    const res = await fetch(
+      "https://tutorcall.co.in/api/tutors/all"
+    );
+
+    const data = await res.json();
+
+    if(!data.success){
+      alert("Tutors not found");
+      return;
+    }
+
+    let list = "";
+
+    data.tutors.forEach((t,index)=>{
+
+      list +=
+      `${index+1}. ${t.name}\n`;
+
+    });
+
+    const choice = prompt(
+      "Select Tutor Number:\n\n" + list
+    );
+
+    if(!choice) return;
+
+    const tutor =
+      data.tutors[Number(choice)-1];
+
+    if(!tutor){
+      alert("Invalid Choice");
+      return;
+    }
+
+    const assignRes = await fetch(
+      "https://tutorcall.co.in/api/admin/assign-tutor",
+      {
+        method:"POST",
+        headers:{
+          "Content-Type":"application/json"
+        },
+        body: JSON.stringify({
+          requestId,
+          tutorId: tutor._id
+        })
+      }
+    );
+
+    const result =
+      await assignRes.json();
+
+    alert(result.message);
+
+    loadRequests();
+
+  }catch(err){
+
+    console.log(err);
+
+    alert("Server Error");
+
+  }
+
+}
+// LOAD TUTORS
+
+async function loadTutors(){
+
+  try{
+
+    const res = await fetch(
+   "https://tutorcall.co.in/api/tutors/all"
+    );
+
+    const data = await res.json();
+
+    const box =
+      document.getElementById("tutorList");
+
+    box.innerHTML = "";
+
+    if(!data.success){
+
+      box.innerHTML = "Failed to load tutors";
+
+      return;
+
+    }
+
+    document.getElementById(
+      "tutorCount"
+    ).innerText =
+      data.tutors.length;
+
+    data.tutors.forEach(t => {
+
+      box.innerHTML += `
+
+        <div class="tutor">
+
+          <div>
+
+            <b>${t.name}</b>
+
+            <br>
+
+            ${t.city || ""}
+
+            <br>
+
+            ${t.phone}
+
+            <br><br>
+
+            <span class="${
+              t.isBlocked
+              ? 'status-blocked'
+              : 'status-active'
+            }">
+
+              ${
+                t.isBlocked
+                ? 'Blocked'
+                : 'Active'
+              }
+
+            </span>
+
+          </div>
+
+          <div>
+
+            <button
+  class="approve"
+  onclick="approveTutor('${t._id}')"
+>
+
+  ${
+    t.isApproved
+    ? "Approved"
+    : "Approve"
+  }
+
+</button>
+
+            <button
+              class="block"
+              onclick="toggleBlock('${t._id}')">
+
+              ${
+                t.isBlocked
+                ? "Unblock"
+                : "Block"
+              }
+
+            </button>
+
+            <button
+  class="approve"
+  onclick="activateSubscription('${t._id}')">
+
+  ${
+    t.isSubscribed
+    ? "Subscribed"
+    : "Activate Subscription"
+  }
+
+</button>
+
+          </div>
+
+        </div>
+
+      `;
+
+    });
+
+  }catch(err){
+
+    console.log(err);
+
+  }
+
+}
+
+
+// LOAD STUDENTS COUNT
+
+async function loadStudents(){
+
+  try{
+
+    const res = await fetch(
+      "https://tutorcall.co.in/api/students/all"
+    );
+
+    const data = await res.json();
+
+    if(data.success){
+
+      document.getElementById(
+        "studentCount"
+      ).innerText =
+        data.students.length;
+
+    }
+
+  }catch(err){
+
+    console.log(err);
+
+  }
+
+}
+
+
+// LOAD BOOKINGS COUNT
+
+async function loadBookings(){
+
+  try{
+
+    const res = await fetch(
+      "https://tutorcall.co.in/api/booking/all"
+    );
+
+    const data = await res.json();
+
+    if(data.success){
+
+      document.getElementById(
+        "bookingCount"
+      ).innerText =
+        data.bookings.length;
+
+    }
+
+  }catch(err){
+
+    console.log(err);
+
+  }
+
+}
+
+
+// BLOCK / UNBLOCK
+
+async function toggleBlock(id){
+
+  try{
+
+    const res = await fetch(
+
+      `https://tutorcall.co.in/api/admin/toggle-block/${id}`,
+
+      {
+        method:"PUT"
+      }
+
+    );
+
+    const data = await res.json();
+
+    alert(data.message);
+
+    loadTutors();
+
+  }catch(err){
+
+    console.log(err);
+
+    alert("Server Error");
+
+  }
+
+}
+
+
+// LOAD ALL
+
+loadTutors();
+
+loadStudents();
+loadRequests();
+
+loadBookings();
+function logoutAdmin(){
+
+  localStorage.removeItem(
+    "adminToken"
+  );
+
+  localStorage.removeItem(
+    "adminInfo"
+  );
+
+ window.location.href = "/routes/admin-login.html";
+
+}
+async function approveTutor(id){
+
+  try {
+
+    const res = await fetch(
+      `https://tutorcall.co.in/api/admin/approve/${id}`,
+      {
+        method:"PUT"
+      }
+    );
+
+    const data = await res.json();
+
+    alert(data.message);
+
+    loadTutors();
+
+  } catch(err){
+
+    console.log(err);
+
+    alert("Server Error");
+
+  }
+
+}
+
+async function activateSubscription(id){
+
+  try{
+
+    const plan = prompt(
+
+`Select Plan
+
+1 = Monthly ₹29
+2 = 6 Months ₹59
+3 = Yearly ₹101`
+
+    );
+
+    if(!plan) return;
+
+    const res = await fetch(
+
+      `https://tutorcall.co.in/api/admin/activate-subscription/${id}`,
+
+      {
+
+        method:"PUT",
+
+        headers:{
+          "Content-Type":"application/json"
+        },
+
+        body: JSON.stringify({
+          plan
+        })
+
+      }
+
+    );
+
+    const data = await res.json();
+
+    alert(data.message);
+
+    loadTutors();
+
+  }catch(err){
+
+    console.log(err);
+
+    alert("Server Error");
+
+  }
+
+}
+
+</script>
+
+</body>
+</html>

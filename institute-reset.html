@@ -1,0 +1,29 @@
+<!-- Save as institute-reset.html -->
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>Set New Password</title></head>
+<body style="font-family:Inter,system-ui,Arial;padding:28px">
+  <div style="max-width:520px;margin:0 auto;background:#fff;padding:18px;border-radius:10px;box-shadow:0 8px 30px rgba(0,0,0,0.06)">
+    <h3>Choose a New Password</h3>
+    <input id="pw1" type="password" placeholder="New password" style="width:100%;padding:10px;margin-top:8px"/>
+    <input id="pw2" type="password" placeholder="Confirm password" style="width:100%;padding:10px;margin-top:8px"/>
+    <div style="margin-top:12px"><button onclick="confirmReset()">Set Password</button></div>
+    <div id="status" style="margin-top:10px;color:#666"></div>
+  </div>
+
+<script>
+  function getToken(){ const u = new URL(location.href); return u.searchParams.get('token'); }
+
+  async function confirmReset(){
+    const a = document.getElementById('pw1').value.trim();
+    const b = document.getElementById('pw2').value.trim();
+    const token = getToken();
+    if(!a || !b){ alert('Fill both'); return; }
+    if(a !== b){ alert('Passwords mismatch'); return; }
+    document.getElementById('status').textContent = 'Submitting...';
+    const res = await fetch('/api/institute/reset/confirm', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ token, password: a })});
+    const data = await res.json();
+    document.getElementById('status').textContent = data.message || 'Done';
+    if(res.ok) setTimeout(()=> location.href='institute-login.html', 1500);
+  }
+</script>
+</body></html>

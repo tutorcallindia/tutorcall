@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Become Tutor – Registration</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+    body{
+        margin:0;
+        font-family:Inter, sans-serif;
+        background:#f5f7fa;
+        padding:20px;
+    }
+    .wrap{
+        max-width:850px;
+        margin:0 auto;
+    }
+    .card{
+        background:#fff;
+        padding:22px;
+        border-radius:14px;
+        box-shadow:0 6px 28px rgba(0,0,0,0.06);
+    }
+    h1{
+        font-size:24px;
+        margin:0 0 8px;
+        font-weight:700;
+    }
+    p.sub{
+        margin:0 0 18px;
+        color:#6b7280;
+        font-size:14px;
+    }
+    label{
+        font-size:14px;
+        margin-top:10px;
+        display:block;
+        font-weight:500;
+    }
+    input,select,textarea{
+        width:100%;
+        padding:11px;
+        margin-top:6px;
+        border-radius:8px;
+        border:1px solid #d1d5db;
+        font-size:15px;
+    }
+    textarea{resize:none;height:100px;}
+    .grid{
+        display:grid;
+        grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+        gap:15px;
+    }
+    .btn{
+        padding:12px;
+        background:#0ea5a4;
+        color:white;
+        border:none;
+        border-radius:8px;
+        cursor:pointer;
+        font-size:16px;
+        font-weight:600;
+        width:100%;
+        margin-top:12px;
+    }
+    .gps-btn{background:#2563eb;}
+    .muted{font-size:13px;color:#6b7280;}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+    <div class="card">
+        <h1>Become a Tutor – Registration</h1>
+        <p class="sub">Fill all details below. GPS automatically captures your current location.</p>
+
+        <form id="tutorForm" onsubmit="return handleSubmit(event)">
+
+            <!-- Personal Details -->
+            <h3>Personal Details</h3>
+            <div class="grid">
+                <div>
+                    <label>Name</label>
+                    <input id="name" name="name" placeholder="Full Name" required>
+                </div>
+                <div>
+                    <label>Email</label>
+                    <input id="email" name="email" type="email" placeholder="Email" required>
+                </div>
+                <label>Password</label>
+<input
+  type="password"
+  id="password"
+  placeholder="Create Password"
+  required
+>
+                <div>
+                    <label>Mobile Number</label>
+                    <input id="mobile" name="mobile" placeholder="10-digit number" required>
+                </div>
+            </div>
+
+            <div class="grid">
+                <div>
+                    <label>State</label>
+                    <input id="state" name="state" placeholder="State" required>
+                </div>
+                <div>
+                    <label>District</label>
+                    <input id="district" name="district" placeholder="District" required>
+                </div>
+            </div>
+
+            <label>Full Address</label>
+            <textarea id="address" name="address" placeholder="House no, Area, Landmark" required></textarea>
+
+            <!-- GPS -->
+            <label>GPS Current Location</label>
+            <input id="gps" name="gps" readonly placeholder="Latitude, Longitude">
+            <button type="button" class="btn gps-btn" onclick="getGPS()">Auto-Fill GPS Location</button>
+
+            <!-- Professional Details -->
+            <h3 style="margin-top:20px;">Professional Details</h3>
+            <div class="grid">
+                <div>
+                    <label>Qualification</label>
+                    <input id="qualification" name="qualification" placeholder="B.A / B.Sc / B.Tech / M.A" required>
+                </div>
+                <div>
+                    <label>Experience (Years)</label>
+                    <input id="experience" name="experience" type="number" placeholder="Years" required>
+                </div>
+            </div>
+
+            <label>Subjects</label>
+            <input id="subjects" name="subjects" placeholder="Math, English, Physics..." required>
+
+            <!-- File Uploads -->
+            <h3 style="margin-top:20px;">Upload Documents</h3>
+
+            <div class="grid">
+                <div>
+                    <label>Aadhar Upload</label>
+                    <input type="file" id="aadhar" name="aadhar" accept="image/*,application/pdf" required>
+                </div>
+                <div>
+                    <label>Profile Photo</label>
+                    <input type="file" id="photo" name="photo" accept="image/*" required>
+                </div>
+                <div>
+                    <label>Resume (PDF)</label>
+                    <input type="file" id="resume" name="resume" accept="application/pdf" required>
+                </div>
+            </div>
+
+            <!-- Fee -->
+            <h3 style="margin-top:20px;">Registration Fee</h3>
+            <input id="fee" name="fee" type="number" placeholder="Enter fee (₹)" required>
+
+            <!-- Submit -->
+            <button type="submit" class="btn">Submit Application</button>
+            <div id="status" class="muted" style="margin-top:10px;"></div>
+           
+        </form>
+
+    </div>
+</div>
+
+<script>
+function getGPS(){
+    let s = document.getElementById('status');
+    s.textContent = "Fetching location...";
+    if(navigator.geolocation){
+        navigator.geolocation.getCurrentPosition(pos =>{
+            let lat = pos.coords.latitude.toFixed(6);
+            let lon = pos.coords.longitude.toFixed(6);
+            document.getElementById('gps').value = lat + ', ' + lon;
+            s.textContent = "GPS location set ✓";
+        }, err =>{
+            s.textContent = "Permission denied or unavailable";
+        });
+    } else s.textContent = "GPS not supported";
+}
+
+async function handleSubmit(e) {
+    e.preventDefault();
+
+    const formData = new FormData();
+
+    formData.append("name", document.getElementById("name").value);
+    formData.append("email", document.getElementById("email").value);
+    formData.append(
+  "password",
+  document.getElementById("password").value
+);
+    formData.append("phone", document.getElementById("mobile").value);
+ formData.append(
+  "city",
+  document.getElementById("district").value
+);
+    formData.append("address", document.getElementById("address").value);
+    formData.append("qualification", document.getElementById("qualification").value);
+ 
+
+    formData.append("experience", document.getElementById("experience").value);
+    formData.append("subjects", document.getElementById("subjects").value);
+    formData.append("fees", document.getElementById("fee").value);
+
+    const gps = document.getElementById("gps").value.split(",");
+
+    formData.append("latitude", gps[0]?.trim() || "");
+    formData.append("longitude", gps[1]?.trim() || "");
+
+    formData.append("aadhar", document.getElementById("aadhar").files[0]);
+    formData.append("photo", document.getElementById("photo").files[0]);
+    formData.append("resume", document.getElementById("resume").files[0]);
+
+    try {
+
+        const res = await fetch(
+            "https://tutorcall.co.in/api/tutors/register",
+            {
+                method: "POST",
+                body: formData
+            }
+        );
+
+        const data = await res.json();
+
+        alert(data.message);
+
+    } catch (err) {
+
+        console.error(err);
+        alert("Server Error");
+
+    }
+}
+
+</script>
+
+
+</body>
+</html>

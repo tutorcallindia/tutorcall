@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Sell Old Books - TutorCall</title>
+
+<link rel="stylesheet" href="style.css">
+
+<style>
+
+body{
+margin:0;
+padding:0;
+font-family:Arial;
+background:#f5f7fb;
+}
+
+.sell-page{
+padding:40px 20px;
+display:flex;
+justify-content:center;
+}
+
+.sell-container{
+width:100%;
+max-width:700px;
+background:white;
+padding:35px;
+border-radius:20px;
+box-shadow:0 5px 20px rgba(0,0,0,0.08);
+}
+
+.sell-container h2{
+margin-bottom:25px;
+font-size:36px;
+color:#111827;
+}
+
+#sellBookForm{
+display:flex;
+flex-direction:column;
+gap:18px;
+}
+
+#sellBookForm input,
+#sellBookForm textarea,
+#sellBookForm select{
+
+padding:16px;
+border:none;
+border-radius:12px;
+background:#eef2f7;
+font-size:16px;
+outline:none;
+}
+
+#sellBookForm textarea{
+height:140px;
+resize:none;
+}
+
+.scan-btn,
+.upload-btn{
+
+padding:16px;
+border:none;
+border-radius:12px;
+font-size:17px;
+cursor:pointer;
+font-weight:bold;
+color:white;
+}
+
+.scan-btn{
+background:#2563eb;
+}
+
+.upload-btn{
+background:#22c55e;
+}
+
+.scan-btn:hover{
+background:#1d4ed8;
+}
+
+.upload-btn:hover{
+background:#16a34a;
+}
+
+#reader{
+width:100%;
+overflow:hidden;
+border-radius:15px;
+}
+
+#previewImage{
+width:100%;
+max-height:320px;
+object-fit:cover;
+border-radius:15px;
+display:none;
+}
+
+header{
+background:white;
+padding:15px 40px;
+box-shadow:0 2px 10px rgba(0,0,0,0.05);
+}
+
+.nav{
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+
+.brand{
+display:flex;
+align-items:center;
+gap:15px;
+}
+
+.logo img{
+width:60px;
+}
+
+.menu{
+display:flex;
+gap:25px;
+}
+
+.menu a{
+text-decoration:none;
+font-size:18px;
+color:#111827;
+font-weight:600;
+}
+
+.tagline{
+font-size:14px;
+color:#666;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<div class="nav">
+
+<div class="brand">
+
+<div class="logo">
+<img src="logo.png">
+</div>
+
+<div>
+<h1>TutorCall</h1>
+
+<div class="tagline">
+Sell Your Old Books
+</div>
+</div>
+
+</div>
+
+<nav class="menu">
+<a href="index.html">Home</a>
+<a href="book-marketplace.html">Marketplace</a>
+</nav>
+
+</div>
+
+</header>
+
+<section class="sell-page">
+
+<div class="sell-container">
+
+<h2>Upload Your Book</h2>
+
+<form id="sellBookForm">
+
+<button
+type="button"
+class="scan-btn">
+
+Scan Book Barcode
+
+</button>
+
+<div id="reader"></div>
+
+<input
+type="file"
+id="barcodeImageInput"
+accept="image/*"
+required>
+
+<img id="previewImage">
+
+<input
+type="text"
+id="bookTitle"
+placeholder="Book Name"
+required>
+
+<input
+type="text"
+id="bookAuthor"
+placeholder="Author">
+
+<input
+type="text"
+id="bookPublisher"
+placeholder="Publisher">
+
+<input
+type="number"
+id="bookPrice"
+placeholder="Price">
+
+<input
+type="text"
+id="bookCity"
+placeholder="City">
+
+<input
+type="text"
+id="bookPincode"
+placeholder="Pincode">
+
+<select id="deliveryAvailable">
+
+<option value="Yes">
+Delivery Available
+</option>
+
+<option value="No">
+No Delivery
+</option>
+
+</select>
+
+<textarea
+id="bookDescription"
+placeholder="Book Description"></textarea>
+
+<button
+type="submit"
+class="upload-btn">
+
+Upload Book
+
+</button>
+
+</form>
+
+</div>
+
+</section>
+
+<script src="https://unpkg.com/html5-qrcode"></script>
+
+<script>
+
+document.addEventListener(
+
+"DOMContentLoaded",
+
+()=>{
+
+const imageInput =
+document.getElementById(
+"barcodeImageInput"
+);
+
+const previewImage =
+document.getElementById(
+"previewImage"
+);
+
+/* ======================
+IMAGE PREVIEW
+====================== */
+
+imageInput.addEventListener(
+
+"change",
+
+function(){
+
+const file =
+this.files[0];
+
+if(file){
+
+previewImage.src =
+URL.createObjectURL(file);
+
+previewImage.style.display =
+"block";
+
+}
+
+}
+
+);
+
+/* ======================
+FETCH BOOK DETAILS
+====================== */
+
+async function fetchBookDetails(barcode){
+
+try{
+
+const response =
+await fetch(
+
+`https://openlibrary.org/api/books?bibkeys=ISBN:${barcode}&format=json&jscmd=data`
+
+);
+
+const data =
+await response.json();
+
+const book =
+data[`ISBN:${barcode}`];
+
+if(book){
+
+document
+.getElementById("bookTitle")
+.value =
+book.title || "";
+
+document
+.getElementById("bookAuthor")
+.value =
+book.authors?.[0]?.name || "";
+
+document
+.getElementById("bookPublisher")
+.value =
+book.publishers?.[0]?.name || "";
+
+alert(
+"Book details fetched!"
+);
+
+}else{
+
+alert(
+"No book found"
+);
+
+}
+
+}catch(error){
+
+console.log(error);
+
+alert(
+"Book fetch failed"
+);
+
+}
+
+}
+
+/* ======================
+SCAN IMAGE BARCODE
+====================== */
+
+imageInput.addEventListener(
+
+"change",
+
+async(event)=>{
+
+const file =
+event.target.files[0];
+
+if(!file) return;
+
+const html5QrCode =
+new Html5Qrcode(
+"reader"
+);
+
+try{
+
+const result =
+await html5QrCode.scanFile(
+file,
+true
+);
+
+fetchBookDetails(result);
+
+}catch(error){
+
+console.log(error);
+
+}
+
+}
+
+);
+
+/* ======================
+LIVE CAMERA SCAN
+====================== */
+
+const scanBtn =
+document.querySelector(
+".scan-btn"
+);
+
+let html5QrCode;
+
+let scannerRunning =
+false;
+
+scanBtn.addEventListener(
+
+"click",
+
+async()=>{
+
+if(scannerRunning){
+
+await html5QrCode.stop();
+
+document
+.getElementById("reader")
+.innerHTML = "";
+
+scanBtn.innerText =
+"Scan Book Barcode";
+
+scannerRunning =
+false;
+
+return;
+
+}
+
+html5QrCode =
+new Html5Qrcode(
+"reader"
+);
+
+const cameras =
+await Html5Qrcode
+.getCameras();
+
+if(cameras.length){
+
+scannerRunning = true;
+
+scanBtn.innerText =
+"Close Scanner";
+
+html5QrCode.start(
+
+cameras[0].id,
+
+{
+fps:20,
+
+qrbox:{
+width:250,
+height:250
+}
+},
+
+(decodedText)=>{
+
+fetchBookDetails(
+decodedText
+);
+
+html5QrCode.stop();
+
+document
+.getElementById("reader")
+.innerHTML = "";
+
+scanBtn.innerText =
+"Scan Book Barcode";
+
+scannerRunning =
+false;
+
+},
+
+(errorMessage)=>{
+
+console.log(
+errorMessage
+);
+
+}
+
+);
+
+}
+
+}
+
+);
+
+/* ======================
+UPLOAD FORM
+====================== */
+
+const form =
+document.getElementById(
+"sellBookForm"
+);
+
+form.addEventListener(
+
+"submit",
+
+async(event)=>{
+
+event.preventDefault();
+
+const formData =
+new FormData();
+
+formData.append(
+"title",
+document.getElementById("bookTitle").value
+);
+
+formData.append(
+"author",
+document.getElementById("bookAuthor").value
+);
+
+formData.append(
+"publisher",
+document.getElementById("bookPublisher").value
+);
+
+formData.append(
+"price",
+document.getElementById("bookPrice").value
+);
+
+formData.append(
+"city",
+document.getElementById("bookCity").value
+);
+
+formData.append(
+"pincode",
+document.getElementById("bookPincode").value
+);
+
+formData.append(
+"delivery",
+document.getElementById("deliveryAvailable").value
+);
+
+formData.append(
+"description",
+document.getElementById("bookDescription").value
+);
+
+formData.append(
+"image",
+document.getElementById("barcodeImageInput").files[0]
+);
+
+try{
+
+const response =
+await fetch(
+
+"http://127.0.0.1:3000/api/books/add",
+
+{
+method:"POST",
+body:formData
+}
+
+);
+
+const result =
+await response.json();
+
+alert(result.message);
+
+form.reset();
+
+previewImage.style.display =
+"none";
+
+}catch(error){
+
+console.log(error);
+
+alert(
+"Upload Failed"
+);
+
+}
+
+}
+
+);
+
+});
+
+</script>
+
+</body>
+</html>

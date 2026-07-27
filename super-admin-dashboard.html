@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Super Admin Dashboard</title>
+
+<link rel="stylesheet"
+href="style.css">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial;
+}
+
+body{
+display:flex;
+background:#f4f7fb;
+}
+
+/* SIDEBAR */
+
+.sidebar{
+
+width:260px;
+height:100vh;
+background:#111827;
+color:white;
+padding:30px 20px;
+position:fixed;
+left:0;
+top:0;
+
+}
+
+.logo{
+
+font-size:28px;
+font-weight:bold;
+margin-bottom:40px;
+text-align:center;
+
+}
+
+.menu{
+
+display:flex;
+flex-direction:column;
+gap:15px;
+
+}
+
+.menu a{
+
+text-decoration:none;
+color:white;
+padding:14px 18px;
+border-radius:12px;
+transition:0.3s;
+
+}
+
+.menu a:hover{
+
+background:#2563eb;
+
+}
+
+/* MAIN CONTENT */
+
+.main{
+
+margin-left:260px;
+width:100%;
+padding:30px;
+
+}
+
+.topbar{
+
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:30px;
+
+}
+
+.topbar h1{
+font-size:32px;
+color:#111827;
+}
+
+.logout-btn{
+
+padding:12px 22px;
+border:none;
+border-radius:12px;
+background:#ef4444;
+color:white;
+cursor:pointer;
+font-weight:bold;
+
+}
+
+/* STATS */
+
+.stats-grid{
+
+display:grid;
+
+grid-template-columns:
+repeat(auto-fit,minmax(220px,1fr));
+
+gap:25px;
+margin-bottom:40px;
+
+}
+
+.stat-card{
+
+background:white;
+padding:30px;
+border-radius:20px;
+box-shadow:
+0 5px 20px rgba(0,0,0,0.08);
+
+}
+
+.stat-card h2{
+
+font-size:42px;
+margin-bottom:10px;
+color:#2563eb;
+
+}
+
+.stat-card p{
+
+font-size:18px;
+color:#6b7280;
+
+}
+
+/* MODULES */
+
+.module-grid{
+
+display:grid;
+
+grid-template-columns:
+repeat(auto-fit,minmax(260px,1fr));
+
+gap:25px;
+
+}
+
+.module-card{
+
+background:white;
+padding:25px;
+border-radius:20px;
+box-shadow:
+0 5px 20px rgba(0,0,0,0.08);
+
+}
+
+.module-card h3{
+
+margin-bottom:15px;
+color:#111827;
+
+}
+
+.module-card p{
+
+color:#6b7280;
+margin-bottom:20px;
+line-height:1.5;
+
+}
+
+.module-card button{
+
+padding:12px 18px;
+border:none;
+border-radius:10px;
+background:#2563eb;
+color:white;
+cursor:pointer;
+font-weight:bold;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+
+<div class="sidebar">
+
+<div class="logo">
+
+TutorCall
+
+</div>
+
+<div class="menu">
+
+<a href="#">
+Dashboard
+</a>
+
+<a href="#">
+Students
+</a>
+
+<a href="#">
+Tutors
+</a>
+
+<a href="#">
+Institutes
+</a>
+
+<a href="#">
+Marketplace
+</a>
+
+<a href="#">
+Study Material
+</a>
+
+<a href="#">
+Payments
+</a>
+
+<a href="#">
+Analytics
+</a>
+
+<a href="#">
+Notifications
+</a>
+
+</div>
+
+</div>
+
+<!-- MAIN -->
+
+<div class="main">
+
+<div class="topbar">
+
+<h1>
+Super Admin Dashboard
+</h1>
+
+<button
+class="logout-btn"
+onclick="logout()">
+
+Logout
+
+</button>
+
+</div>
+
+<!-- STATS -->
+
+<div class="stats-grid">
+
+<div class="stat-card">
+
+<h2 id="studentCount">
+0
+</h2>
+
+<p>Total Students</p>
+
+</div>
+
+<div class="stat-card">
+
+<h2 id="tutorCount">
+0
+</h2>
+
+<p>Total Tutors</p>
+
+</div>
+
+<div class="stat-card">
+
+<h2 id="bookCount">
+0
+</h2>
+
+<p>Total Books</p>
+
+</div>
+
+<div class="stat-card">
+
+<h2 id="revenue">
+₹0
+</h2>
+
+<p>Total Revenue</p>
+
+</div>
+
+</div>
+
+<!-- MODULES -->
+
+<div class="module-grid">
+
+<div class="module-card">
+
+<h3>
+Student Management
+</h3>
+
+<p>
+Manage all registered students,
+profiles and bookings.
+</p>
+
+<button
+onclick="
+window.location.href=
+'student-dashboard.html'
+">
+
+Open Module
+
+</button>
+
+</div>
+
+<div class="module-card">
+
+<h3>
+Tutor Management
+</h3>
+
+<p>
+Approve tutors, manage earnings
+and booking requests.
+</p>
+
+<button
+onclick="
+window.location.href=
+'tutor-dashboard.html'
+">
+
+Open Module
+
+</button>
+
+</div>
+
+<div class="module-card">
+
+<h3>
+Institute Management
+</h3>
+
+<p>
+Manage institutes, approvals and
+course systems.
+</p>
+
+<button
+onclick="
+window.location.href=
+'institute-dashboard.html'
+">
+
+Open Module
+
+</button>
+
+</div>
+
+<div class="module-card">
+
+<h3>
+Marketplace
+</h3>
+
+<p>
+Manage books, payments and
+marketplace analytics.
+</p>
+
+<button
+onclick="
+window.location.href=
+'admin.html'
+">
+
+Open Module
+
+</button>
+
+</div>
+
+<div class="module-card">
+
+<h3>
+Study Material
+</h3>
+
+<p>
+Upload and manage PDFs,
+ebooks and notes.
+</p>
+
+<button
+onclick="
+window.location.href=
+'study.html'
+">
+
+Open Module
+
+</button>
+
+</div>
+
+<div class="module-card">
+
+<h3>
+Notifications
+</h3>
+
+<p>
+Send announcements and alerts
+to users.
+</p>
+
+<button
+onclick="
+alert(
+'Notification Module Coming Soon'
+)
+">
+
+Open Module
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+async function loadStats(){
+
+try{
+
+/* BOOKS */
+
+const booksResponse =
+await fetch(
+"http://127.0.0.1:3000/api/books"
+);
+
+const books =
+await booksResponse.json();
+
+document
+.getElementById("bookCount")
+.innerText =
+books.length;
+
+/* USERS */
+
+const usersResponse =
+await fetch(
+"http://127.0.0.1:3000/api/auth/users"
+);
+
+const users =
+await usersResponse.json();
+
+/* STUDENTS */
+
+const students =
+users.filter(
+user=>user.role==="buyer"
+);
+
+document
+.getElementById("studentCount")
+.innerText =
+students.length;
+
+/* TUTORS */
+
+const tutors =
+users.filter(
+user=>user.role==="seller"
+);
+
+document
+.getElementById("tutorCount")
+.innerText =
+tutors.length;
+
+/* REVENUE */
+
+let totalRevenue = 0;
+
+books.forEach(book=>{
+
+totalRevenue +=
+Number(book.price);
+
+});
+
+document
+.getElementById("revenue")
+.innerText =
+"₹" + totalRevenue;
+
+}catch(error){
+
+console.log(error);
+
+}
+
+}
+
+function logout(){
+
+localStorage.clear();
+
+window.location.href =
+"login.html";
+
+}
+
+loadStats();
+
+</script>
+
+</body>
+</html>

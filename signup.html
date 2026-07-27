@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Signup - TutorCall</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+rel="stylesheet">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Poppins',sans-serif;
+}
+
+body{
+
+min-height:100vh;
+
+display:flex;
+justify-content:center;
+align-items:center;
+
+padding:20px;
+
+background:
+linear-gradient(
+135deg,
+#fff0f7,
+#f3e8ff
+);
+
+}
+
+/* MAIN BOX */
+
+.signup-box{
+
+width:100%;
+max-width:460px;
+
+background:white;
+
+padding:40px;
+
+border-radius:28px;
+
+box-shadow:
+0 15px 40px rgba(255,0,140,0.12);
+
+animation:fadeIn 0.5s ease;
+
+}
+
+/* ANIMATION */
+
+@keyframes fadeIn{
+
+from{
+opacity:0;
+transform:translateY(20px);
+}
+
+to{
+opacity:1;
+transform:translateY(0);
+}
+
+}
+
+/* LOGO */
+
+.logo{
+
+text-align:center;
+margin-bottom:15px;
+
+}
+
+.logo img{
+
+width:75px;
+border-radius:18px;
+
+}
+
+/* TITLE */
+
+.signup-box h2{
+
+text-align:center;
+
+font-size:34px;
+
+margin-bottom:8px;
+
+background:
+linear-gradient(
+135deg,
+#ff4fa3,
+#7b5cff
+);
+
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+
+}
+
+.subtitle{
+
+text-align:center;
+color:#666;
+margin-bottom:28px;
+
+}
+
+/* FORM */
+
+#signupForm{
+
+display:flex;
+flex-direction:column;
+gap:18px;
+
+}
+
+/* INPUT GROUP */
+
+.input-group{
+
+display:flex;
+flex-direction:column;
+gap:8px;
+
+}
+
+.input-group label{
+
+font-size:14px;
+font-weight:600;
+color:#333;
+
+}
+
+#signupForm input,
+#signupForm select{
+
+padding:14px 16px;
+
+border:2px solid #f1d4e6;
+
+border-radius:14px;
+
+font-size:15px;
+
+outline:none;
+
+transition:0.3s;
+
+background:#fffafd;
+
+}
+
+#signupForm input:focus,
+#signupForm select:focus{
+
+border-color:#ff4fa3;
+
+box-shadow:
+0 0 0 4px rgba(255,79,163,0.12);
+
+}
+
+/* BUTTON */
+
+#signupForm button{
+
+padding:15px;
+
+border:none;
+
+border-radius:14px;
+
+background:
+linear-gradient(
+135deg,
+#ff4fa3,
+#7b5cff
+);
+
+color:white;
+
+font-size:17px;
+
+font-weight:600;
+
+cursor:pointer;
+
+transition:0.3s;
+
+margin-top:5px;
+
+}
+
+#signupForm button:hover{
+
+transform:translateY(-3px);
+
+box-shadow:
+0 10px 20px rgba(255,0,140,0.25);
+
+}
+
+/* LOGIN LINK */
+
+.login-link{
+
+text-align:center;
+
+margin-top:20px;
+
+font-size:14px;
+
+}
+
+.login-link a{
+
+text-decoration:none;
+
+color:#7b5cff;
+
+font-weight:600;
+
+}
+
+/* RESPONSIVE */
+
+@media(max-width:500px){
+
+.signup-box{
+
+padding:30px 22px;
+
+}
+
+.signup-box h2{
+
+font-size:28px;
+
+}
+
+}
+
+</style>
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+</head>
+
+<body>
+
+<div class="signup-box">
+
+<!-- LOGO -->
+
+<div class="logo">
+
+<img src="logo.png"
+alt="TutorCall Logo">
+
+</div>
+
+<!-- TITLE -->
+
+<h2>Create Account</h2>
+
+<div class="subtitle">
+
+Join TutorCall and start learning smarter 🚀
+
+</div>
+
+<!-- FORM -->
+
+<form id="signupForm">
+
+<div class="input-group">
+
+<label>Full Name</label>
+
+<input
+type="text"
+id="name"
+placeholder="Enter your full name"
+required>
+
+</div>
+
+<div class="input-group">
+
+<label>Email Address</label>
+
+<input
+type="email"
+id="email"
+placeholder="Enter your email"
+required>
+
+</div>
+
+<div class="input-group">
+
+<label>Password</label>
+
+<input
+type="password"
+id="password"
+placeholder="Create password"
+required>
+
+</div>
+
+<div class="input-group">
+
+<label>Select Role</label>
+
+<select id="role">
+
+<option value="buyer">
+Buyer
+</option>
+
+<option value="seller">
+Seller
+</option>
+
+</select>
+
+</div>
+
+<button type="submit">
+
+Create Account
+
+</button>
+
+</form>
+
+<!-- LOGIN LINK -->
+
+<div class="login-link">
+
+Already have an account?
+
+<a href="login.html">
+
+Login
+
+</a>
+
+</div>
+
+</div>
+
+<script>
+
+const form =
+document.getElementById(
+"signupForm"
+);
+
+form.addEventListener(
+
+"submit",
+
+async(e)=>{
+
+e.preventDefault();
+
+const data = {
+
+name:
+document
+.getElementById("name")
+.value,
+
+email:
+document
+.getElementById("email")
+.value,
+
+password:
+document
+.getElementById("password")
+.value,
+
+role:
+document
+.getElementById("role")
+.value
+
+};
+
+try{
+
+const response =
+await fetch(
+
+"http://127.0.0.1:3000/api/auth/signup",
+
+{
+
+method:"POST",
+
+headers:{
+"Content-Type":
+"application/json"
+},
+
+body:
+JSON.stringify(data)
+
+}
+
+);
+
+const result =
+await response.json();
+
+if(result.token){
+
+localStorage.setItem(
+"token",
+result.token
+);
+
+localStorage.setItem(
+"user",
+
+JSON.stringify(result.user)
+);
+
+alert(
+"Signup Successful 🚀"
+);
+
+window.location.href =
+"dashboard.html";
+
+}else{
+
+alert(result.message);
+
+}
+
+}catch(error){
+
+console.log(error);
+
+alert(
+"Signup Failed"
+);
+
+}
+
+}
+
+);
+
+</script>
+
+</body>
+</html>

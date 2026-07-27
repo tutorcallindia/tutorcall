@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Student Dashboard – TutorCall</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    body{
+        margin:0;
+        font-family:Inter, sans-serif;
+        background:#f4f6f9;
+    }
+    header{
+        background:#0ea5a4;
+        color:#fff;
+        padding:18px 22px;
+        font-size:20px;
+        font-weight:600;
+    }
+    .container{
+        max-width:900px;
+        margin:25px auto;
+        padding:0 15px;
+    }
+    .card{
+        background:white;
+        padding:18px;
+        border-radius:12px;
+        box-shadow:0 2px 12px #0001;
+        margin-bottom:20px;
+    }
+    .section-title{
+        font-size:18px;
+        font-weight:600;
+        margin-bottom:10px;
+    }
+    .demo-item{
+        padding:12px;
+        border:1px solid #e5e7eb;
+        border-radius:10px;
+        margin-bottom:10px;
+        background:#f9fafb;
+    }
+    .badge{
+        padding:3px 8px;
+        background:#10b981;
+        color:white;
+        font-size:12px;
+        border-radius:6px;
+        margin-left:8px;
+    }
+    .btn{
+        padding:10px 14px;
+        background:#0ea5a4;
+        color:white;
+        border:none;
+        border-radius:8px;
+        font-size:15px;
+        cursor:pointer;
+        margin-top:12px;
+    }
+    .logout{
+        background:#ef4444;
+    }
+</style>
+</head>
+<body>
+
+<header>Student Dashboard</header>
+
+<div class="container">
+
+    <!-- 1. Student Info -->
+    <div class="card">
+        <div class="section-title">Welcome, <span id="studentName">Student</span></div>
+        <p style="color:#6b7280;font-size:14px;">Here is your complete activity summary.</p>
+    </div>
+
+    <!-- 2. Demo Requests -->
+    <div class="card">
+        <div class="section-title">Your Demo Requests</div>
+
+        <div id="demoList"></div>
+
+        <button class="btn" onclick="bookNewDemo()">Book New Demo</button>
+    </div>
+
+    <!-- 3. Recently Viewed Tutors -->
+    <div class="card">
+        <div class="section-title">Recently Viewed Tutors</div>
+        <div id="recentTutors"></div>
+    </div>
+
+    <!-- Logout -->
+    <button class="btn logout" style="width:100%;" onclick="logout()">Logout</button>
+
+</div>
+
+<script>
+// Dummy local data (later backend se fetch karenge)
+let student = {
+    name: "Demo Student",
+    demos: [
+        { tutor:"Rakesh Kumar", subject:"Math", status:"Confirmed", time:"Tomorrow 5 PM" },
+        { tutor:"Anita Sharma", subject:"English", status:"Pending", time:"Awaiting Tutor" }
+    ],
+    recent: [
+        { name:"Vikas Singh", subject:"Physics" },
+        { name:"Priya Verma", subject:"Math" }
+    ]
+};
+
+document.getElementById("studentName").textContent = student.name;
+
+// Demo List Render
+function loadDemos(){
+    let box = document.getElementById("demoList");
+    box.innerHTML = "";
+
+    student.demos.forEach(d =>{
+        box.innerHTML += `
+            <div class='demo-item'>
+                <strong>${d.tutor}</strong> — ${d.subject}
+                <span class='badge'>${d.status}</span><br>
+                <small style='color:#6b7280;'>${d.time}</small>
+            </div>
+        `;
+    });
+}
+
+// Recent Tutors Render
+function loadRecent(){
+    let box = document.getElementById("recentTutors");
+    box.innerHTML = "";
+
+    student.recent.forEach(r =>{
+        box.innerHTML += `
+            <div class='demo-item'>
+                <strong>${r.name}</strong> — <small>${r.subject}</small>
+            </div>
+        `;
+    });
+}
+
+loadDemos();
+loadRecent();
+
+// Redirect functions
+function bookNewDemo(){
+    window.location.href = "book-demo.html";
+}
+
+function logout(){
+    alert("You are logged out!");
+    window.location.href = "index.html";
+}
+</script>
+
+</body>
+</html>

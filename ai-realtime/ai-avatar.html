@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>TutorCall AI Avatar</title>
+
+<style>
+
+body{
+    margin:0;
+    padding:0;
+    background:#050816;
+    overflow:hidden;
+    font-family:Arial;
+    color:white;
+}
+
+.container{
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+    gap:80px;
+    flex-wrap:wrap;
+
+}
+
+.avatarBox{
+
+    text-align:center;
+
+}
+
+.avatar-wrapper{
+
+    position:relative;
+
+}
+
+.avatar{
+
+    width:300px;
+    height:300px;
+
+    border-radius:50%;
+
+    object-fit:cover;
+
+    border:4px solid cyan;
+
+    box-shadow:
+    0 0 20px cyan,
+    0 0 60px cyan;
+
+    transition:all 0.3s ease;
+
+    transform-origin:center;
+
+    animation:
+    floating 3s ease-in-out infinite;
+
+}
+
+/* MAYA GLOW */
+
+.maya{
+
+    border-color:#ff00ff;
+
+    box-shadow:
+    0 0 20px #ff00ff,
+    0 0 60px #ff00ff;
+
+}
+
+/* NAME */
+
+.name{
+
+    margin-top:20px;
+
+    font-size:35px;
+
+    font-weight:bold;
+
+    letter-spacing:2px;
+
+}
+
+/* STATUS */
+
+.status{
+
+    color:#00ff99;
+
+    margin-top:10px;
+
+    font-size:20px;
+
+}
+
+/* BUTTON */
+
+button{
+
+    padding:15px 30px;
+
+    margin-top:30px;
+
+    border:none;
+
+    border-radius:12px;
+
+    background:cyan;
+
+    color:black;
+
+    font-size:18px;
+
+    cursor:pointer;
+
+    font-weight:bold;
+
+    transition:0.3s;
+
+}
+
+button:hover{
+
+    transform:scale(1.08);
+
+    background:white;
+
+}
+
+/* VOICE WAVE */
+
+.voice-wave{
+
+    position:absolute;
+
+    bottom:20px;
+    left:50%;
+
+    transform:translateX(-50%);
+
+    width:100px;
+    height:20px;
+
+    border-radius:20px;
+
+    background:cyan;
+
+    opacity:0;
+
+    filter:blur(2px);
+
+}
+
+/* ACTIVE WAVE */
+
+.wave-active{
+
+    animation:
+    wave 0.3s infinite alternate;
+
+    opacity:1;
+
+}
+
+/* SPEAKING ANIMATION */
+
+.speaking{
+
+    animation:
+    talking 0.4s infinite alternate;
+
+}
+
+/* FLOATING */
+
+@keyframes floating{
+
+    0%{
+        transform:translateY(0px);
+    }
+
+    50%{
+        transform:translateY(-20px);
+    }
+
+    100%{
+        transform:translateY(0px);
+    }
+
+}
+
+/* TALKING */
+
+@keyframes talking{
+
+    0%{
+
+        transform:
+        rotate(-2deg)
+        scale(1);
+
+        filter:brightness(1);
+
+    }
+
+    25%{
+
+        transform:
+        rotate(2deg)
+        scale(1.03);
+
+        filter:brightness(1.1);
+
+    }
+
+    50%{
+
+        transform:
+        rotate(-1deg)
+        scale(1.05);
+
+        filter:brightness(1.2);
+
+    }
+
+    75%{
+
+        transform:
+        rotate(1deg)
+        scale(1.03);
+
+        filter:brightness(1.1);
+
+    }
+
+    100%{
+
+        transform:
+        rotate(0deg)
+        scale(1);
+
+        filter:brightness(1);
+
+    }
+
+}
+
+/* VOICE WAVE */
+
+@keyframes wave{
+
+    from{
+
+        width:60px;
+        height:10px;
+
+        opacity:0.5;
+
+    }
+
+    to{
+
+        width:120px;
+        height:30px;
+
+        opacity:1;
+
+    }
+
+}
+#chatBox{
+
+    position:fixed;
+
+    bottom:30px;
+    left:50%;
+
+    transform:translateX(-50%);
+
+    width:70%;
+
+    padding:20px;
+
+    border-radius:20px;
+
+    background:
+    rgba(0,0,0,0.7);
+
+    backdrop-filter:blur(10px);
+
+    color:white;
+
+    font-size:24px;
+
+    text-align:center;
+
+    border:2px solid cyan;
+
+    box-shadow:
+    0 0 20px cyan;
+
+    min-height:40px;
+
+}
+.blink{
+
+    animation:
+    blinkAnim 5s infinite;
+
+}
+
+@keyframes blinkAnim{
+
+    0%{
+        transform:scaleY(1);
+    }
+
+    48%{
+        transform:scaleY(1);
+    }
+
+    49%{
+        transform:scaleY(0.05);
+    }
+
+    50%{
+        transform:scaleY(1);
+    }
+
+    100%{
+        transform:scaleY(1);
+    }
+
+}
+.eye-blink{
+
+    position:absolute;
+
+    top:110px;
+    left:50%;
+
+    transform:translateX(-50%);
+
+    width:140px;
+    height:8px;
+
+    background:black;
+
+    border-radius:20px;
+
+    opacity:0;
+
+    animation:
+    eyeBlink 4s infinite;
+
+}
+
+@keyframes eyeBlink{
+
+    0%{
+        opacity:0;
+        height:8px;
+    }
+
+    48%{
+        opacity:0;
+        height:8px;
+    }
+
+    49%{
+        opacity:1;
+        height:2px;
+    }
+
+    50%{
+        opacity:0;
+        height:8px;
+    }
+
+    100%{
+        opacity:0;
+        height:8px;
+    }
+
+}
+#micBtn{
+
+    position:fixed;
+
+    bottom:120px;
+    left:50%;
+
+    transform:translateX(-50%);
+
+    background:#ff00ff;
+
+    color:white;
+
+    border:none;
+
+    padding:20px 40px;
+
+    border-radius:50px;
+
+    font-size:22px;
+
+    cursor:pointer;
+
+    box-shadow:
+    0 0 20px #ff00ff;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- MAYA -->
+
+    <div class="avatarBox">
+
+        <div class="avatar-wrapper">
+
+            <img
+src="./public/avatars/maya.png"
+class="avatar maya blink"
+id="maya"
+/>
+<div class="eye-blink"></div>
+
+            <div class="voice-wave"></div>
+
+        </div>
+
+        <div class="name">
+            MAYA
+        </div>
+
+        <div class="status">
+            AI Tutor Online
+        </div>
+
+        <button onclick="startTalking('maya')">
+            Talk To Maya
+        </button>
+
+    </div>
+
+    <!-- VIRATH -->
+
+    <div class="avatarBox">
+
+        <div class="avatar-wrapper">
+
+            <img
+src="./public/avatars/virath.png"
+class="avatar"
+id="virath"
+/>
+<div class="eye-blink"></div>
+            <div class="voice-wave"></div>
+
+        </div>
+
+        <div class="name">
+            VIRATH
+        </div>
+
+        <div class="status">
+            AI Mentor Online
+        </div>
+
+        <button onclick="startTalking('virath')">
+            Talk To Virath
+        </button>
+
+    </div>
+<div id="chatBox"></div>
+<button id="micBtn">
+🎤 Start Talking
+</button>
+</div>
+
+<script>
+
+const socket = new WebSocket("ws://localhost:8000");
+
+socket.onopen = () => {
+    console.log("AI Connected");
+    showMessage("✅ AI Connected");
+};
+
+socket.onerror = (error) => {
+    console.log("Socket Error", error);
+    showMessage("❌ WebSocket Error");
+};
+
+socket.onclose = () => {
+    console.log("Socket Closed");
+    showMessage("❌ AI Disconnected");
+};
+
+socket.onmessage = (event) => {
+
+    const data = JSON.parse(event.data);
+
+    speakAI(
+        data.reply,
+        data.character
+    );
+
+};
+
+function startTalking(character){
+
+    if(
+        !window.SpeechRecognition &&
+        !window.webkitSpeechRecognition
+    ){
+        alert("Speech Recognition Not Supported");
+        return;
+    }
+
+    const SpeechRecognition =
+    window.SpeechRecognition ||
+    window.webkitSpeechRecognition;
+
+    const recognition =
+    new SpeechRecognition();
+
+    recognition.lang = "en-IN";
+
+    showMessage("🎤 Listening...");
+
+    recognition.start();
+
+    recognition.onresult = (event)=>{
+
+        const userText =
+        event.results[0][0]
+        .transcript;
+
+        showMessage(
+            "🧑 You: " + userText
+        );
+
+        socket.send(
+            JSON.stringify({
+                type:"USER_MESSAGE",
+                message:userText,
+                character:character
+            })
+        );
+
+    };
+
+    recognition.onerror = (e)=>{
+
+        showMessage(
+            "❌ Mic Error: " + e.error
+        );
+
+    };
+
+}
+
+function speakAI(text,character){
+
+    const utterance =
+    new SpeechSynthesisUtterance(text);
+
+    utterance.lang = "en-IN";
+
+    if(character === "maya"){
+
+        utterance.pitch = 1.5;
+        utterance.rate = 1;
+
+    }else{
+
+        utterance.pitch = 0.8;
+        utterance.rate = 0.9;
+
+    }
+
+    const avatar =
+    document.getElementById(character);
+
+    if(avatar){
+        avatar.classList.add("speaking");
+    }
+
+    showMessage(
+        "🤖 " +
+        character.toUpperCase() +
+        ": " +
+        text
+    );
+
+    speechSynthesis.speak(
+        utterance
+    );
+
+    utterance.onend = ()=>{
+
+        if(avatar){
+            avatar.classList.remove(
+                "speaking"
+            );
+        }
+
+    };
+
+}
+
+function showMessage(msg){
+
+    const box =
+    document.getElementById(
+        "responseBox"
+    );
+
+    if(box){
+        box.innerHTML = msg;
+    }
+
+}
+
+/* MIC BUTTON */
+
+document
+.getElementById("micBtn")
+.addEventListener(
+"click",
+()=>{
+    startTalking("maya");
+}
+);
+
+</script>
+<div id="responseBox"
+style="
+position:absolute;
+bottom:30px;
+left:50%;
+transform:translateX(-50%);
+background:black;
+padding:20px 40px;
+border-radius:20px;
+font-size:30px;
+color:white;
+border:2px solid cyan;
+box-shadow:0 0 20px cyan;
+">
+AI Ready...
+</div>
+
+</body>
+
+</html>

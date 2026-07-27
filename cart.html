@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Cart - TutorCall</title>
+
+<link rel="stylesheet"
+href="style.css">
+<style>
+
+body{
+
+  background:#fff5fa;
+
+}
+
+/* ===============================
+          CART TITLE
+================================ */
+
+.cart-title{
+
+  font-size:42px;
+
+  margin:40px 0 30px;
+
+  color:#111827;
+
+}
+
+/* ===============================
+          CART GRID
+================================ */
+
+.cart-grid{
+
+  display:grid;
+
+  grid-template-columns:
+  repeat(auto-fit,minmax(280px,1fr));
+
+  gap:30px;
+
+}
+
+/* ===============================
+          BOOK CARD
+================================ */
+
+.book-card{
+
+  background:white;
+
+  border-radius:24px;
+
+  padding:20px;
+
+  box-shadow:
+  0 10px 30px rgba(255,0,140,0.08);
+
+  border:1px solid #ffd6ea;
+
+  transition:0.35s;
+
+}
+
+.book-card:hover{
+
+  transform:translateY(-10px);
+
+  box-shadow:
+  0 18px 40px rgba(255,0,140,0.18);
+
+}
+
+/* ===============================
+          BOOK IMAGE
+================================ */
+
+.book-card img{
+
+  width:100%;
+
+  height:240px;
+
+  object-fit:cover;
+
+  border-radius:18px;
+
+}
+
+/* ===============================
+          BOOK TEXT
+================================ */
+
+.book-card h3{
+
+  margin-top:18px;
+
+  font-size:24px;
+
+  color:#111827;
+
+}
+
+.price{
+
+  font-size:30px;
+
+  font-weight:700;
+
+  color:#ff1493;
+
+  margin-top:12px;
+
+}
+
+.city{
+
+  color:#666;
+
+  margin-top:10px;
+
+}
+
+/* ===============================
+          TOTAL
+================================ */
+
+#cartTotal{
+
+  margin-top:40px;
+
+  font-size:34px;
+
+  color:#111827;
+
+}
+
+/* ===============================
+        PAYMENT BUTTON
+================================ */
+
+#payBtn{
+
+  margin-top:25px;
+
+  padding:16px 30px;
+
+  font-size:18px;
+
+  border:none;
+
+  border-radius:16px;
+
+  background:
+  linear-gradient(
+    135deg,
+    #ff4fa3,
+    #7b5cff
+  );
+
+  color:white;
+
+  cursor:pointer;
+
+  font-weight:700;
+
+  transition:0.3s;
+
+}
+
+#payBtn:hover{
+
+  transform:translateY(-4px);
+
+  box-shadow:
+  0 12px 25px rgba(255,0,140,0.25);
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<div class="container nav">
+
+<div class="brand">
+
+<div class="logo">
+<img src="logo.png">
+</div>
+
+<div>
+
+<h1>TutorCall</h1>
+
+<div class="tagline">
+Shopping Cart
+</div>
+
+</div>
+
+</div>
+
+<nav class="menu">
+
+<a href="index.html">Home</a>
+
+<a href="book-marketplace.html">
+Marketplace
+</a>
+
+</nav>
+
+</div>
+
+</header>
+
+<section class="container">
+
+<h2 class="cart-title">
+Your Cart
+</h2>
+
+<div id="cartContainer"
+class="cart-grid">
+
+</div>
+
+<h2 id="cartTotal">
+Total: ₹0
+</h2>
+<button
+id="payBtn"
+class="btn buy-btn"
+onclick="location.href='buy-now.html'">
+
+Proceed To Payment
+
+</button>
+</section>
+
+<script>
+
+const cart =
+JSON.parse(
+localStorage.getItem("cart")
+) || [];
+
+const cartContainer =
+document.getElementById(
+"cartContainer"
+);
+
+let total = 0;
+
+cart.forEach((book,index)=>{
+
+total += Number(book.price);
+
+cartContainer.innerHTML += `
+
+<div class="book-card">
+
+<img src="${book.image}">
+
+<h3>${book.title}</h3>
+
+<p class="price">
+₹${book.price}
+</p>
+
+<p class="city">
+${book.city}
+</p>
+
+<button class="btn buy-btn">
+Buy Now
+</button>
+<button
+class="btn"
+onclick="removeFromCart(${index})"
+style="
+margin-top:12px;
+background:#ef4444;
+width:100%;
+">
+
+Remove
+
+</button>
+
+</div>
+
+`;
+
+});
+
+document
+.getElementById("cartTotal")
+.innerText =
+"Total: ₹" + total;
+/* ===============================
+      RAZORPAY PAYMENT
+================================ */
+
+document
+.getElementById("payBtn")
+
+.addEventListener(
+
+"click",
+
+function(){
+
+const options = {
+
+key:
+"rzp_test_RvpBJ9WK210iH2",
+
+amount:
+total * 100,
+
+currency:
+"INR",
+
+name:
+"TutorCall",
+
+description:
+"Book Purchase",
+
+image:
+"logo.png",
+
+handler:function(response){
+
+alert(
+
+"Payment Successful\n\nPayment ID: " +
+
+response.razorpay_payment_id
+
+);
+
+localStorage.removeItem(
+"cart"
+);
+
+window.location.reload();
+
+},
+
+theme:{
+
+color:"#16a34a"
+
+}
+
+};
+
+const rzp =
+new Razorpay(options);
+
+rzp.open();
+
+}
+);
+/* ===============================
+      REMOVE FROM CART
+================================ */
+
+function removeFromCart(index){
+
+cart.splice(index,1);
+
+localStorage.setItem(
+
+"cart",
+
+JSON.stringify(cart)
+
+);
+
+location.reload();
+
+}
+</script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+</body>
+</html>

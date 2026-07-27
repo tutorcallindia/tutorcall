@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Booking Successful</title>
+  <style>
+    body {
+      font-family: Arial;
+      background: #f4f6f8;
+      text-align: center;
+      padding-top: 80px;
+    }
+    .card {
+      background: #fff;
+      padding: 30px;
+      width: 350px;
+      margin: auto;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    button {
+      margin-top: 15px;
+      padding: 12px 20px;
+      border: none;
+      background: #1a73e8;
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 15px;
+    }
+    button:hover {
+      background: #1558b0;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h2>🎉 Booking Completed</h2>
+    <p>Your booking is confirmed.</p>
+
+    <button onclick="downloadInvoice()">
+      📄 Download Invoice
+    </button>
+  </div>
+
+  <script src="booking-success.js"></script>
+</body>
+</html>

@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Study Material - TutorCall</title>
+
+    <!-- GOOGLE FONTS -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- MAIN CSS -->
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+        }
+
+        body{
+            font-family:'Poppins',sans-serif;
+            background:#fff5fa;
+            color:#222;
+        }
+
+        /* =========================
+              HEADER
+        ========================= */
+
+        .sm-header{
+
+            background:white;
+
+            padding:25px 20px;
+
+            text-align:center;
+
+            box-shadow:0 3px 15px rgba(0,0,0,0.05);
+
+            position:sticky;
+
+            top:0;
+
+            z-index:100;
+
+        }
+
+        .sm-header h2{
+
+            font-size:40px;
+
+            margin-bottom:8px;
+
+            background:linear-gradient(
+                135deg,
+                #ff4fa3,
+                #7b5cff
+            );
+
+            -webkit-background-clip:text;
+
+            -webkit-text-fill-color:transparent;
+
+        }
+
+        .sm-header p{
+
+            color:#666;
+
+            font-size:15px;
+
+        }
+
+        /* =========================
+             HERO SECTION
+        ========================= */
+
+        .sm-hero{
+
+            max-width:1200px;
+
+            margin:30px auto;
+
+            border-radius:28px;
+
+            overflow:hidden;
+
+            position:relative;
+
+            min-height:320px;
+
+            background-image:url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=1600&auto=format&fit=crop');
+
+            background-size:cover;
+
+            background-position:center;
+
+            display:flex;
+
+            align-items:center;
+
+            padding:50px;
+
+        }
+
+        .sm-overlay{
+
+            position:absolute;
+
+            inset:0;
+
+            background:rgba(0,0,0,0.55);
+
+        }
+
+        .sm-hero-content{
+
+            position:relative;
+
+            z-index:2;
+
+            color:white;
+
+            max-width:600px;
+
+        }
+
+        .sm-hero-content h1{
+
+            font-size:55px;
+
+            line-height:1.1;
+
+            margin-bottom:18px;
+
+        }
+
+        .sm-hero-content p{
+
+            font-size:18px;
+
+            color:#f1f1f1;
+
+            margin-bottom:28px;
+
+        }
+
+        .sm-btn{
+
+            background:linear-gradient(
+                135deg,
+                #ff4fa3,
+                #7b5cff
+            );
+
+            color:white;
+
+            padding:14px 28px;
+
+            border:none;
+
+            border-radius:12px;
+
+            text-decoration:none;
+
+            font-weight:600;
+
+            display:inline-block;
+
+            transition:0.3s;
+
+            box-shadow:0 8px 20px rgba(255,0,140,0.25);
+
+        }
+
+        .sm-btn:hover{
+
+            transform:translateY(-4px);
+
+        }
+
+        /* =========================
+              WRAPPER
+        ========================= */
+
+        .sm-wrapper{
+
+            max-width:1200px;
+
+            margin:auto;
+
+            padding:20px;
+
+        }
+
+        /* =========================
+              BOARD ROW
+        ========================= */
+
+        .sm-board-row{
+
+            display:flex;
+
+            gap:14px;
+
+            align-items:center;
+
+            flex-wrap:wrap;
+
+            margin-bottom:25px;
+
+        }
+
+        .sm-board{
+
+            padding:14px 24px;
+
+            border-radius:14px;
+
+            background:white;
+
+            border:2px solid #eee;
+
+            cursor:pointer;
+
+            font-weight:600;
+
+            transition:0.3s;
+
+            box-shadow:0 4px 12px rgba(0,0,0,0.05);
+
+        }
+
+        .sm-board:hover{
+
+            transform:translateY(-3px);
+
+        }
+
+        .sm-board.active{
+
+            background:linear-gradient(
+                135deg,
+                #ff4fa3,
+                #7b5cff
+            );
+
+            color:white;
+
+            border:none;
+
+        }
+
+        /* =========================
+             FILTER ROW
+        ========================= */
+
+        .sm-filter-row{
+
+            display:flex;
+
+            gap:14px;
+
+            align-items:center;
+
+            flex-wrap:wrap;
+
+            margin-bottom:25px;
+
+        }
+
+        #smClassSelect,
+        #smSearch{
+
+            padding:14px;
+
+            border-radius:12px;
+
+            border:1px solid #ddd;
+
+            font-size:15px;
+
+            outline:none;
+
+            transition:0.3s;
+
+        }
+
+        #smClassSelect{
+
+            min-width:240px;
+
+        }
+
+        #smSearch{
+
+            flex:1;
+
+        }
+
+        #smClassSelect:focus,
+        #smSearch:focus{
+
+            border-color:#ff4fa3;
+
+            box-shadow:0 0 0 4px rgba(255,79,163,0.15);
+
+        }
+
+        /* =========================
+             SUBJECT CARDS
+        ========================= */
+
+        .sm-subject-card{
+
+            background:white;
+
+            border-radius:22px;
+
+            padding:22px;
+
+            margin-bottom:18px;
+
+            display:flex;
+
+            justify-content:space-between;
+
+            align-items:center;
+
+            flex-wrap:wrap;
+
+            gap:18px;
+
+            border:1px solid #ffd8ea;
+
+            box-shadow:0 6px 20px rgba(255,0,140,0.08);
+
+            transition:0.3s;
+
+        }
+
+        .sm-subject-card:hover{
+
+            transform:translateY(-6px);
+
+            box-shadow:0 12px 30px rgba(255,0,140,0.15);
+
+        }
+
+        .sm-subject-info h3{
+
+            font-size:28px;
+
+            margin-bottom:8px;
+
+            color:#111827;
+
+        }
+
+        .sm-subject-info p{
+
+            color:#666;
+
+            font-size:15px;
+
+        }
+
+        /* =========================
+                BUTTONS
+        ========================= */
+
+        .sm-buttons{
+
+            display:flex;
+
+            gap:10px;
+
+            flex-wrap:wrap;
+
+        }
+
+        .sm-buttons button{
+
+            border:none;
+
+            color:white;
+
+            padding:10px 16px;
+
+            border-radius:10px;
+
+            cursor:pointer;
+
+            font-weight:600;
+
+            transition:0.3s;
+
+        }
+
+        .notes-btn{
+
+            background:#ff4fa3;
+
+        }
+
+        .video-btn{
+
+            background:#7b5cff;
+
+        }
+
+        .practice-btn{
+
+            background:linear-gradient(
+                135deg,
+                #ff4fa3,
+                #7b5cff
+            );
+
+        }
+
+        .sm-buttons button:hover{
+
+            transform:translateY(-3px);
+
+            box-shadow:0 8px 18px rgba(0,0,0,0.12);
+
+        }
+
+        /* =========================
+               EMPTY BOX
+        ========================= */
+
+        .sm-empty{
+
+            background:white;
+
+            padding:28px;
+
+            border-radius:18px;
+
+            text-align:center;
+
+            color:#777;
+
+            box-shadow:0 5px 20px rgba(0,0,0,0.05);
+
+        }
+
+        /* =========================
+                FOOTER
+        ========================= */
+
+        footer{
+
+            margin-top:60px;
+
+            padding:30px;
+
+            text-align:center;
+
+            background:white;
+
+            color:#555;
+
+        }
+
+        /* =========================
+              RESPONSIVE
+        ========================= */
+
+        @media(max-width:768px){
+
+            .sm-hero{
+
+                padding:30px;
+
+                min-height:250px;
+
+            }
+
+            .sm-hero-content h1{
+
+                font-size:36px;
+
+            }
+
+            .sm-hero-content p{
+
+                font-size:15px;
+
+            }
+
+            .sm-filter-row{
+
+                flex-direction:column;
+
+                align-items:stretch;
+
+            }
+
+            #smClassSelect,
+            #smSearch{
+
+                width:100%;
+
+            }
+
+            .sm-subject-card{
+
+                flex-direction:column;
+
+                align-items:flex-start;
+
+            }
+
+            .sm-subject-info h3{
+
+                font-size:24px;
+
+            }
+
+            .sm-buttons{
+
+                width:100%;
+
+            }
+
+            .sm-buttons button{
+
+    border:none;
+
+    color:white !important;
+
+    padding:10px 16px;
+
+    border-radius:10px;
+
+    cursor:pointer;
+
+    font-weight:600;
+
+    transition:0.3s;
+
+}
+
+/* NOTES BUTTON */
+
+.notes-btn{
+
+    background:#ff4fa3 !important;
+
+}
+
+/* VIDEOS BUTTON */
+
+.video-btn{
+
+    background:#7b5cff !important;
+
+}
+
+/* PRACTICE BUTTON */
+
+.practice-btn{
+
+    background:linear-gradient(
+        135deg,
+        #ff4fa3,
+        #7b5cff
+    ) !important;
+
+}
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <!-- HEADER -->
+
+    <div class="sm-header">
+
+        <h2>Study Material</h2>
+
+        <p>
+            Select Board → Select Class → Choose Subject
+        </p>
+
+    </div>
+
+    <!-- HERO SECTION -->
+
+    <section class="sm-hero">
+
+        <div class="sm-overlay"></div>
+
+        <div class="sm-hero-content">
+
+            <h1>
+                Free Notes, Videos & Practice
+            </h1>
+
+            <p>
+                Learn smarter with TutorCall premium study resources for CBSE & ICSE students.
+            </p>
+
+            <a href="#" class="sm-btn">
+                Start Learning
+            </a>
+
+        </div>
+
+    </section>
+
+    <!-- MAIN WRAPPER -->
+
+    <div class="sm-wrapper">
+
+        <!-- BOARD SELECT -->
+
+        <div class="sm-board-row">
+
+            <div class="sm-board" data-board="ICSE">
+                ICSE
+            </div>
+
+            <div class="sm-board" data-board="CBSE">
+                CBSE
+            </div>
+
+            <div style="margin-left:auto;color:#666;font-size:15px;">
+
+                Selected:
+                <strong id="smSelectedBoard">
+                    None
+                </strong>
+
+            </div>
+
+        </div>
+
+        <!-- FILTERS -->
+
+        <div class="sm-filter-row">
+
+            <label for="smClassSelect"
+                   style="font-weight:600;">
+
+                Choose Class:
+
+            </label>
+
+            <select id="smClassSelect">
+
+                <option value="">
+                    — Select Board First —
+                </option>
+
+            </select>
+
+            <input id="smSearch"
+                   placeholder="🔍 Search subject...">
+
+        </div>
+
+        <!-- SUBJECTS -->
+
+        <div id="smSubjectsWrap">
+
+            <div id="smEmptyInfo" class="sm-empty">
+
+                Choose a board and class to load subjects.
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- FOOTER -->
+
+    <footer>
+
+        © 2026 TutorCall — Smart Learning Platform
+
+    </footer>
+
+    <!-- JS -->
+
+    <script src="study-material.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>TutorCall AI Test</title>
+</head>
+
+<body>
+
+  <h1>TutorCall AI Test</h1>
+
+  <button id="connectBtn">
+    Connect AI
+  </button>
+
+  <script>
+
+    const button =
+      document.getElementById("connectBtn");
+
+    button.onclick = () => {
+
+      const socket = new WebSocket(
+        "ws://localhost:8000/live-tutor"
+      );
+
+      socket.onopen = () => {
+
+        console.log(
+          "Connected To Backend"
+        );
+
+        socket.send(
+          JSON.stringify({
+            type: "TEXT",
+            message: "Hello AI"
+          })
+        );
+      };
+
+      socket.onmessage = (event) => {
+
+        console.log(
+          "AI Response:",
+          event.data
+        );
+      };
+
+      socket.onerror = (error) => {
+
+        console.log(
+          "Socket Error",
+          error
+        );
+      };
+    };
+
+  </script>
+
+</body>
+
+</html>

@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>About Us - TutorCall</title>
+
+  <!-- GOOGLE FONT -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+
+  <style>
+
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+    }
+
+    body{
+      background:#f5f7fb;
+      font-family:'Roboto',sans-serif;
+      color:#222;
+    }
+
+    .container{
+      width:100%;
+      max-width:1200px;
+      margin:auto;
+      padding:0 15px;
+    }
+
+    /* =========================
+            HEADER
+    ========================= */
+
+    .topbar{
+      background:#fff;
+      border-bottom:1px solid #eee;
+      position:sticky;
+      top:0;
+      z-index:1000;
+    }
+
+    .header-row{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding:14px 0;
+      flex-wrap:wrap;
+      gap:15px;
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+    }
+
+    .logo-img{
+      width:48px;
+      height:48px;
+      border-radius:10px;
+      object-fit:cover;
+    }
+
+    .brand-text{
+      font-size:24px;
+      font-weight:700;
+      font-family:'Montserrat',sans-serif;
+    }
+
+    .nav{
+      display:flex;
+      align-items:center;
+      gap:15px;
+      flex-wrap:wrap;
+    }
+
+    .nav a{
+      text-decoration:none;
+      color:#222;
+      font-weight:500;
+      transition:0.25s;
+    }
+
+    .nav a:hover{
+      color:#4CAF50;
+    }
+
+    .btn{
+      padding:10px 16px;
+      border-radius:10px;
+      color:white !important;
+      font-weight:600;
+    }
+
+    .btn-gold{
+      background:#ff9800;
+    }
+
+    .btn-purple{
+      background:#673ab7;
+    }
+
+    /* =========================
+            HERO
+    ========================= */
+
+    .about-hero{
+      height:380px;
+      background:
+      linear-gradient(rgba(0,0,0,0.6),rgba(0,0,0,0.6)),
+      url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f');
+      background-size:cover;
+      background-position:center;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      text-align:center;
+      color:white;
+    }
+
+    .about-overlay h1{
+      font-size:54px;
+      margin-bottom:14px;
+      font-family:'Montserrat',sans-serif;
+    }
+
+    .about-overlay p{
+      font-size:20px;
+      opacity:0.95;
+    }
+
+    /* =========================
+            MAIN
+    ========================= */
+
+    .about-main{
+      padding:55px 15px;
+    }
+
+    .about-card{
+      background:white;
+      padding:35px;
+      border-radius:22px;
+      box-shadow:0 8px 25px rgba(0,0,0,0.08);
+      margin-bottom:30px;
+    }
+
+    .about-card h2{
+      font-size:34px;
+      margin-bottom:18px;
+      font-family:'Montserrat',sans-serif;
+    }
+
+    .about-card p{
+      line-height:1.9;
+      color:#555;
+      font-size:17px;
+      margin-bottom:14px;
+    }
+
+    /* =========================
+            GRID
+    ========================= */
+
+    .about-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+      gap:22px;
+      margin-bottom:30px;
+    }
+
+    .feature-box{
+      background:white;
+      padding:30px;
+      border-radius:22px;
+      box-shadow:0 8px 25px rgba(0,0,0,0.08);
+      transition:0.3s;
+    }
+
+    .feature-box:hover{
+      transform:translateY(-7px);
+    }
+
+    .feature-box h3{
+      font-size:24px;
+      margin-bottom:14px;
+      font-family:'Montserrat',sans-serif;
+    }
+
+    .feature-box p{
+      color:#555;
+      line-height:1.8;
+      font-size:16px;
+    }
+
+    /* =========================
+            VISION
+    ========================= */
+
+    .vision-box{
+      background:white;
+      padding:35px;
+      border-radius:22px;
+      box-shadow:0 8px 25px rgba(0,0,0,0.08);
+      margin-bottom:30px;
+    }
+
+    .vision-box h2{
+      font-size:32px;
+      margin-bottom:18px;
+      font-family:'Montserrat',sans-serif;
+    }
+
+    .vision-box p{
+      line-height:1.9;
+      color:#555;
+      font-size:17px;
+    }
+
+    /* =========================
+          FOUNDER SECTION
+    ========================= */
+
+    .founder-box{
+      margin-top:35px;
+      background:linear-gradient(135deg,#ffffff,#f7fff8);
+      padding:45px 35px;
+      border-radius:24px;
+      box-shadow:0 10px 30px rgba(0,0,0,0.08);
+      text-align:center;
+      border:1px solid #e8f5e9;
+      position:relative;
+      overflow:hidden;
+    }
+
+    .founder-box::before{
+      content:'';
+      position:absolute;
+      width:220px;
+      height:220px;
+      background:rgba(76,175,80,0.08);
+      border-radius:50%;
+      top:-80px;
+      right:-80px;
+    }
+
+    .founder-icon{
+      width:80px;
+      height:80px;
+      background:#4CAF50;
+      border-radius:50%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:white;
+      font-size:36px;
+      margin:auto;
+      margin-bottom:20px;
+      box-shadow:0 10px 25px rgba(76,175,80,0.35);
+      position:relative;
+      z-index:2;
+    }
+
+    .founder-box h2{
+      font-size:36px;
+      margin-bottom:22px;
+      font-family:'Montserrat',sans-serif;
+      position:relative;
+      z-index:2;
+    }
+
+    .founder-note{
+      max-width:900px;
+      margin:auto;
+      line-height:2;
+      color:#555;
+      font-size:18px;
+      font-style:italic;
+      position:relative;
+      z-index:2;
+    }
+
+    .signature-area{
+      margin-top:40px;
+      position:relative;
+      z-index:2;
+    }
+
+    .signature-line{
+      width:140px;
+      height:2px;
+      background:#4CAF50;
+      margin:0 auto 18px;
+    }
+
+    .signature{
+      font-family:cursive;
+      font-size:50px;
+      color:#2e7d32;
+      text-shadow:1px 2px 4px rgba(0,0,0,0.08);
+    }
+
+    .founder-name{
+      margin-top:10px;
+      font-size:18px;
+      font-weight:700;
+      color:#222;
+      letter-spacing:0.5px;
+    }
+
+    .founder-brand{
+      margin-top:6px;
+      color:#4CAF50;
+      font-size:15px;
+      font-weight:600;
+      letter-spacing:1px;
+    }
+
+    /* =========================
+            FOOTER
+    ========================= */
+
+    .site-footer{
+      margin-top:40px;
+      background:white;
+      border-top:1px solid #eee;
+      padding:24px;
+      text-align:center;
+      color:#666;
+    }
+
+    /* =========================
+            MOBILE
+    ========================= */
+
+    @media(max-width:768px){
+
+      .header-row{
+        justify-content:center;
+      }
+
+      .nav{
+        justify-content:center;
+      }
+
+      .about-overlay h1{
+        font-size:36px;
+      }
+
+      .about-overlay p{
+        font-size:16px;
+      }
+
+      .about-card,
+      .vision-box,
+      .founder-box{
+        padding:25px;
+      }
+
+      .founder-box h2{
+        font-size:28px;
+      }
+
+      .founder-note{
+        font-size:16px;
+        line-height:1.9;
+      }
+
+      .signature{
+        font-size:40px;
+      }
+
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+<!-- HEADER -->
+
+<header class="topbar">
+
+  <div class="container header-row">
+
+    <div class="brand">
+
+      <img src="logo.png"
+           class="logo-img"
+           alt="logo">
+
+      <div class="brand-text">
+        TutorCall
+      </div>
+
+    </div>
+
+    <nav class="nav">
+
+      <a href="index.html">Home</a>
+
+      <a href="study-material.html">
+        Study Material
+      </a>
+
+      <a href="about.html">
+        About Us
+      </a>
+
+      <a href="contact.html">
+        Contact
+      </a>
+
+      <a href="tutor-register.html"
+         class="btn btn-gold">
+         Become Tutor
+      </a>
+
+      <a href="find-tutor.html"
+         class="btn btn-purple">
+         Find Tutor
+      </a>
+
+    </nav>
+
+  </div>
+
+</header>
+
+<!-- HERO -->
+
+<section class="about-hero">
+
+  <div class="about-overlay">
+
+    <h1>About TutorCall</h1>
+
+    <p>
+      India’s Smart Platform For Students & Tutors
+    </p>
+
+  </div>
+
+</section>
+
+<!-- MAIN -->
+
+<section class="about-main container">
+
+  <!-- ABOUT -->
+
+  <div class="about-card">
+
+    <h2>Who We Are</h2>
+
+    <p>
+      TutorCall is an educational platform created to connect students with trusted tutors,
+      coaching institutes, and quality study materials across India.
+    </p>
+
+    <p>
+      Our mission is to make learning simple, affordable, and accessible for every student.
+      Whether you are searching for home tutors, online classes, JEE/NEET preparation,
+      or school study material — TutorCall brings everything together in one place.
+    </p>
+
+  </div>
+
+  <!-- FEATURES -->
+
+  <div class="about-grid">
+
+    <div class="feature-box">
+
+      <h3>📘 Study Materials</h3>
+
+      <p>
+        Notes, PDFs, videos, and practice content for CBSE, ICSE, JEE, NEET,
+        and school students.
+      </p>
+
+    </div>
+
+    <div class="feature-box">
+
+      <h3>👨‍🏫 Verified Tutors</h3>
+
+      <p>
+        Find trusted tutors for home tuition and online learning with easy search options.
+      </p>
+
+    </div>
+
+    <div class="feature-box">
+
+      <h3>🏫 Institute Registration</h3>
+
+      <p>
+        Coaching institutes can register and connect with students directly.
+      </p>
+
+    </div>
+
+  </div>
+
+  <!-- VISION -->
+
+  <div class="vision-box">
+
+    <h2>Our Vision</h2>
+
+    <p>
+      We believe every student deserves the right teacher and the right guidance.
+      TutorCall aims to become India’s leading educational network for students,
+      teachers, and institutes.
+    </p>
+
+  </div>
+
+  <!-- FOUNDER -->
+
+  <div class="founder-box">
+
+    <div class="founder-icon">
+      ✨
+    </div>
+
+    <h2>Founder’s Message</h2>
+
+    <p class="founder-note">
+
+      “At TutorCall, we believe that every student deserves the right guidance,
+      the right mentor, and the right opportunity to succeed.
+
+      Our mission is not just to connect tutors and students —
+      but to build a trusted educational ecosystem where learning becomes smarter,
+      accessible, affordable, and future-ready for every family across India.
+
+      We are working with a vision to empower students,
+      support teachers, and digitally transform the education experience through innovation and trust.
+
+      Thank you for being part of the TutorCall journey.”
+
+    </p>
+
+    <div class="signature-area">
+
+      <div class="signature-line"></div>
+
+      <div class="signature">
+        Tej Prakash
+      </div>
+
+      <div class="founder-name">
+        Founder & Vision Creator
+      </div>
+
+      <div class="founder-brand">
+        TutorCall
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+<!-- FOOTER -->
+
+<footer class="site-footer">
+
+  © 2025 TutorCall | All Rights Reserved
+
+</footer>
+
+</body>
+</html>

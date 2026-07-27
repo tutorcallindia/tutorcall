@@ -1,0 +1,9 @@
+node_modules/
+server/node_modules/
+ai-realtime/node_modules/
+
+.env
+server/.env
+ai-realtime/.env
+
+*.log

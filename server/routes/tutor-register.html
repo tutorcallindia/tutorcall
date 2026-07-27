@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Tutor Registration</title>
+
+  <style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Poppins',sans-serif;
+}
+
+body{
+
+background:#fdf2f8;
+padding:40px;
+
+}
+
+.box{
+
+max-width:900px;
+
+background:white;
+
+margin:auto;
+
+padding:50px;
+
+border-radius:30px;
+
+box-shadow:
+0 15px 40px rgba(255,0,140,0.08);
+
+border:1px solid #ffd3ea;
+
+}
+
+h2{
+
+text-align:center;
+
+font-size:42px;
+
+margin-bottom:10px;
+
+font-weight:800;
+
+background:linear-gradient(
+135deg,
+#ff4fa3,
+#7b5cff
+);
+
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+
+}
+
+.subtext{
+
+text-align:center;
+
+color:#666;
+
+margin-bottom:35px;
+
+font-size:16px;
+
+}
+
+.form-grid{
+
+display:grid;
+
+grid-template-columns:
+repeat(auto-fit,minmax(250px,1fr));
+
+gap:22px;
+
+}
+
+.field-full{
+
+grid-column:1/-1;
+
+}
+
+label{
+
+display:block;
+
+margin-bottom:8px;
+
+font-size:16px;
+
+font-weight:700;
+
+color:#111827;
+
+}
+
+input,
+select{
+
+width:100%;
+
+padding:15px;
+
+margin-top:8px;
+margin-bottom:22px;
+
+border-radius:18px;
+
+border:2px solid #ffd3ea;
+
+font-size:16px;
+
+background:white;
+
+outline:none;
+
+transition:0.3s;
+
+}
+
+input:focus,
+select:focus{
+
+border-color:#ff4fa3;
+
+box-shadow:
+0 0 0 5px rgba(255,79,163,0.12);
+
+}
+
+button{
+
+padding:15px;
+
+border:none;
+
+border-radius:16px;
+
+font-size:16px;
+
+font-weight:700;
+
+cursor:pointer;
+
+transition:0.3s;
+
+}
+
+.submit-btn{
+
+width:100%;
+
+background:linear-gradient(
+135deg,
+#ff4fa3,
+#7b5cff
+);
+
+color:white;
+
+margin-top:10px;
+
+}
+
+.submit-btn:hover{
+
+transform:translateY(-3px);
+
+box-shadow:
+0 12px 25px rgba(123,92,255,0.25);
+
+}
+
+.gps-btn{
+
+background:#eef2ff;
+
+color:#4f46e5;
+
+margin-bottom:20px;
+
+}
+
+.gps-btn:hover{
+
+background:#dbeafe;
+
+}
+
+.msg{
+
+text-align:center;
+margin-bottom:20px;
+font-size:14px;
+
+}
+
+.back{
+
+display:block;
+
+text-align:center;
+
+margin-top:25px;
+
+text-decoration:none;
+
+font-weight:700;
+
+color:#ff4fa3;
+
+}
+
+.photo-preview{
+
+margin-top:10px;
+
+width:100px;
+height:100px;
+
+border-radius:20px;
+
+object-fit:cover;
+
+display:none;
+
+border:3px solid #ffd6ea;
+
+}
+
+@media(max-width:700px){
+
+.box{
+
+padding:25px;
+
+}
+
+h2{
+<p class="subtext">
+
+Create your professional TutorCall profile
+
+</p>
+font-size:32px;
+
+}
+
+}
+/* FORM GRID */
+
+#tutorForm{
+
+display:grid;
+
+grid-template-columns:
+1fr 1fr;
+
+gap:24px 40px;
+
+}
+
+#tutorForm button{
+
+grid-column:span 2;
+
+}
+
+/* MOBILE */
+
+@media(max-width:768px){
+
+#tutorForm{
+
+grid-template-columns:1fr;
+
+}
+
+#tutorForm button{
+
+grid-column:span 1;
+
+}
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="box">
+
+  <h2>Tutor Registration</h2>
+
+  <div class="msg" id="msg"></div>
+
+  <form id="tutorForm"
+class="form-grid">
+
+    <label>Full Name</label>
+    <input type="text" id="name" required>
+
+    <label>Phone</label>
+    <input type="text" id="phone" required>
+
+    <label>Email</label>
+    <input type="email" id="email" required>
+
+    <label>Password</label>
+    <input type="password" id="password" required>
+
+    <label>City</label>
+    <input type="text" id="city" required>
+    <label>Full Address</label>
+<input
+  type="text"
+  id="address"
+  placeholder="Enter full address"
+  required
+>
+
+<div class="field-full">
+
+<button
+type="button"
+class="gps-btn"
+onclick="getCurrentLocation()"
+>
+
+📍 Auto Detect Current Location
+
+</button>
+
+</div>
+<input type="hidden" id="latitude">
+<input type="hidden" id="longitude">
+
+    <label>Qualification</label>
+    <input type="text" id="qualification" required>
+
+    <label>Experience</label>
+    <input type="text" id="experience" required>
+
+    <label>Classes You Teach</label>
+    <select id="classes">
+      <option value="">Select Class</option>
+      <option>Class 1-5</option>
+      <option>Class 6-8</option>
+      <option>Class 9-10</option>
+      <option>Class 11-12</option>
+      <option>NEET/JEE</option>
+    </select>
+
+    <label>Subjects You Teach</label>
+    <input type="text" id="subjects" required>
+    <label>Fees (per month)</label>
+<input type="number" id="fees" placeholder="e.g., 500" required>
+<label>Profile Photo</label>
+
+<input
+type="file"
+id="photo"
+accept="image/*"
+>
+
+
+
+    <label>Teaching Mode</label>
+    <select id="mode">
+      <option value="">Select Mode</option>
+      <option>Home Tuition</option>
+      <option>Online Tuition</option>
+      <option>Both</option>
+    </select>
+
+   <div class="field-full">
+
+<button
+type="submit"
+class="submit-btn"
+>
+
+Register Tutor
+
+</button>
+
+</div>
+<img
+id="preview"
+class="photo-preview">
+
+  </form>
+
+  <a href="student-home.html" class="back">⬅ Back</a>
+
+</div>
+
+<!-- FIXED SCRIPT -->
+<script src="tutor-register.js"></script>
+  
+  <script>
+
+function getCurrentLocation() {
+
+  if (!navigator.geolocation) {
+
+    alert("Geolocation not supported");
+
+    return;
+
+  }
+
+  navigator.geolocation.getCurrentPosition(
+
+    async position => {
+
+      const lat = position.coords.latitude;
+      const lng = position.coords.longitude;
+
+      document.getElementById("latitude").value = lat;
+      document.getElementById("longitude").value = lng;
+
+      try {
+
+        const res = await fetch(
+
+          `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`
+
+        );
+
+        const data = await res.json();
+
+        document.getElementById("address").value =
+          data.display_name || "";
+
+        document.getElementById("city").value =
+          data.address.city ||
+          data.address.town ||
+          data.address.state ||
+          "";
+
+      } catch (err) {
+
+        console.log(err);
+
+      }
+
+    },
+
+    err => {
+
+      alert("Location permission denied");
+
+    }
+
+  );
+
+}
+<script>
+
+document
+.getElementById("photo")
+
+.addEventListener(
+
+"change",
+
+function(e){
+
+const file =
+e.target.files[0];
+
+if(file){
+
+const reader =
+new FileReader();
+
+reader.onload =
+function(event){
+
+const preview =
+document.getElementById(
+"preview"
+);
+
+preview.src =
+event.target.result;
+
+preview.style.display =
+"block";
+
+};
+
+reader.readAsDataURL(file);
+
+}
+
+}
+
+);
+
+</script>
+
+</script>
+
+</body>
+</html>

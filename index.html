@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+  <title>TutorCall</title>
+
+  <meta name="description"
+        content="Find best tutors near you with TutorCall">
+
+  <link rel="icon" href="logo.png">
+
+  <link rel="preconnect"
+        href="https://fonts.googleapis.com">
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+  <link rel="stylesheet"
+        href="style.css">
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+</head>
+
+<body>
+
+<!-- =========================
+         HEADER
+========================= -->
+
+<header>
+
+  <div class="container nav">
+
+    <!-- LOGO -->
+
+    <div class="brand">
+
+      <div class="logo">
+
+        <img src="logo.png"
+             alt="TutorCall Logo">
+
+      </div>
+
+      <div>
+
+        <h1>TutorCall</h1>
+
+        <div class="tagline">
+          Find best tutors near you
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- MENU -->
+
+    <nav class="menu">
+
+      <a href="#">Home</a>
+
+      <a href="#"
+         onclick="openOtpModal()">
+         Study Material
+      </a>
+
+      <a href="about.html">
+        About
+      </a>
+
+      <a href="contact.html">
+        Contact
+      </a>
+
+      <!-- SIGN IN DROPDOWN -->
+
+      <div class="signin-dropdown">
+
+        <button id="signinBtn"
+                class="signin-btn">
+
+          Sign In ▼
+
+        </button>
+
+        <div id="signinDropdown"
+             class="dropdown-menu">
+
+          <!-- FREE -->
+
+          <div class="dropdown-title">
+            Free Access
+          </div>
+
+          <a href="find-tutor.html">
+            🔍 Find Tutor
+          </a>
+
+          <!-- STUDENT -->
+
+          <div class="dropdown-title">
+            Student
+          </div>
+
+          <a href="login.html">
+            👨‍🎓 Student Login
+          </a>
+
+          <a href="signup.html">
+            📝 Student Register
+          </a>
+
+          <!-- TUTOR -->
+
+          <div class="dropdown-title premium">
+            Tutor (Paid)
+          </div>
+
+          <a href="tutor-login.html">
+            👨‍🏫 Tutor Login
+          </a>
+
+          <a href="tutor-register.html">
+            💎 Tutor Register
+          </a>
+
+          <!-- INSTITUTE -->
+
+          <div class="dropdown-title premium">
+            Institute (Paid)
+          </div>
+
+          <a href="institute-login.html">
+            🏫 Institute Login
+          </a>
+
+          <a href="institute-register.html">
+            🚀 Institute Register
+          </a>
+
+        </div>
+
+      </div>
+
+    </nav>
+
+  </div>
+
+</header>
+
+<!-- =========================
+          HERO
+========================= -->
+
+<!-- HERO -->
+
+<section class="hero">
+
+  <!-- SLIDE 1 -->
+
+  <div class="slide active"
+  style="background-image:url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=1600&auto=format&fit=crop')">
+
+    <div class="overlay"></div>
+
+    <div class="hero-content">
+
+      <h2>Find Best Tutors Near You</h2>
+
+      <p>India's smart tutor finding platform.</p>
+
+      <a href="find-tutor.html" class="btn">
+        Find Tutor
+      </a>
+
+    </div>
+
+  </div>
+
+  <!-- SLIDE 2 -->
+
+  <div class="slide"
+  style="background-image:url('https://images.unsplash.com/photo-1513258496099-48168024aec0?q=80&w=1600&auto=format&fit=crop')">
+
+    <div class="overlay"></div>
+
+    <div class="hero-content">
+
+      <h2>Become A Tutor</h2>
+
+      <p>Register as tutor and start teaching students.</p>
+
+      <a href="tutor-register.html" class="btn">
+        Register Tutor
+      </a>
+
+    </div>
+
+  </div>
+
+  <!-- SLIDE 3 -->
+
+  <div class="slide"
+  style="background-image:url('https://images.unsplash.com/photo-1521587760476-6c12a4b040da?q=80&w=1600&auto=format&fit=crop')">
+
+    <div class="overlay"></div>
+
+    <div class="hero-content">
+
+      <h2>Buy & Sell Old Books</h2>
+
+      <p>NCERT, JEE, NEET and school books marketplace.</p>
+
+      <a href="sell-book.html" class="btn">
+        Resell Books
+      </a>
+
+    </div>
+
+  </div>
+
+  <!-- SLIDE 4 -->
+
+  <div class="slide"
+  style="background-image:url('https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=1600&auto=format&fit=crop')">
+
+    <div class="overlay"></div>
+
+    <div class="hero-content">
+
+      <h2>AI Study Assistant</h2>
+
+      <p>Smart AI support for study & preparation.</p>
+
+      <a href="#" class="btn">
+        Ask AI
+      </a>
+
+    </div>
+
+  </div>
+
+</section>
+
+<!-- =========================
+          FEATURES
+========================= -->
+
+<section class="features">
+
+  <div class="card">
+
+    <h3>Tutor Details</h3>
+
+    <p>
+      Find experienced tutors with verified profiles.
+    </p>
+
+    <a href="#"
+       class="btn">
+
+      View Details
+
+    </a>
+
+  </div>
+
+  <div class="card">
+
+    <h3>Book Demo</h3>
+
+    <p>
+      Get free demo classes from tutors nearby.
+    </p>
+
+    <a href="#"
+       class="btn">
+
+      Book Demo
+
+    </a>
+
+  </div>
+
+  <div class="card">
+
+    <h3>Study Material</h3>
+
+    <p>
+      Access notes, videos & PDFs.
+    </p>
+
+    <a href="#"
+       class="btn">
+
+      Open Material
+
+    </a>
+
+  </div>
+
+  <div class="card">
+
+    <h3>Old Books</h3>
+
+    <p>
+      Buy & sell second hand books.
+    </p>
+
+    <a href="#"
+       class="btn">
+
+      Explore Books
+
+    </a>
+
+  </div>
+
+  <div class="card">
+
+    <h3>AI Assistant</h3>
+
+    <p>
+      Smart AI study support system.
+    </p>
+
+    <a href="#"
+       class="btn">
+
+      Notify Me
+
+    </a>
+
+  </div>
+
+  <div class="card">
+
+    <h3>Nearby Tutors</h3>
+
+    <p>
+      Search tutors near your location instantly.
+    </p>
+
+    <a href="#"
+       class="btn">
+
+      Search Now
+
+    </a>
+
+  </div>
+
+</section>
+
+<!-- =========================
+          FOOTER
+========================= -->
+
+<footer>
+
+  © 2026 TutorCall.
+  All Rights Reserved.
+
+</footer>
+
+<script src="script.js"></script>
+
+</body>
+</html>

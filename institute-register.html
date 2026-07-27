@@ -1,0 +1,221 @@
+<!-- Save as institute-register.html -->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Institute Register</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--accent:#0ea5a4;--muted:#6b7280}
+  *{box-sizing:border-box}
+  body{font-family:Inter,system-ui,Arial;background:linear-gradient(180deg,#f3f8fb,#ffffff);margin:0;padding:28px;display:flex;justify-content:center}
+  .card{width:920px;max-width:98%;background:#fff;border-radius:12px;padding:22px;box-shadow:0 10px 30px rgba(6,16,32,0.06)}
+  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+  h1{margin:0 0 8px;color:var(--accent)}
+  label{display:block;margin-top:10px;font-weight:600}
+  input, select, textarea{width:100%;padding:10px;border-radius:8px;border:1px solid #e6eef6}
+  textarea{min-height:90px}
+  .full{grid-column:1 / -1}
+  .row{display:flex;gap:10px}
+  .btn{background:var(--accent);color:#fff;padding:11px 14px;border:0;border-radius:10px;cursor:pointer;font-weight:700}
+  .ghost{background:transparent;color:var(--accent);border:1px solid rgba(14,165,164,0.12)}
+  .muted{color:var(--muted);font-size:13px}
+  .uploads{display:flex;gap:10px;flex-wrap:wrap}
+  .thumb{width:110px;height:72px;object-fit:cover;border-radius:6px;border:1px solid #e6eef6}
+  .note{font-size:13px;color:#556; margin-top:8px}
+  @media(max-width:880px){ .grid{grid-template-columns:1fr} }
+</style>
+</head>
+<body>
+  <div class="card">
+    <h1>Institute Registration</h1>
+    <div class="muted">Create institute account. We'll review & approve your listing.</div>
+
+    <form id="regForm" class="grid" enctype="multipart/form-data">
+      <!-- Basic -->
+      <div>
+        <label>Institute / School Name *</label>
+        <input name="name" required />
+      </div>
+      <div>
+        <label>Owner / Director Name *</label>
+        <input name="owner" required />
+      </div>
+
+      <div>
+        <label>Primary Contact *</label>
+        <input name="contact" placeholder="10-digit mobile" required />
+      </div>
+      <div>
+        <label>Alternate Number</label>
+        <input name="alt_contact" placeholder="Optional" />
+      </div>
+
+      <div>
+        <label>Email *</label>
+        <input name="email" type="email" required />
+      </div>
+      <div>
+        <label>Website</label>
+        <input name="website" placeholder="https://example.com" />
+      </div>
+
+      <div>
+        <label>Year of Establishment</label>
+        <input name="yoe" type="number" min="1800" max="2099" />
+      </div>
+      <div>
+        <label>Board</label>
+        <select name="board">
+          <option>CBSE</option><option>ICSE</option><option>State</option><option>College</option><option>Coaching</option>
+        </select>
+      </div>
+
+      <!-- Address & GPS -->
+      <div class="full">
+        <label>Full Address *</label>
+        <textarea name="address" required></textarea>
+      </div>
+      <div>
+        <label>State *</label>
+        <input name="state" required />
+      </div>
+      <div>
+        <label>District *</label>
+        <input name="district" required />
+      </div>
+      <div>
+        <label>PIN Code</label>
+        <input name="pin" />
+      </div>
+      <div>
+        <label>GPS Location</label>
+        <div class="row">
+          <input id="gpsInput" name="gps" readonly placeholder="Latitude, Longitude" />
+          <button type="button" class="ghost" id="gpsBtn">Use GPS</button>
+        </div>
+        <div class="note">Click "Use GPS" to auto-fill coordinates</div>
+      </div>
+
+      <!-- Courses & Facilities -->
+      <div>
+        <label>Class Range</label>
+        <input name="class_range" placeholder="e.g. 1-12, IIT, NEET" />
+      </div>
+      <div>
+        <label>Subjects (comma separated)</label>
+        <input name="subjects" placeholder="Math, Physics, Chemistry" />
+      </div>
+
+      <div class="full">
+        <label>Facilities (comma separated)</label>
+        <input name="facilities" placeholder="Library, Transport, Smart Classes" />
+      </div>
+
+      <!-- Fees -->
+      <div>
+        <label>Admission Fee (₹)</label>
+        <input name="admission_fee" type="number" />
+      </div>
+      <div>
+        <label>Monthly Fee (₹)</label>
+        <input name="monthly_fee" type="number" />
+      </div>
+
+      <!-- Uploads -->
+      <div>
+        <label>Logo (JPG/PNG)</label>
+        <input type="file" name="logo" accept="image/*" />
+      </div>
+      <div>
+        <label>Featured Photo</label>
+        <input type="file" name="featured" accept="image/*" />
+      </div>
+
+      <div class="full">
+        <label>Gallery Photos (multiple allowed)</label>
+        <input type="file" id="gallery" name="gallery" accept="image/*" multiple />
+        <div id="galleryPreview" class="uploads"></div>
+      </div>
+
+      <!-- Documents -->
+      <div>
+        <label>Institute Reg Certificate (PDF)</label>
+        <input type="file" name="reg_cert" accept="application/pdf,image/*" />
+      </div>
+      <div>
+        <label>Director Aadhar (image/pdf)</label>
+        <input type="file" name="dir_aadhar" accept="application/pdf,image/*" />
+      </div>
+
+      <!-- Account -->
+      <div>
+        <label>Password *</label>
+        <input name="password" type="password" required minlength="6" />
+      </div>
+      <div>
+        <label>Confirm Password *</label>
+        <input name="confirm_password" type="password" required minlength="6" />
+      </div>
+
+      <!-- Actions -->
+      <div class="full" style="display:flex;gap:12px;align-items:center">
+        <button class="btn" type="submit">Create Account & Request Approval</button>
+        <button type="button" class="ghost" id="saveDraft">Save Draft</button>
+        <div id="regStatus" class="muted" style="margin-left:auto"></div>
+      </div>
+    </form>
+  </div>
+
+<script>
+  // Preview gallery
+  document.getElementById('gallery').addEventListener('change', e=>{
+    const out = document.getElementById('galleryPreview'); out.innerHTML='';
+    Array.from(e.target.files).slice(0,20).forEach(f=>{
+      if(!f.type.startsWith('image/')) return;
+      const img = document.createElement('img'); img.className='thumb';
+      img.src = URL.createObjectURL(f); out.appendChild(img);
+    });
+  });
+
+  // GPS
+  document.getElementById('gpsBtn').addEventListener('click', ()=>{
+    const status = document.getElementById('regStatus');
+    status.textContent = 'Locating...';
+    if(!navigator.geolocation){ status.textContent = 'GPS not supported'; return; }
+    navigator.geolocation.getCurrentPosition(pos=>{
+      document.getElementById('gpsInput').value = pos.coords.latitude.toFixed(6)+', '+pos.coords.longitude.toFixed(6);
+      status.textContent = 'Location set';
+    }, err=> status.textContent = 'GPS permission denied');
+  });
+
+  // Submit handler — sends multipart form data to backend
+  document.getElementById('regForm').addEventListener('submit', async e=>{
+    e.preventDefault();
+    const form = e.target;
+    const fd = new FormData(form);
+
+    // client-side password match
+    if(fd.get('password') !== fd.get('confirm_password')){ alert('Passwords do not match'); return; }
+
+    document.getElementById('regStatus').textContent = 'Submitting...';
+    try{
+      const res = await fetch('/api/institute/register', { method:'POST', body: fd });
+      const data = await res.json();
+      if(!res.ok) throw new Error(data.message || 'Register failed');
+      document.getElementById('regStatus').textContent = 'Registered (pending approval)';
+      alert('Registered successfully — you can login after approval (demo).');
+      window.location.href = 'institute-login.html';
+    }catch(err){
+      document.getElementById('regStatus').textContent = err.message;
+    }
+  });
+
+  // Save draft (frontend)
+  document.getElementById('saveDraft').addEventListener('click', ()=>{
+    alert('Draft saved locally (demo). Implement server save to persist.');
+  });
+</script>
+</body>
+</html>

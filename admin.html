@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Admin Dashboard - TutorCall</title>
+
+<link rel="stylesheet"
+href="style.css">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial;
+}
+
+body{
+background:#f4f6fb;
+}
+
+.admin-header{
+
+background:#111827;
+color:white;
+padding:20px 40px;
+
+display:flex;
+justify-content:space-between;
+align-items:center;
+
+}
+
+.admin-header h1{
+font-size:28px;
+}
+
+.logout-btn{
+
+padding:10px 20px;
+border:none;
+border-radius:10px;
+background:#ef4444;
+color:white;
+cursor:pointer;
+
+}
+
+.dashboard{
+
+padding:40px;
+
+}
+
+.stats-grid{
+
+display:grid;
+grid-template-columns:
+repeat(auto-fit,minmax(220px,1fr));
+
+gap:25px;
+margin-bottom:40px;
+
+}
+
+.stat-card{
+
+background:white;
+padding:30px;
+border-radius:20px;
+box-shadow:
+0 5px 20px rgba(0,0,0,0.08);
+
+}
+
+.stat-card h2{
+font-size:40px;
+margin-bottom:10px;
+}
+
+.books-section h2{
+margin-bottom:20px;
+}
+
+.book-grid{
+
+display:grid;
+
+grid-template-columns:
+repeat(auto-fit,minmax(250px,1fr));
+
+gap:25px;
+
+}
+
+.book-card{
+
+background:white;
+padding:15px;
+border-radius:15px;
+box-shadow:
+0 5px 15px rgba(0,0,0,0.08);
+
+}
+
+.book-card img{
+
+width:100%;
+height:220px;
+object-fit:cover;
+border-radius:12px;
+
+}
+
+.book-card h3{
+margin:15px 0 10px;
+}
+
+.delete-btn{
+
+width:100%;
+padding:12px;
+border:none;
+border-radius:10px;
+background:#ef4444;
+color:white;
+cursor:pointer;
+margin-top:15px;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header class="admin-header">
+
+<h1>Admin Dashboard</h1>
+
+<button
+class="logout-btn"
+onclick="logout()">
+
+Logout
+
+</button>
+
+</header>
+
+<section class="dashboard">
+
+<div class="stats-grid">
+
+<div class="stat-card">
+
+<h2 id="totalBooks">
+0
+</h2>
+
+<p>Total Books</p>
+
+</div>
+
+<div class="stat-card">
+
+<h2 id="totalUsers">
+0
+</h2>
+
+<p>Total Users</p>
+
+</div>
+
+</div>
+
+<div class="books-section">
+
+<h2>All Uploaded Books</h2>
+
+<div
+class="book-grid"
+id="bookGrid">
+
+</div>
+
+</div>
+
+</section>
+
+<script>
+
+async function loadBooks(){
+
+const response =
+await fetch(
+"http://127.0.0.1:3000/api/books"
+);
+
+const books =
+await response.json();
+
+document
+.getElementById("totalBooks")
+.innerText =
+books.length;
+
+const bookGrid =
+document.getElementById(
+"bookGrid"
+);
+
+bookGrid.innerHTML = "";
+
+books.forEach(book=>{
+
+bookGrid.innerHTML += `
+
+<div class="book-card">
+
+<img src="${book.image}">
+
+<h3>
+${book.title}
+</h3>
+
+<p>
+₹${book.price}
+</p>
+
+<p>
+${book.city}
+</p>
+
+<button
+class="delete-btn"
+
+onclick="deleteBook(
+'${book._id}'
+)"
+
+>
+
+Delete Book
+
+</button>
+
+</div>
+
+`;
+
+});
+
+}
+
+async function loadUsers(){
+
+const response =
+await fetch(
+"http://127.0.0.1:3000/api/auth/users"
+);
+
+const users =
+await response.json();
+
+document
+.getElementById("totalUsers")
+.innerText =
+users.length;
+
+}
+
+async function deleteBook(id){
+
+const confirmDelete =
+confirm(
+"Delete this book?"
+);
+
+if(!confirmDelete){
+return;
+}
+
+await fetch(
+
+`http://127.0.0.1:3000/api/books/${id}`,
+
+{
+method:"DELETE"
+}
+
+);
+
+alert(
+"Book Deleted"
+);
+
+loadBooks();
+
+}
+
+function logout(){
+
+localStorage.clear();
+
+window.location.href =
+"login.html";
+
+}
+
+loadBooks();
+
+loadUsers();
+
+</script>
+
+</body>
+</html>
