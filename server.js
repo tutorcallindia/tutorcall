@@ -165,11 +165,7 @@ express.static("uploads")
 ================================ */
 
 app.get("/", (req, res) => {
-    console.log("__dirname =", __dirname);
-
-    res.send(
-        "__dirname = " + __dirname
-    );
+  res.sendFile(path.join(__dirname, "index.html"));
 });
 /* ===============================
           MONGODB
