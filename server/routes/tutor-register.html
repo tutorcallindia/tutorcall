@@ -237,25 +237,21 @@ border:3px solid #ffd6ea;
 
 }
 
+
+
 @media(max-width:700px){
 
 .box{
-
 padding:25px;
-
 }
 
 h2{
-<p class="subtext">
-
-Create your professional TutorCall profile
-
-</p>
 font-size:32px;
-
 }
 
 }
+
+
 /* FORM GRID */
 
 #tutorForm{
@@ -301,26 +297,72 @@ grid-column:span 1;
 <div class="box">
 
   <h2>Tutor Registration</h2>
+  <p class="subtext">
+Create your professional TutorCall profile
+</p>
 
   <div class="msg" id="msg"></div>
 
   <form id="tutorForm"
 class="form-grid">
 
-    <label>Full Name</label>
-    <input type="text" id="name" required>
+<div>
 
-    <label>Phone</label>
-    <input type="text" id="phone" required>
+<label>Full Name</label>
 
-    <label>Email</label>
-    <input type="email" id="email" required>
+<input
+type="text"
+id="name"
+required>
 
-    <label>Password</label>
-    <input type="password" id="password" required>
+</div>
 
-    <label>City</label>
-    <input type="text" id="city" required>
+<div>
+
+<label>Phone</label>
+
+<input
+type="tel"
+id="phone"
+maxlength="10"
+pattern="[0-9]{10}"
+inputmode="numeric"
+required>
+</div>
+
+<div>
+
+<label>Email</label>
+
+<input
+type="email"
+id="email"
+required>
+
+</div>
+
+<div>
+
+<label>Password</label>
+
+<input
+type="password"
+id="password"
+minlength="6"
+required>
+
+</div>
+   <div>
+
+<label>City</label>
+
+<input
+type="text"
+id="city"
+required>
+
+</div>
+<div>
     <label>Full Address</label>
 <input
   type="text"
@@ -328,6 +370,7 @@ class="form-grid">
   placeholder="Enter full address"
   required
 >
+</div>
 
 <div class="field-full">
 
@@ -345,13 +388,16 @@ onclick="getCurrentLocation()"
 <input type="hidden" id="latitude">
 <input type="hidden" id="longitude">
 
+<div>
     <label>Qualification</label>
-    <input type="text" id="qualification" required>
+    <input type="text" id="qualification" required>  </div>
 
+    <div>
     <label>Experience</label>
-    <input type="text" id="experience" required>
+    <input type="text" id="experience" required> </div>
 
-    <label>Classes You Teach</label>
+    <div>
+          <label>Classes You Teach</label>
     <select id="classes">
       <option value="">Select Class</option>
       <option>Class 1-5</option>
@@ -359,30 +405,53 @@ onclick="getCurrentLocation()"
       <option>Class 9-10</option>
       <option>Class 11-12</option>
       <option>NEET/JEE</option>
-    </select>
+    </select> </div>
 
-    <label>Subjects You Teach</label>
-    <input type="text" id="subjects" required>
+
+   <div> <label>Subjects You Teach</label>
+    <input type="text" id="subjects" required>  </div>
+
+    <div>
     <label>Fees (per month)</label>
-<input type="number" id="fees" placeholder="e.g., 500" required>
+<input
+type="number"
+id="fees"
+min="100"
+placeholder="e.g., 500"
+required>  </div>
+<div>
+
 <label>Profile Photo</label>
 
 <input
 type="file"
 id="photo"
-accept="image/*"
->
+accept="image/*">
+
+<img
+id="preview"
+class="photo-preview">
+
+</div>
 
 
+    <div>
 
-    <label>Teaching Mode</label>
-    <select id="mode">
-      <option value="">Select Mode</option>
-      <option>Home Tuition</option>
-      <option>Online Tuition</option>
-      <option>Both</option>
-    </select>
+<label>Teaching Mode</label>
 
+<select id="mode">
+
+<option value="">Select Mode</option>
+
+<option>Home Tuition</option>
+
+<option>Online Tuition</option>
+
+<option>Both</option>
+
+</select>
+
+</div>
    <div class="field-full">
 
 <button
@@ -395,9 +464,7 @@ Register Tutor
 </button>
 
 </div>
-<img
-id="preview"
-class="photo-preview">
+
 
   </form>
 
@@ -466,7 +533,7 @@ function getCurrentLocation() {
   );
 
 }
-<script>
+
 
 document
 .getElementById("photo")
@@ -511,7 +578,7 @@ reader.readAsDataURL(file);
 
 </script>
 
-</script>
+
 
 </body>
 </html>
