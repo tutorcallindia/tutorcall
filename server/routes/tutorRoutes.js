@@ -35,6 +35,158 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 const authTutor = require("../middleware/authTutor");
+
+const twilio = require("twilio");
+
+const client = twilio(
+
+process.env.TWILIO_ACCOUNT_SID,
+
+process.env.TWILIO_AUTH_TOKEN
+
+);
+
+// Memory OTP Storage
+
+const otpStore = {};
+
+/* =========================================
+            SEND OTP
+========================================= */
+
+router.post("/send-otp", async (req,res)=>{
+
+try{
+
+const { phone } = req.body;
+
+if(!phone){
+
+return res.json({
+
+success:false,
+
+message:"Phone Required"
+
+});
+
+}
+
+const otp =
+
+Math.floor(
+
+100000+
+
+Math.random()*900000
+
+).toString();
+
+otpStore[phone]={
+
+otp,
+
+expires:Date.now()+5*60*1000
+
+};
+
+await client.messages.create({
+
+body:`TutorCall OTP : ${otp}`,
+
+from:process.env.TWILIO_PHONE_NUMBER,
+
+to:"+91"+phone
+
+});
+
+res.json({
+
+success:true,
+
+message:"OTP Sent"
+
+});
+
+}
+
+catch(err){
+
+console.log(err);
+
+res.json({
+
+success:false,
+
+message:"Failed to Send OTP"
+
+});
+
+}
+
+});
+
+/* =========================================
+            VERIFY OTP
+========================================= */
+
+router.post("/verify-otp",(req,res)=>{
+
+const { phone, otp }=req.body;
+
+const data=
+
+otpStore[phone];
+
+if(!data){
+
+return res.json({
+
+success:false,
+
+message:"OTP Not Found"
+
+});
+
+}
+
+if(Date.now()>data.expires){
+
+delete otpStore[phone];
+
+return res.json({
+
+success:false,
+
+message:"OTP Expired"
+
+});
+
+}
+
+if(data.otp!=otp){
+
+return res.json({
+
+success:false,
+
+message:"Invalid OTP"
+
+});
+
+}
+
+delete otpStore[phone];
+
+res.json({
+
+success:true,
+
+message:"OTP Verified"
+
+});
+
+});
 /* =========================================
             REGISTER
 ========================================= */

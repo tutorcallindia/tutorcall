@@ -1,4 +1,13 @@
-require("dotenv").config();
+
+
+const path = require("path");
+
+require("dotenv").config({
+  path: path.join(__dirname, "server", ".env")
+});
+console.log("MONGO =", process.env.MONGO_URI ? "FOUND" : "NOT FOUND");
+console.log("TWILIO =", process.env.TWILIO_ACCOUNT_SID ? "FOUND" : "NOT FOUND");
+console.log("RAZORPAY =", process.env.RAZORPAY_KEY_ID ? "FOUND" : "NOT FOUND");
 console.log("TOP OF SERVER FILE");
 console.log("VERSION TEST 07 JUNE");
 console.log("VERSION TEST 31 MAY");
@@ -15,8 +24,6 @@ const mongoose =
 const cors =
   require("cors");
 
-const path =
-  require("path");
 
 const app =
   express();
