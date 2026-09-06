@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -12,12 +13,13 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
+      min-height: 100vh;
       margin: 0;
     }
 
     .login-box {
       width: 350px;
+      max-width: 90%;
       background: white;
       padding: 25px;
       border-radius: 10px;
@@ -31,6 +33,7 @@
     }
 
     input {
+      box-sizing: border-box;
       width: 100%;
       padding: 12px;
       margin: 8px 0;
@@ -40,6 +43,7 @@
     }
 
     button {
+      box-sizing: border-box;
       width: 100%;
       padding: 12px;
       background: #007bff;
@@ -48,147 +52,747 @@
       border-radius: 5px;
       font-size: 16px;
       margin-top: 10px;
+      cursor: pointer;
     }
 
-    #msg {
+    button:hover {
+      background: #0069d9;
+    }
+
+    .forgot-btn {
+      background: none;
+      color: #007bff;
+      border: none;
+      font-size: 14px;
+      margin-top: 12px;
+      padding: 5px;
+      cursor: pointer;
+    }
+
+    .forgot-btn:hover {
+      background: none;
+      color: #0056b3;
+    }
+
+    .back-btn {
+      background: #6c757d;
+    }
+
+    .back-btn:hover {
+      background: #545b62;
+    }
+
+    #msg,
+    #forgotMsg {
       margin-top: 10px;
       text-align: center;
       font-size: 14px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .step-title {
+      text-align: center;
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: #333;
+    }
+
+    .small-text {
+      text-align: center;
+      color: #666;
+      font-size: 13px;
+      margin-bottom: 10px;
     }
   </style>
 </head>
 
 <body>
 
-  <div class="login-box">
+  <!-- ================================
+          LOGIN BOX
+  ================================= -->
+
+  <div class="login-box" id="loginBox">
+
     <h2>Tutor Login</h2>
+
     <input
-id="phone"
-type="text"
-placeholder="Enter Phone Number"
->
-    <input id="password" type="password" placeholder="Enter Password" />
-    <script>
+      id="phone"
+      type="text"
+      placeholder="Enter Phone Number"
+      maxlength="10"
+    />
 
-document
-.getElementById("password")
-.addEventListener("keypress", function(e){
+    <input
+      id="password"
+      type="password"
+      placeholder="Enter Password"
+    />
 
-  if(e.key === "Enter"){
-    loginTutor();
-  }
-
-});
-
-</script>
     <button onclick="loginTutor()">Login</button>
 
+    <button
+      type="button"
+      class="forgot-btn"
+      onclick="showForgotPassword()"
+    >
+      Forgot Password?
+    </button>
+
     <p id="msg"></p>
+
   </div>
 
-  <!-- JS File -->
- <script>
-  /*
-if(localStorage.getItem("tutorToken")){
 
-  window.location.href =
-  "tutor-dashboard-v2.html";
+  <!-- ================================
+          FORGOT PASSWORD BOX
+  ================================= -->
 
-}
-*/
-  
-async function loginTutor() {
+  <div class="login-box hidden" id="forgotBox">
 
-  const phone =
-  document.getElementById("phone").value;
+    <h2>Forgot Password</h2>
 
-  const password =
-  document.getElementById("password").value;
 
-  const msg =
-  document.getElementById("msg");
+    <!-- STEP 1 -->
 
-  if (!phone || !password) {
+    <div id="step1">
 
-    msg.style.color = "red";
+      <div class="step-title">
+        Enter Phone Number
+      </div>
 
-    msg.innerText =
-    "Please fill all fields";
+      <div class="small-text">
+        We will send OTP to your WhatsApp number.
+      </div>
 
-    return;
-  }
+      <input
+        id="forgotPhone"
+        type="text"
+        placeholder="Enter Phone Number"
+        maxlength="10"
+      />
 
-  try {
+      <button onclick="sendForgotOTP()">
+        Send OTP
+      </button>
 
-    const res = await 
-      fetch(
-  "https://tutorcall.co.in/api/tutors/login",
-      {
+    </div>
 
-        method: "POST",
 
-        headers: {
-          "Content-Type":
-          "application/json"
-        },
+    <!-- STEP 2 -->
 
-        body: JSON.stringify({
-          phone,
-          password
-        })
+    <div id="step2" class="hidden">
+
+      <div class="step-title">
+        Verify OTP
+      </div>
+
+      <div class="small-text">
+        Enter the OTP sent to your WhatsApp.
+      </div>
+
+      <input
+        id="forgotOtp"
+        type="text"
+        placeholder="Enter 6 Digit OTP"
+        maxlength="6"
+      />
+
+      <button onclick="verifyForgotOTP()">
+        Verify OTP
+      </button>
+
+    </div>
+
+
+    <!-- STEP 3 -->
+
+    <div id="step3" class="hidden">
+
+      <div class="step-title">
+        Create New Password
+      </div>
+
+      <input
+        id="newPassword"
+        type="password"
+        placeholder="Enter New Password"
+      />
+
+      <input
+        id="confirmPassword"
+        type="password"
+        placeholder="Confirm New Password"
+      />
+
+      <button onclick="resetPassword()">
+        Reset Password
+      </button>
+
+    </div>
+
+
+    <button
+      type="button"
+      class="back-btn"
+      onclick="showLogin()"
+    >
+      Back to Login
+    </button>
+
+    <p id="forgotMsg"></p>
+
+  </div>
+
+
+  <!-- ================================
+              JAVASCRIPT
+  ================================= -->
+
+  <script>
+
+    const API_URL =
+  "http://localhost:3000/api/tutors";
+
+
+    /* =================================
+              LOGIN
+    ================================= */
+
+    async function loginTutor() {
+
+      const phone =
+        document.getElementById("phone").value.trim();
+
+      const password =
+        document.getElementById("password").value;
+
+      const msg =
+        document.getElementById("msg");
+
+      msg.innerText = "";
+
+      if (!phone || !password) {
+
+        msg.style.color = "red";
+
+        msg.innerText =
+          "Please fill all fields";
+
+        return;
+      }
+
+      try {
+
+        const res = await fetch(
+          API_URL + "/login",
+          {
+            method: "POST",
+
+            headers: {
+              "Content-Type":
+                "application/json"
+            },
+
+            body: JSON.stringify({
+              phone,
+              password
+            })
+          }
+        );
+
+        const data =
+          await res.json();
+
+        console.log(data);
+
+        if (data.success) {
+
+          msg.style.color = "green";
+
+          msg.innerText =
+            "Login Successful";
+
+          localStorage.setItem(
+            "tutorToken",
+            data.token
+          );
+
+          localStorage.setItem(
+            "tutorId",
+            data.tutor._id
+          );
+
+          localStorage.setItem(
+            "tutorData",
+            JSON.stringify(data.tutor)
+          );
+
+          setTimeout(() => {
+
+            window.location.href =
+              "/routes/tutor-dashboard-v2.html";
+
+          }, 700);
+
+        } else {
+
+          msg.style.color = "red";
+
+          msg.innerText =
+            data.message;
+
+        }
+
+      } catch (error) {
+
+        console.error(error);
+
+        msg.style.color = "red";
+
+        msg.innerText =
+          "Server Error";
 
       }
-    );
 
-    const data =
-    await res.json();
-
-    console.log(data);
-
-    if (data.success) {
-
-      msg.style.color = "green";
-
-      msg.innerText =
-      "Login Successful";
-
-      localStorage.setItem(
-        "tutorToken",
-        data.token
-      );
-localStorage.setItem(
-  "tutorId",
-  data.tutor._id
-);
-     localStorage.setItem(
-    "tutorData",
-    JSON.stringify(data.tutor)
-);
-    window.location.href =
-"/routes/tutor-dashboard-v2.html";
-
-    } else {
-
-      msg.style.color = "red";
-
-      msg.innerText =
-      data.message;
     }
 
-  } catch (error) {
 
-    console.log(error);
+    /* =================================
+          SHOW FORGOT PASSWORD
+    ================================= */
 
-    msg.style.color = "red";
+    function showForgotPassword() {
 
-    msg.innerText =
-    "Server Error";
-  }
+      document
+        .getElementById("loginBox")
+        .classList.add("hidden");
 
-}
+      document
+        .getElementById("forgotBox")
+        .classList.remove("hidden");
 
-</script>
+      document
+        .getElementById("forgotMsg")
+        .innerText = "";
 
+      document
+        .getElementById("step1")
+        .classList.remove("hidden");
+
+      document
+        .getElementById("step2")
+        .classList.add("hidden");
+
+      document
+        .getElementById("step3")
+        .classList.add("hidden");
+
+    }
+
+
+    /* =================================
+              BACK TO LOGIN
+    ================================= */
+
+    function showLogin() {
+
+      document
+        .getElementById("forgotBox")
+        .classList.add("hidden");
+
+      document
+        .getElementById("loginBox")
+        .classList.remove("hidden");
+
+      document
+        .getElementById("forgotMsg")
+        .innerText = "";
+
+    }
+
+
+    /* =================================
+          STEP 1 - SEND OTP
+    ================================= */
+
+    async function sendForgotOTP() {
+
+      const phone =
+        document
+          .getElementById("forgotPhone")
+          .value
+          .trim();
+
+      const msg =
+        document.getElementById("forgotMsg");
+
+      msg.innerText = "";
+
+      if (!phone) {
+
+        msg.style.color = "red";
+
+        msg.innerText =
+          "Please enter phone number";
+
+        return;
+      }
+
+      if (!/^\d{10}$/.test(phone)) {
+
+        msg.style.color = "red";
+
+        msg.innerText =
+          "Enter valid 10 digit phone number";
+
+        return;
+      }
+
+      msg.style.color = "#333";
+
+      msg.innerText =
+        "Sending OTP...";
+
+      try {
+
+        const res = await fetch(
+          API_URL +
+          "/forgot-password/send-otp",
+          {
+
+            method: "POST",
+
+            headers: {
+              "Content-Type":
+                "application/json"
+            },
+
+            body: JSON.stringify({
+              phone
+            })
+
+          }
+        );
+
+        const data =
+          await res.json();
+
+        console.log(data);
+
+        if (data.success) {
+
+          msg.style.color = "green";
+
+          msg.innerText =
+            "OTP sent successfully";
+
+          document
+            .getElementById("step1")
+            .classList.add("hidden");
+
+          document
+            .getElementById("step2")
+            .classList.remove("hidden");
+
+        } else {
+
+          msg.style.color = "red";
+
+          msg.innerText =
+            data.message;
+
+        }
+
+      } catch (error) {
+
+        console.error(error);
+
+        msg.style.color = "red";
+
+        msg.innerText =
+          "Server Error";
+
+      }
+
+    }
+
+
+    /* =================================
+          STEP 2 - VERIFY OTP
+    ================================= */
+
+    async function verifyForgotOTP() {
+
+      const phone =
+        document
+          .getElementById("forgotPhone")
+          .value
+          .trim();
+
+      const otp =
+        document
+          .getElementById("forgotOtp")
+          .value
+          .trim();
+
+      const msg =
+        document.getElementById("forgotMsg");
+
+      if (!otp) {
+
+        msg.style.color = "red";
+
+        msg.innerText =
+          "Please enter OTP";
+
+        return;
+      }
+
+      if (!/^\d{6}$/.test(otp)) {
+
+        msg.style.color = "red";
+
+        msg.innerText =
+          "Enter valid 6 digit OTP";
+
+        return;
+      }
+
+      msg.style.color = "#333";
+
+      msg.innerText =
+        "Verifying OTP...";
+
+      try {
+
+        const res = await fetch(
+          API_URL +
+          "/forgot-password/verify-otp",
+          {
+
+            method: "POST",
+
+            headers: {
+              "Content-Type":
+                "application/json"
+            },
+
+            body: JSON.stringify({
+              phone,
+              otp
+            })
+
+          }
+        );
+
+        const data =
+          await res.json();
+
+        console.log(data);
+
+        if (data.success) {
+
+          msg.style.color = "green";
+
+          msg.innerText =
+            "OTP verified successfully";
+
+          document
+            .getElementById("step2")
+            .classList.add("hidden");
+
+          document
+            .getElementById("step3")
+            .classList.remove("hidden");
+
+        } else {
+
+          msg.style.color = "red";
+
+          msg.innerText =
+            data.message;
+
+        }
+
+      } catch (error) {
+
+        console.error(error);
+
+        msg.style.color = "red";
+
+        msg.innerText =
+          "Server Error";
+
+      }
+
+    }
+
+
+    /* =================================
+          STEP 3 - RESET PASSWORD
+    ================================= */
+
+    async function resetPassword() {
+
+      const phone =
+        document
+          .getElementById("forgotPhone")
+          .value
+          .trim();
+
+      const newPassword =
+        document
+          .getElementById("newPassword")
+          .value;
+
+      const confirmPassword =
+        document
+          .getElementById("confirmPassword")
+          .value;
+
+      const msg =
+        document.getElementById("forgotMsg");
+
+
+      if (!newPassword || !confirmPassword) {
+
+        msg.style.color = "red";
+
+        msg.innerText =
+          "Please fill both password fields";
+
+        return;
+      }
+
+
+      if (newPassword.length < 6) {
+
+        msg.style.color = "red";
+
+        msg.innerText =
+          "Password must be at least 6 characters";
+
+        return;
+      }
+
+
+      if (newPassword !== confirmPassword) {
+
+        msg.style.color = "red";
+
+        msg.innerText =
+          "Passwords do not match";
+
+        return;
+      }
+
+
+      msg.style.color = "#333";
+
+      msg.innerText =
+        "Resetting password...";
+
+
+      try {
+
+        const res = await fetch(
+          API_URL +
+          "/forgot-password/reset",
+          {
+
+            method: "POST",
+
+            headers: {
+              "Content-Type":
+                "application/json"
+            },
+
+            body: JSON.stringify({
+
+              phone,
+
+              newPassword
+
+            })
+
+          }
+        );
+
+        const data =
+          await res.json();
+
+        console.log(data);
+
+
+        if (data.success) {
+
+          msg.style.color = "green";
+
+          msg.innerText =
+            "Password reset successful!";
+
+          setTimeout(() => {
+
+            showLogin();
+
+            document
+              .getElementById("phone")
+              .value = phone;
+
+            document
+              .getElementById("password")
+              .value = "";
+
+          }, 1500);
+
+        } else {
+
+          msg.style.color = "red";
+
+          msg.innerText =
+            data.message;
+
+        }
+
+      } catch (error) {
+
+        console.error(error);
+
+        msg.style.color = "red";
+
+        msg.innerText =
+          "Server Error";
+
+      }
+
+    }
+
+
+    /* =================================
+          ENTER KEY - LOGIN
+    ================================= */
+
+    document
+      .getElementById("password")
+      .addEventListener(
+        "keypress",
+        function (e) {
+
+          if (e.key === "Enter") {
+
+            loginTutor();
+
+          }
+
+        }
+      );
+
+  </script>
 
 </body>
 </html>

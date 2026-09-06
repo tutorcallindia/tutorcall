@@ -609,6 +609,118 @@ router.get("/:id", async (req, res) => {
 
 });
 
+// ===============================
+// SEND OTP
+// ===============================
 
+router.post("/send-otp", async (req, res) => {
+
+    try {
+
+        const { phone } = req.body;
+
+        if (!phone) {
+            return res.json({
+                success: false,
+                message: "Phone number required"
+            });
+        }
+
+        const otp = Math.floor(
+            100000 + Math.random() * 900000
+        ).toString();
+
+        otpStore[phone] = {
+            otp,
+            expires: Date.now() + 5 * 60 * 1000
+        };
+
+        await twilioClient.messages.create({
+            body: `TutorCall OTP is ${otp}. Valid for 5 minutes.`,
+            from: process.env.TWILIO_PHONE_NUMBER,
+            to: `+91${phone}`
+        });
+
+        res.json({
+            success: true,
+            message: "OTP Sent"
+        });
+
+    } catch (err) {
+
+        console.log(err);
+
+        res.status(500).json({
+            success: false,
+            message: "Failed to send OTP"
+        });
+
+    }
+
+});
+
+
+// ===============================
+// VERIFY OTP
+// ===============================
+
+router.post("/verify-otp", async (req, res) => {
+
+    try {
+
+        const { phone, otp } = req.body;
+
+        const saved = otpStore[phone];
+
+        if (!saved) {
+
+            return res.json({
+                success: false,
+                message: "OTP not found"
+            });
+
+        }
+
+        if (Date.now() > saved.expires) {
+
+            delete otpStore[phone];
+
+            return res.json({
+                success: false,
+                message: "OTP Expired"
+            });
+
+        }
+
+        if (saved.otp !== otp) {
+
+            return res.json({
+                success: false,
+                message: "Invalid OTP"
+            });
+
+        }
+
+        delete otpStore[phone];
+
+        res.json({
+            success: true,
+            message: "OTP Verified"
+        });
+
+    }
+
+    catch(err){
+
+        console.log(err);
+
+        res.status(500).json({
+            success:false,
+            message:"Server Error"
+        });
+
+    }
+
+});
 
 module.exports = router;

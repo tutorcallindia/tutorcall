@@ -1,195 +1,298 @@
-document
-.getElementById("tutorForm")
+console.log("Tutor JS Loaded");
 
-.addEventListener(
+let otpVerified = false;
 
-"submit",
+// SEND OTP
+document.getElementById("sendOtpBtn").addEventListener("click", async () => {
 
-async (e) => {
+    const phone = document.getElementById("otpPhone").value.trim();
 
-e.preventDefault();
+    if (phone.length !== 10) {
+        alert("Enter valid mobile number");
+        return;
+    }
 
-const msg =
-document.getElementById("msg");
+    try {
 
-msg.style.color = "blue";
+        const res = await fetch("/api/tutors/send-otp", {
 
-msg.innerHTML = "Registering...";
+            method: "POST",
 
-/* PHOTO */
+            headers: {
+                "Content-Type": "application/json"
+            },
 
-let photoBase64 = "";
+            body: JSON.stringify({ phone })
 
-const photoInput =
-document.getElementById("photo");
+        });
 
-if (
-photoInput.files.length > 0
-) {
+        const data = await res.json();
 
-const file =
-photoInput.files[0];
+        alert(data.message);
 
-const reader =
-new FileReader();
+    } catch (err) {
 
-reader.readAsDataURL(file);
+        console.log(err);
 
-photoBase64 =
-await new Promise((resolve)=>{
+        alert("Failed to send OTP");
 
-reader.onload = ()=>{
-
-resolve(reader.result);
-
-};
+    }
 
 });
 
-}
 
-/* DATA */
+// VERIFY OTP
+document.getElementById("verifyOtpBtn").addEventListener("click", async () => {
 
-const tutorData = {
+    const phone = document.getElementById("otpPhone").value.trim();
 
-name:
-document.getElementById("name").value,
+    const otp = document.getElementById("otpCode").value.trim();
 
-phone:
-document.getElementById("phone").value,
+    try {
 
-email:
-document.getElementById("email").value,
+        const res = await fetch("/api/tutors/verify-otp", {
 
-password:
-document.getElementById("password").value,
+            method: "POST",
 
-city:
-document.getElementById("city").value,
+            headers: {
+                "Content-Type": "application/json"
+            },
 
-address:
-document.getElementById("address").value,
+            body: JSON.stringify({
+                phone,
+                otp
+            })
 
-latitude:
-document.getElementById("latitude").value,
+        });
 
-longitude:
-document.getElementById("longitude").value,
+        const data = await res.json();
 
-qualification:
-document.getElementById("qualification").value,
+        if (data.success) {
 
-experience:
-document.getElementById("experience").value,
+            otpVerified = true;
 
-classes:
-document.getElementById("classes").value,
+            document.getElementById("otpSection").style.display = "none";
 
-subjects:
-document.getElementById("subjects").value,
+            document.getElementById("tutorForm").style.display = "grid";
 
-fees:
-document.getElementById("fees").value,
+            document.getElementById("phone").value = phone;
 
-mode:
-document.getElementById("mode").value,
+            document.getElementById("phone").readOnly = true;
 
-photo:
-photoBase64
+            alert("OTP Verified Successfully");
 
-};
+        } else {
 
-try {
+            alert(data.message);
 
-const response =
-await fetch(
+        }
 
-https://tutorcall.co.in/api/routes/tutors/register",
+    } catch (err) {
 
-{
+        console.log(err);
 
-method: "POST",
+        alert("Verification Failed");
 
-headers: {
+    }
 
-"Content-Type":
-"application/json"
-
-},
-
-body:
-JSON.stringify(tutorData)
-
-}
-
-);
-
-const data =
-await response.json();
-
-console.log(data);
-
-/* SUCCESS */
-
-if (data.success) {
-
-msg.style.color =
-"green";
-
-msg.innerHTML =
-"Tutor Registered Successfully ✅";
-
-alert(
-"Tutor Registered Successfully"
-);
+});
 
 document
-.getElementById("tutorForm")
-.reset();
+    .getElementById("tutorForm")
 
-setTimeout(()=>{
+    .addEventListener(
 
-window.location.href =
-"tutor-login.html";
+        "submit",
 
-},1000);
+        async (e) => {
 
-}
+            e.preventDefault();
 
-/* FAILED */
+            if (!otpVerified) {
 
-else {
+                alert("Please verify your mobile number first.");
 
-msg.style.color =
-"red";
+                return;
 
-msg.innerHTML =
-data.message;
+            }
 
-alert(data.message);
+            const msg =
+                document.getElementById("msg");
 
-}
+            msg.style.color = "blue";
 
-}
+            msg.innerHTML = "Registering...";
 
-/* ERROR */
+            /* PHOTO */
 
-catch (error) {
+            let photoBase64 = "";
 
-console.log(error);
+            const photoInput =
+                document.getElementById("photo");
 
-msg.style.color =
-"red";
+            if (
+                photoInput.files.length > 0
+            ) {
 
-msg.innerHTML =
-"Server Error";
+                const file =
+                    photoInput.files[0];
 
-alert(
-"Server Error"
-);
+                const reader =
+                    new FileReader();
 
-}
+                reader.readAsDataURL(file);
 
-}
+                photoBase64 = await new Promise((resolve, reject) => {
 
-);
+                    reader.onload = () => resolve(reader.result);
+
+                    reader.onerror = reject;
+
+                });
+            }
+
+            /* DATA */
+
+            const tutorData = {
+
+                name:
+                    document.getElementById("name").value,
+
+                phone:
+                    document.getElementById("phone").value,
+
+                email:
+                    document.getElementById("email").value,
+
+                password:
+                    document.getElementById("password").value,
+
+                city:
+                    document.getElementById("city").value,
+
+                address:
+                    document.getElementById("address").value,
+
+                latitude:
+                    document.getElementById("latitude").value,
+
+                longitude:
+                    document.getElementById("longitude").value,
+
+                qualification:
+                    document.getElementById("qualification").value,
+
+                experience:
+                    document.getElementById("experience").value,
+
+                classes:
+                    document.getElementById("classes").value,
+
+                subjects:
+                    document.getElementById("subjects").value,
+
+                fees:
+                    document.getElementById("fees").value,
+
+                mode:
+                    document.getElementById("mode").value,
+
+                photo:
+                    photoBase64
+
+            };
+
+            try {
+
+                const response =
+                    await fetch(
+
+                        "http://localhost:3000/api/tutors/register",
+
+                        {
+
+                            method: "POST",
+
+                            headers: {
+
+                                "Content-Type":
+                                    "application/json"
+
+                            },
+
+                            body:
+                                JSON.stringify(tutorData)
+
+                        }
+
+                    );
+
+                const data =
+                    await response.json();
+
+                console.log(data);
+
+                /* SUCCESS */
+
+                if (data.success) {
+
+                    msg.style.color =
+                        "green";
+
+                    msg.innerHTML =
+                        "Tutor Registered Successfully ✅";
+
+                    alert(
+                        "Tutor Registered Successfully"
+                    );
+
+                    document
+                        .getElementById("tutorForm")
+                        .reset();
+
+                    setTimeout(() => {
+
+                        window.location.href =
+                            "tutor-login.html";
+
+                    }, 1000);
+
+                }
+
+                /* FAILED */
+
+                else {
+
+                    msg.style.color =
+                        "red";
+
+                    msg.innerHTML =
+                        data.message;
+
+                    alert(data.message);
+
+                }
+
+            }
+
+            /* ERROR */
+
+            catch (error) {
+
+                console.log(error);
+
+                msg.style.color =
+                    "red";
+
+                msg.innerHTML =
+                    "Server Error";
+
+                alert(
+                    "Server Error"
+                );
+
+            }
+
+        }
+
+    );

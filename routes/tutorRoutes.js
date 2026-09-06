@@ -1,3 +1,4 @@
+console.log("SEND OTP ROUTE FILE LOADED");
 console.log("TUTOR ROUTES FILE START 111");
 
 const express = require("express");
@@ -35,6 +36,443 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 const authTutor = require("../middleware/authTutor");
+
+const twilio = require("twilio");
+
+const client = twilio(
+
+process.env.TWILIO_ACCOUNT_SID,
+
+process.env.TWILIO_AUTH_TOKEN
+
+);
+
+// Memory OTP Storage
+
+const otpStore = {};
+
+/* =========================================
+            SEND OTP
+========================================= */
+
+router.post("/send-otp", async (req,res)=>{
+ console.log("==== SEND OTP HIT ====");
+    console.log(req.body);
+try{
+
+const { phone } = req.body;
+
+if(!phone){
+
+return res.json({
+
+success:false,
+
+message:"Phone Required"
+
+});
+
+}
+
+const otp =
+
+Math.floor(
+
+100000+
+
+Math.random()*900000
+
+).toString();
+
+otpStore[phone]={
+
+otp,
+
+expires:Date.now()+5*60*1000
+
+};
+
+console.log("FROM =", process.env.TWILIO_WHATSAPP_NUMBER);
+console.log("TO =", "whatsapp:+91" + phone);
+
+await client.messages.create({
+    body: `TutorCall OTP : ${otp}`,
+    from: process.env.TWILIO_WHATSAPP_NUMBER,
+    to: "whatsapp:+91" + phone
+});
+
+res.json({
+
+success:true,
+
+message:"OTP Sent"
+
+});
+
+}
+
+catch (err) {
+
+    console.error("TWILIO ERROR =>");
+    console.error(err);
+
+    return res.status(500).json({
+        success: false,
+        message: err.message
+    });
+
+}
+
+});
+
+/* =========================================
+            VERIFY OTP
+========================================= */
+
+router.post("/verify-otp",(req,res)=>{
+
+const { phone, otp }=req.body;
+
+const data=
+
+otpStore[phone];
+
+if(!data){
+
+return res.json({
+
+success:false,
+
+message:"OTP Not Found"
+
+});
+
+}
+
+if(Date.now()>data.expires){
+
+delete otpStore[phone];
+
+return res.json({
+
+success:false,
+
+message:"OTP Expired"
+
+});
+
+}
+
+if(data.otp!=otp){
+
+return res.json({
+
+success:false,
+
+message:"Invalid OTP"
+
+});
+
+}
+
+delete otpStore[phone];
+
+res.json({
+
+success:true,
+
+message:"OTP Verified"
+
+});
+
+});
+
+/* =========================================
+        FORGOT PASSWORD - SEND OTP
+========================================= */
+
+router.post("/forgot-password/send-otp", async (req, res) => {
+
+  try {
+
+    const { phone } = req.body;
+
+    if (!phone) {
+      return res.json({
+        success: false,
+        message: "Phone Required"
+      });
+    }
+
+    // Check tutor exists
+    const tutor = await Tutor.findOne({ phone });
+
+    if (!tutor) {
+      return res.json({
+        success: false,
+        message: "Tutor not found"
+      });
+    }
+
+    if (tutor.isBlocked) {
+      return res.json({
+        success: false,
+        message: "Account blocked by admin"
+      });
+    }
+
+    const otp =
+      Math.floor(
+        100000 + Math.random() * 900000
+      ).toString();
+
+    otpStore["forgot_" + phone] = {
+
+      otp: otp,
+
+      expires:
+        Date.now() + 5 * 60 * 1000,
+
+      verified: false
+
+    };
+
+    console.log("FORGOT PASSWORD OTP");
+    console.log("TO =", "whatsapp:+91" + phone);
+
+    await client.messages.create({
+
+      body: `TutorCall Password Reset OTP : ${otp}`,
+
+      from:
+        process.env.TWILIO_WHATSAPP_NUMBER,
+
+      to:
+        "whatsapp:+91" + phone
+
+    });
+
+    res.json({
+
+      success: true,
+      message: "OTP Sent"
+
+    });
+
+  } catch (err) {
+
+    console.error(
+      "FORGOT PASSWORD OTP ERROR =>",
+      err
+    );
+
+    res.status(500).json({
+
+      success: false,
+      message: err.message
+
+    });
+
+  }
+
+});
+
+
+/* =========================================
+        FORGOT PASSWORD - VERIFY OTP
+========================================= */
+
+router.post("/forgot-password/verify-otp", (req, res) => {
+
+  const { phone, otp } = req.body;
+
+  const key = "forgot_" + phone;
+
+  const data = otpStore[key];
+
+  if (!data) {
+
+    return res.json({
+
+      success: false,
+      message: "OTP Not Found"
+
+    });
+
+  }
+
+  if (Date.now() > data.expires) {
+
+    delete otpStore[key];
+
+    return res.json({
+
+      success: false,
+      message: "OTP Expired"
+
+    });
+
+  }
+
+  if (data.otp !== otp) {
+
+    return res.json({
+
+      success: false,
+      message: "Invalid OTP"
+
+    });
+
+  }
+
+  // OTP verified
+  data.verified = true;
+
+  // Keep verification for 10 minutes
+  data.expires =
+    Date.now() + 10 * 60 * 1000;
+
+  res.json({
+
+    success: true,
+    message: "OTP Verified"
+
+  });
+
+});
+
+
+/* =========================================
+        FORGOT PASSWORD - RESET
+========================================= */
+
+router.post("/forgot-password/reset", async (req, res) => {
+
+  try {
+
+    const {
+      phone,
+      newPassword
+    } = req.body;
+
+    if (!phone || !newPassword) {
+
+      return res.json({
+
+        success: false,
+        message:
+          "Phone & new password required"
+
+      });
+
+    }
+
+    if (newPassword.length < 6) {
+
+      return res.json({
+
+        success: false,
+        message:
+          "Password must be at least 6 characters"
+
+      });
+
+    }
+
+    const key = "forgot_" + phone;
+
+    const data = otpStore[key];
+
+    if (!data) {
+
+      return res.json({
+
+        success: false,
+        message:
+          "Please verify OTP first"
+
+      });
+
+    }
+
+    if (!data.verified) {
+
+      return res.json({
+
+        success: false,
+        message:
+          "Please verify OTP first"
+
+      });
+
+    }
+
+    if (Date.now() > data.expires) {
+
+      delete otpStore[key];
+
+      return res.json({
+
+        success: false,
+        message:
+          "Password reset session expired"
+
+      });
+
+    }
+
+    const tutor =
+      await Tutor.findOne({ phone });
+
+    if (!tutor) {
+
+      return res.json({
+
+        success: false,
+        message:
+          "Tutor not found"
+
+      });
+
+    }
+
+    // Hash new password
+    tutor.password =
+      await bcrypt.hash(
+        newPassword,
+        10
+      );
+
+    await tutor.save();
+
+    // Delete OTP/reset session
+    delete otpStore[key];
+
+    res.json({
+
+      success: true,
+      message:
+        "Password reset successful"
+
+    });
+
+  } catch (err) {
+
+    console.error(
+      "PASSWORD RESET ERROR =>",
+      err
+    );
+
+    res.status(500).json({
+
+      success: false,
+      message: err.message
+
+    });
+
+  }
+
+});
 /* =========================================
             REGISTER
 ========================================= */
@@ -50,6 +488,11 @@ router.post(
 
   async (req, res) => {
   console.log("BODY =", req.body);
+console.log({
+    name: req.body.name,
+    phone: req.body.phone,
+    email: req.body.email
+});
 console.log("FILES =", req.files);
 
   try {
@@ -168,10 +611,11 @@ longitude,
 ========================================= */
 
 router.post("/login", async (req, res) => {
-
+    console.log("LOGIN BODY =", req.body);
   try {
 
     const { phone, password } = req.body;
+  console.log("LOGIN BODY =", req.body);
 
     if (!phone || !password) {
 
@@ -186,6 +630,7 @@ router.post("/login", async (req, res) => {
 
     const tutor =
       await Tutor.findOne({ phone });
+console.log("FOUND TUTOR =", tutor);
 
     if (!tutor) {
 
@@ -208,12 +653,14 @@ router.post("/login", async (req, res) => {
       });
 
     }
+  console.log("DB PASSWORD =", tutor.password);
 
     const isMatch =
       await bcrypt.compare(
         password,
         tutor.password
       );
+ console.log("PASSWORD MATCH =", isMatch);
 
     if (!isMatch) {
 
@@ -264,6 +711,52 @@ router.post("/login", async (req, res) => {
 
 });
 
+
+router.post("/reset-password-temp", async (req, res) => {
+
+  try {
+
+    const { phone, newPassword } = req.body;
+
+    if (!phone || !newPassword) {
+      return res.json({
+        success: false,
+        message: "Phone and new password required"
+      });
+    }
+
+    const tutor = await Tutor.findOne({ phone });
+
+    if (!tutor) {
+      return res.json({
+        success: false,
+        message: "Tutor not found"
+      });
+    }
+
+    tutor.password = await bcrypt.hash(newPassword, 10);
+
+    await tutor.save();
+
+    console.log("PASSWORD RESET SUCCESS:", phone);
+
+    res.json({
+      success: true,
+      message: "Password reset successful"
+    });
+
+  } catch (err) {
+
+    console.log("RESET PASSWORD ERROR:", err);
+
+    res.status(500).json({
+      success: false,
+      message: err.message
+    });
+
+  }
+
+});
 /* =========================================
             TUTOR LIST + FILTER
 ========================================= */
@@ -456,7 +949,6 @@ router.get("/:id", async (req, res) => {
   }
 
 });
-
 
 
 module.exports = router;

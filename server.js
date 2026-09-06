@@ -54,6 +54,8 @@ console.log("AFTER EXPRESS");
 console.log("LOAD tutorRoutes");
 const tutorRoutes =
   require("./routes/tutorRoutes");
+  console.log("Tutor Routes File =", require.resolve("./routes/tutorRoutes"));
+console.log("Has send-otp route loaded");
   console.log("tutorRoutes loaded successfully");
 
 console.log("LOAD bookingRoutes");
@@ -122,6 +124,8 @@ console.log("IS ROUTER =", typeof tutorRoutes, tutorRoutes);
 app.get("/test123", (req,res)=>{
   res.send("TEST OK");
 });
+
+
 
 console.log("AFTER TEST ROUTE");
 app.use("/api/tutors", tutorRoutes);

@@ -288,6 +288,31 @@ grid-column:span 1;
 }
 
 }
+#otpSection{
+
+background:white;
+
+padding:30px;
+
+border-radius:20px;
+
+margin-bottom:30px;
+
+box-shadow:0 10px 30px rgba(0,0,0,.08);
+
+}
+
+#otpSection button{
+
+margin-top:15px;
+
+width:100%;
+
+background:linear-gradient(135deg,#ff4fa3,#7b5cff);
+
+color:white;
+
+}
 
 </style>
 </head>
@@ -303,8 +328,46 @@ Create your professional TutorCall profile
 
   <div class="msg" id="msg"></div>
 
-  <form id="tutorForm"
-class="form-grid">
+<div id="otpSection">
+
+    <label>Mobile Number</label>
+
+    <input
+        type="tel"
+        id="otpPhone"
+        maxlength="10"
+        placeholder="Enter Mobile Number">
+
+    <button
+        type="button"
+        id="sendOtpBtn">
+
+        Send OTP
+
+    </button>
+
+    <br><br>
+
+    <input
+        type="text"
+        id="otpCode"
+        maxlength="6"
+        placeholder="Enter OTP">
+
+    <button
+        type="button"
+        id="verifyOtpBtn">
+
+        Verify OTP
+
+    </button>
+
+</div>
+
+  <form
+id="tutorForm"
+class="form-grid"
+style="display:none;">
 
 <div>
 
