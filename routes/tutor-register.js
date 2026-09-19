@@ -13,21 +13,18 @@ const tutorForm = document.getElementById("tutorForm");
 const msg = document.getElementById("msg");
 
 
-// =====================================================
-// FIREBASE CONFIG
-// =====================================================
-// IMPORTANT:
-// Yahan EXACT wahi firebaseConfig use karo
-// jo working student-login.html / student-login.js me hai.
+ // ================================
+  // FIREBASE CONFIG
+  // ================================
 
-const firebaseConfig = {
-    apiKey: "PASTE_SAME_API_KEY_FROM_STUDENT_LOGIN",
+  const firebaseConfig = {
+    apiKey: "AIzaSyDhz8zisR0m01UuFcatuOoSuSWM7eHcyTg",
     authDomain: "tutorcall-8ffad.firebaseapp.com",
     projectId: "tutorcall-8ffad",
     storageBucket: "tutorcall-8ffad.firebasestorage.app",
-    messagingSenderId: "PASTE_SAME_MESSAGING_SENDER_ID",
-    appId: "PASTE_SAME_APP_ID_FROM_STUDENT_LOGIN"
-};
+    messagingSenderId: "1092526942662",
+    appId: "1:1092526942662:web:05a498f6a02d911ae9eac7"
+  };
 
 
 // Initialize Firebase only once
