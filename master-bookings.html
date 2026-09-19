@@ -1,0 +1,1356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>TutorCall - Master Booking Management</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+body{
+    background:#f4f7fb;
+    color:#1f2937;
+}
+
+/* =========================
+   SIDEBAR
+========================= */
+
+.sidebar{
+    position:fixed;
+    left:0;
+    top:0;
+    width:250px;
+    height:100vh;
+    background:#111827;
+    color:white;
+    padding:22px 15px;
+    overflow-y:auto;
+}
+
+.logo{
+    font-size:25px;
+    font-weight:bold;
+    text-align:center;
+    padding:10px 0 25px;
+}
+
+.logo span{
+    color:#38bdf8;
+}
+
+.menu-title{
+    font-size:11px;
+    color:#9ca3af;
+    margin:18px 10px 8px;
+    text-transform:uppercase;
+    letter-spacing:1px;
+}
+
+.menu a{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    text-decoration:none;
+    color:#d1d5db;
+    padding:12px 13px;
+    border-radius:8px;
+    margin-bottom:5px;
+    transition:.2s;
+    cursor:pointer;
+}
+
+.menu a:hover,
+.menu a.active{
+    background:#1e40af;
+    color:white;
+}
+
+/* =========================
+   MAIN
+========================= */
+
+.main{
+    margin-left:250px;
+    padding:25px;
+}
+
+/* =========================
+   HEADER
+========================= */
+
+.topbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:25px;
+}
+
+.heading h1{
+    font-size:28px;
+    margin-bottom:6px;
+}
+
+.heading p{
+    color:#6b7280;
+    font-size:14px;
+}
+
+.refresh-btn{
+    border:none;
+    background:#2563eb;
+    color:white;
+    padding:11px 18px;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.refresh-btn:hover{
+    background:#1d4ed8;
+}
+
+/* =========================
+   STATS
+========================= */
+
+.stats{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:16px;
+    margin-bottom:25px;
+}
+
+.stat-card{
+    background:white;
+    padding:20px;
+    border-radius:12px;
+    box-shadow:0 2px 8px rgba(0,0,0,.06);
+    border:1px solid #e5e7eb;
+}
+
+.stat-card .icon{
+    font-size:25px;
+    margin-bottom:10px;
+}
+
+.stat-card h3{
+    font-size:13px;
+    color:#6b7280;
+    margin-bottom:7px;
+}
+
+.stat-card .number{
+    font-size:27px;
+    font-weight:bold;
+}
+
+/* =========================
+   CONTROLS
+========================= */
+
+.controls{
+    background:white;
+    padding:18px;
+    border-radius:12px;
+    margin-bottom:20px;
+    box-shadow:0 2px 8px rgba(0,0,0,.05);
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
+}
+
+.search{
+    flex:1;
+    min-width:250px;
+}
+
+.search input,
+.controls select{
+    width:100%;
+    padding:11px 13px;
+    border:1px solid #d1d5db;
+    border-radius:8px;
+    outline:none;
+    font-size:14px;
+}
+
+.search input:focus,
+.controls select:focus{
+    border-color:#2563eb;
+}
+
+/* =========================
+   TABLE
+========================= */
+
+.table-box{
+    background:white;
+    border-radius:12px;
+    box-shadow:0 2px 8px rgba(0,0,0,.05);
+    overflow:hidden;
+}
+
+.table-header{
+    padding:18px 20px;
+    border-bottom:1px solid #e5e7eb;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.table-header h2{
+    font-size:18px;
+}
+
+.count-text{
+    font-size:13px;
+    color:#6b7280;
+}
+
+.table-wrapper{
+    overflow-x:auto;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    min-width:1050px;
+}
+
+th{
+    background:#f8fafc;
+    text-align:left;
+    padding:14px;
+    font-size:12px;
+    color:#6b7280;
+    text-transform:uppercase;
+    border-bottom:1px solid #e5e7eb;
+}
+
+td{
+    padding:15px 14px;
+    border-bottom:1px solid #f0f0f0;
+    font-size:13px;
+    vertical-align:middle;
+}
+
+tr:hover{
+    background:#fafcff;
+}
+
+/* =========================
+   STATUS
+========================= */
+
+.status{
+    display:inline-block;
+    padding:6px 10px;
+    border-radius:20px;
+    font-size:11px;
+    font-weight:bold;
+}
+
+.status.Pending{
+    background:#fef3c7;
+    color:#92400e;
+}
+
+.status.Accepted{
+    background:#dbeafe;
+    color:#1e40af;
+}
+
+.status.Completed{
+    background:#dcfce7;
+    color:#166534;
+}
+
+.status.Rejected{
+    background:#fee2e2;
+    color:#991b1b;
+}
+
+.status.Cancelled{
+    background:#f3f4f6;
+    color:#374151;
+}
+
+/* =========================
+   ACTION BUTTONS
+========================= */
+
+.actions{
+    display:flex;
+    gap:6px;
+    flex-wrap:wrap;
+}
+
+.action-btn{
+    border:none;
+    padding:7px 10px;
+    border-radius:6px;
+    cursor:pointer;
+    font-size:11px;
+    font-weight:bold;
+}
+
+.view-btn{
+    background:#e0e7ff;
+    color:#3730a3;
+}
+
+.accept-btn{
+    background:#dcfce7;
+    color:#166534;
+}
+
+.complete-btn{
+    background:#dbeafe;
+    color:#1e40af;
+}
+
+.action-btn:hover{
+    opacity:.8;
+}
+
+/* =========================
+   EMPTY / LOADING
+========================= */
+
+.message{
+    text-align:center;
+    padding:45px;
+    color:#6b7280;
+}
+
+.spinner{
+    width:28px;
+    height:28px;
+    border:3px solid #e5e7eb;
+    border-top:3px solid #2563eb;
+    border-radius:50%;
+    animation:spin 1s linear infinite;
+    margin:0 auto 12px;
+}
+
+@keyframes spin{
+    100%{
+        transform:rotate(360deg);
+    }
+}
+
+/* =========================
+   MODAL
+========================= */
+
+.modal{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.55);
+    z-index:1000;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+}
+
+.modal-box{
+    background:white;
+    width:100%;
+    max-width:600px;
+    max-height:90vh;
+    overflow-y:auto;
+    border-radius:14px;
+    padding:25px;
+}
+
+.modal-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:20px;
+}
+
+.modal-head h2{
+    font-size:21px;
+}
+
+.close{
+    border:none;
+    background:#f3f4f6;
+    width:34px;
+    height:34px;
+    border-radius:50%;
+    cursor:pointer;
+    font-size:18px;
+}
+
+.detail-row{
+    display:grid;
+    grid-template-columns:150px 1fr;
+    padding:12px 0;
+    border-bottom:1px solid #eee;
+}
+
+.detail-label{
+    color:#6b7280;
+    font-size:13px;
+}
+
+.detail-value{
+    font-weight:600;
+    word-break:break-word;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media(max-width:1100px){
+    .stats{
+        grid-template-columns:repeat(3,1fr);
+    }
+}
+
+@media(max-width:800px){
+    .sidebar{
+        width:70px;
+        padding:15px 8px;
+    }
+
+    .logo{
+        font-size:0;
+    }
+
+    .logo span{
+        font-size:22px;
+    }
+
+    .menu-title{
+        display:none;
+    }
+
+    .menu a{
+        justify-content:center;
+        font-size:0;
+    }
+
+    .menu a span{
+        font-size:20px;
+    }
+
+    .main{
+        margin-left:70px;
+        padding:15px;
+    }
+
+    .stats{
+        grid-template-columns:repeat(2,1fr);
+    }
+}
+
+@media(max-width:500px){
+    .stats{
+        grid-template-columns:1fr;
+    }
+
+    .topbar{
+        align-items:flex-start;
+        gap:10px;
+        flex-direction:column;
+    }
+
+    .heading h1{
+        font-size:23px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- =========================
+     SIDEBAR
+========================= -->
+
+<aside class="sidebar">
+
+    <div class="logo">
+        Tutor<span>Call</span>
+    </div>
+
+    <div class="menu-title">Management</div>
+
+    <div class="menu">
+
+        <a href="/routes/master-dashboard.html">
+            <span>📊</span>
+            Dashboard
+        </a>
+
+        <a href="/master-students.html">
+            <span>👨‍🎓</span>
+            Students
+        </a>
+
+        <a href="/master-tutors.html">
+            <span>👨‍🏫</span>
+            Tutors
+        </a>
+
+        <a href="#">
+            <span>🏫</span>
+            Institutes
+        </a>
+
+        <a class="active">
+            <span>📚</span>
+            Bookings
+        </a>
+
+        <a href="#">
+            <span>💳</span>
+            Payments
+        </a>
+
+        <a href="#">
+            <span>🧾</span>
+            Invoices
+        </a>
+
+        <a href="#">
+            <span>⭐</span>
+            Reviews
+        </a>
+
+        <a href="#">
+            <span>📖</span>
+            Study Material
+        </a>
+
+        <a href="#">
+            <span>🛒</span>
+            Marketplace
+        </a>
+
+        <a href="#">
+            <span>📈</span>
+            Analytics
+        </a>
+
+        <a href="#">
+            <span>🔔</span>
+            Notifications
+        </a>
+
+    </div>
+
+    <div class="menu-title">System</div>
+
+    <div class="menu">
+
+        <a href="#">
+            <span>⚙️</span>
+            Settings
+        </a>
+
+        <a href="#" onclick="logout()">
+            <span>🚪</span>
+            Logout
+        </a>
+
+    </div>
+
+</aside>
+
+
+<!-- =========================
+     MAIN
+========================= -->
+
+<main class="main">
+
+    <div class="topbar">
+
+        <div class="heading">
+            <h1>Booking Management</h1>
+            <p>Manage all TutorCall student-tutor bookings</p>
+        </div>
+
+        <button class="refresh-btn" onclick="loadBookings()">
+            🔄 Refresh
+        </button>
+
+    </div>
+
+
+    <!-- =========================
+         STATS
+    ========================= -->
+
+    <section class="stats">
+
+        <div class="stat-card">
+            <div class="icon">📚</div>
+            <h3>Total Bookings</h3>
+            <div class="number" id="totalBookings">0</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="icon">⏳</div>
+            <h3>Pending</h3>
+            <div class="number" id="pendingBookings">0</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="icon">✅</div>
+            <h3>Accepted</h3>
+            <div class="number" id="acceptedBookings">0</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="icon">🎓</div>
+            <h3>Completed</h3>
+            <div class="number" id="completedBookings">0</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="icon">💰</div>
+            <h3>Total Booking Value</h3>
+            <div class="number" id="totalAmount">₹0</div>
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         SEARCH / FILTER
+    ========================= -->
+
+    <section class="controls">
+
+        <div class="search">
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="Search student, tutor, phone, email..."
+                oninput="renderBookings()"
+            >
+        </div>
+
+        <div style="min-width:180px;">
+            <select id="statusFilter" onchange="renderBookings()">
+                <option value="All">All Status</option>
+                <option value="Pending">Pending</option>
+                <option value="Accepted">Accepted</option>
+                <option value="Completed">Completed</option>
+                <option value="Rejected">Rejected</option>
+                <option value="Cancelled">Cancelled</option>
+            </select>
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         BOOKING TABLE
+    ========================= -->
+
+    <section class="table-box">
+
+        <div class="table-header">
+
+            <h2>All Bookings</h2>
+
+            <div class="count-text" id="showingCount">
+                Showing 0 bookings
+            </div>
+
+        </div>
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>#</th>
+                        <th>Student</th>
+                        <th>Tutor</th>
+                        <th>Schedule</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Created</th>
+                        <th>Actions</th>
+                    </tr>
+
+                </thead>
+
+                <tbody id="bookingTable">
+
+                    <tr>
+                        <td colspan="8">
+                            <div class="message">
+                                <div class="spinner"></div>
+                                Loading bookings...
+                            </div>
+                        </td>
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<!-- =========================
+     DETAILS MODAL
+========================= -->
+
+<div class="modal" id="detailsModal">
+
+    <div class="modal-box">
+
+        <div class="modal-head">
+
+            <h2>Booking Details</h2>
+
+            <button class="close" onclick="closeModal()">
+                ×
+            </button>
+
+        </div>
+
+        <div id="bookingDetails"></div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+let allBookings = [];
+
+
+/* =====================================
+   LOAD BOOKINGS
+===================================== */
+
+async function loadBookings(){
+
+    const table = document.getElementById("bookingTable");
+
+    table.innerHTML = `
+        <tr>
+            <td colspan="8">
+                <div class="message">
+                    <div class="spinner"></div>
+                    Loading bookings...
+                </div>
+            </td>
+        </tr>
+    `;
+
+    try{
+
+        const response = await fetch("/api/booking/all");
+
+        if(!response.ok){
+            throw new Error("Server returned " + response.status);
+        }
+
+        const data = await response.json();
+
+        if(!data.success){
+            throw new Error(data.message || "Unable to load bookings");
+        }
+
+        allBookings = data.bookings || [];
+
+        updateStats();
+
+        renderBookings();
+
+    }catch(error){
+
+        console.error("Booking loading error:", error);
+
+        table.innerHTML = `
+            <tr>
+                <td colspan="8">
+                    <div class="message">
+                        ❌ Unable to load bookings
+                        <br><br>
+                        <small>${escapeHtml(error.message)}</small>
+                    </div>
+                </td>
+            </tr>
+        `;
+
+        document.getElementById("showingCount").innerText =
+            "Unable to load bookings";
+    }
+}
+
+
+/* =====================================
+   UPDATE STATS
+===================================== */
+
+function updateStats(){
+
+    const total = allBookings.length;
+
+    const pending = allBookings.filter(
+        b => normalizeStatus(b.status) === "Pending"
+    ).length;
+
+    const accepted = allBookings.filter(
+        b => normalizeStatus(b.status) === "Accepted"
+    ).length;
+
+    const completed = allBookings.filter(
+        b => normalizeStatus(b.status) === "Completed"
+    ).length;
+
+    const amount = allBookings.reduce(
+        (sum,b) => sum + (Number(b.amount) || 0),
+        0
+    );
+
+    document.getElementById("totalBookings").innerText = total;
+    document.getElementById("pendingBookings").innerText = pending;
+    document.getElementById("acceptedBookings").innerText = accepted;
+    document.getElementById("completedBookings").innerText = completed;
+
+    document.getElementById("totalAmount").innerText =
+        "₹" + amount.toLocaleString("en-IN");
+}
+
+
+/* =====================================
+   RENDER BOOKINGS
+===================================== */
+
+function renderBookings(){
+
+    const search =
+        document.getElementById("searchInput")
+        .value
+        .toLowerCase()
+        .trim();
+
+    const status =
+        document.getElementById("statusFilter").value;
+
+    let filtered = allBookings.filter(booking => {
+
+        const student =
+            getStudentName(booking).toLowerCase();
+
+        const tutor =
+            getTutorName(booking).toLowerCase();
+
+        const text = JSON.stringify(booking).toLowerCase();
+
+        const searchMatch =
+            !search ||
+            student.includes(search) ||
+            tutor.includes(search) ||
+            text.includes(search);
+
+        const statusMatch =
+            status === "All" ||
+            normalizeStatus(booking.status) === status;
+
+        return searchMatch && statusMatch;
+    });
+
+
+    const table =
+        document.getElementById("bookingTable");
+
+    document.getElementById("showingCount").innerText =
+        `Showing ${filtered.length} booking${filtered.length === 1 ? "" : "s"}`;
+
+
+    if(filtered.length === 0){
+
+        table.innerHTML = `
+            <tr>
+                <td colspan="8">
+                    <div class="message">
+                        📭 No bookings found
+                    </div>
+                </td>
+            </tr>
+        `;
+
+        return;
+    }
+
+
+    table.innerHTML = filtered.map((booking,index) => {
+
+        const statusValue =
+            normalizeStatus(booking.status);
+
+        const studentName =
+            getStudentName(booking);
+
+        const tutorName =
+            getTutorName(booking);
+
+        const schedule =
+            booking.schedule || "Not specified";
+
+        const amount =
+            Number(booking.amount || 0);
+
+        const created =
+            formatDate(booking.createdAt);
+
+
+        return `
+            <tr>
+
+                <td>
+                    ${index + 1}
+                </td>
+
+                <td>
+                    <strong>${escapeHtml(studentName)}</strong>
+                </td>
+
+                <td>
+                    <strong>${escapeHtml(tutorName)}</strong>
+                </td>
+
+                <td>
+                    ${escapeHtml(String(schedule))}
+                </td>
+
+                <td>
+                    <strong>₹${amount.toLocaleString("en-IN")}</strong>
+                </td>
+
+                <td>
+                    <span class="status ${statusValue}">
+                        ${escapeHtml(statusValue)}
+                    </span>
+                </td>
+
+                <td>
+                    ${created}
+                </td>
+
+                <td>
+
+                    <div class="actions">
+
+                        <button
+                            class="action-btn view-btn"
+                            onclick='viewBooking(${JSON.stringify(booking)})'
+                        >
+                            View
+                        </button>
+
+                        ${
+                            statusValue === "Pending"
+                            ?
+                            `
+                            <button
+                                class="action-btn accept-btn"
+                                onclick="acceptBooking('${booking._id}')"
+                            >
+                                Accept
+                            </button>
+                            `
+                            :
+                            ""
+                        }
+
+                        ${
+                            statusValue === "Accepted"
+                            ?
+                            `
+                            <button
+                                class="action-btn complete-btn"
+                                onclick="completeBooking('${booking._id}')"
+                            >
+                                Complete
+                            </button>
+                            `
+                            :
+                            ""
+                        }
+
+                    </div>
+
+                </td>
+
+            </tr>
+        `;
+
+    }).join("");
+
+}
+
+
+/* =====================================
+   ACCEPT BOOKING
+===================================== */
+
+async function acceptBooking(id){
+
+    if(!confirm("Accept this booking?")){
+        return;
+    }
+
+    try{
+
+        const response = await fetch(
+            `/api/booking/accept/${id}`,
+            {
+                method:"POST",
+                headers:{
+                    "Content-Type":"application/json"
+                }
+            }
+        );
+
+        const data = await response.json();
+
+        if(!data.success){
+
+            alert(
+                data.message ||
+                "Unable to accept booking"
+            );
+
+            return;
+        }
+
+        alert("Booking accepted successfully.");
+
+        await loadBookings();
+
+    }catch(error){
+
+        console.error(error);
+
+        alert("Server error while accepting booking.");
+    }
+}
+
+
+/* =====================================
+   COMPLETE BOOKING
+===================================== */
+
+async function completeBooking(id){
+
+    if(!confirm("Mark this booking as completed?")){
+        return;
+    }
+
+    try{
+
+        const response = await fetch(
+            `/api/booking/mark-complete/${id}`,
+            {
+                method:"POST",
+                headers:{
+                    "Content-Type":"application/json"
+                }
+            }
+        );
+
+        const data = await response.json();
+
+        if(!data.success){
+
+            alert(
+                data.message ||
+                "Unable to complete booking"
+            );
+
+            return;
+        }
+
+        alert("Booking marked as completed.");
+
+        await loadBookings();
+
+    }catch(error){
+
+        console.error(error);
+
+        alert("Server error while completing booking.");
+    }
+}
+
+
+/* =====================================
+   VIEW BOOKING
+===================================== */
+
+function viewBooking(booking){
+
+    const student =
+        getStudentName(booking);
+
+    const tutor =
+        getTutorName(booking);
+
+    const status =
+        normalizeStatus(booking.status);
+
+    const html = `
+
+        <div class="detail-row">
+            <div class="detail-label">Booking ID</div>
+            <div class="detail-value">
+                ${escapeHtml(String(booking._id || "-"))}
+            </div>
+        </div>
+
+        <div class="detail-row">
+            <div class="detail-label">Student</div>
+            <div class="detail-value">
+                ${escapeHtml(student)}
+            </div>
+        </div>
+
+        <div class="detail-row">
+            <div class="detail-label">Tutor</div>
+            <div class="detail-value">
+                ${escapeHtml(tutor)}
+            </div>
+        </div>
+
+        <div class="detail-row">
+            <div class="detail-label">Amount</div>
+            <div class="detail-value">
+                ₹${Number(booking.amount || 0).toLocaleString("en-IN")}
+            </div>
+        </div>
+
+        <div class="detail-row">
+            <div class="detail-label">Schedule</div>
+            <div class="detail-value">
+                ${escapeHtml(String(booking.schedule || "Not specified"))}
+            </div>
+        </div>
+
+        <div class="detail-row">
+            <div class="detail-label">Status</div>
+            <div class="detail-value">
+                <span class="status ${status}">
+                    ${escapeHtml(status)}
+                </span>
+            </div>
+        </div>
+
+        <div class="detail-row">
+            <div class="detail-label">Message</div>
+            <div class="detail-value">
+                ${escapeHtml(String(booking.message || "No message"))}
+            </div>
+        </div>
+
+        <div class="detail-row">
+            <div class="detail-label">Created</div>
+            <div class="detail-value">
+                ${formatDate(booking.createdAt)}
+            </div>
+        </div>
+
+    `;
+
+    document.getElementById("bookingDetails").innerHTML = html;
+
+    document.getElementById("detailsModal").style.display =
+        "flex";
+}
+
+
+/* =====================================
+   CLOSE MODAL
+===================================== */
+
+function closeModal(){
+
+    document.getElementById("detailsModal").style.display =
+        "none";
+}
+
+
+/* =====================================
+   HELPERS
+===================================== */
+
+function getStudentName(booking){
+
+    if(booking.studentId){
+
+        if(typeof booking.studentId === "object"){
+            return (
+                booking.studentId.name ||
+                booking.studentId.email ||
+                booking.studentId.phone ||
+                "Student"
+            );
+        }
+
+    }
+
+    return (
+        booking.studentName ||
+        booking.studentEmail ||
+        "Student"
+    );
+}
+
+
+function getTutorName(booking){
+
+    if(booking.tutorId){
+
+        if(typeof booking.tutorId === "object"){
+            return (
+                booking.tutorId.name ||
+                booking.tutorId.email ||
+                booking.tutorId.phone ||
+                "Tutor"
+            );
+        }
+
+    }
+
+    return (
+        booking.tutorName ||
+        booking.tutorEmail ||
+        "Tutor"
+    );
+}
+
+
+function normalizeStatus(status){
+
+    if(!status){
+        return "Pending";
+    }
+
+    const value =
+        String(status).trim();
+
+    const match = [
+        "Pending",
+        "Accepted",
+        "Completed",
+        "Rejected",
+        "Cancelled"
+    ].find(
+        item => item.toLowerCase() === value.toLowerCase()
+    );
+
+    return match || value;
+}
+
+
+function formatDate(date){
+
+    if(!date){
+        return "-";
+    }
+
+    const d = new Date(date);
+
+    if(isNaN(d.getTime())){
+        return "-";
+    }
+
+    return d.toLocaleString(
+        "en-IN",
+        {
+            day:"2-digit",
+            month:"short",
+            year:"numeric",
+            hour:"2-digit",
+            minute:"2-digit"
+        }
+    );
+}
+
+
+function escapeHtml(value){
+
+    return String(value ?? "")
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+}
+
+
+/* =====================================
+   LOGOUT
+===================================== */
+
+function logout(){
+
+    if(confirm("Are you sure you want to logout?")){
+
+        localStorage.removeItem("adminToken");
+        localStorage.removeItem("masterToken");
+        localStorage.removeItem("adminInfo");
+
+        window.location.href =
+            "/routes/master-login.html";
+    }
+}
+
+
+/* =====================================
+   MODAL OUTSIDE CLICK
+===================================== */
+
+window.addEventListener("click",function(event){
+
+    const modal =
+        document.getElementById("detailsModal");
+
+    if(event.target === modal){
+        closeModal();
+    }
+
+});
+
+
+/* =====================================
+   INITIAL LOAD
+===================================== */
+
+loadBookings();
+
+</script>
+
+</body>
+</html>

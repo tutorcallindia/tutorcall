@@ -444,7 +444,7 @@ View Profile
 
 <button
 class="btn book"
-onclick="bookTutor('${t._id}')">
+onclick="bookTutor('${t._id}', ${Number(t.fees) || 0})">
 
 Book Tutor
 
@@ -473,7 +473,7 @@ function viewProfile(id){
 alert("Tutor profile page coming soon.");
 
 }
-async function bookTutor(tutorId){
+async function bookTutor(tutorId, amount){
 
 const token = localStorage.getItem("studentToken");
 
@@ -497,7 +497,7 @@ const message = prompt(
 "Any message for tutor?"
 ) || "";
 
-const amount = 0;
+
 
 try{
 

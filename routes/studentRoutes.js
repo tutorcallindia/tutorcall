@@ -3,6 +3,7 @@ const router = express.Router();
 const Student = require("../models/student");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const { auth } = require("../server/firebaseAdmin");
 const authStudent = require("../middleware/authStudent");
 const Review = require("../models/review");
 const Booking = require("../models/booking");
@@ -112,7 +113,97 @@ router.post("/login", async (req, res) => {
 
   }
 });
-// ------------------------------------------
+
+
+// --------------------------------------
+// ✔ STUDENT FIREBASE OTP LOGIN
+// --------------------------------------
+router.post("/firebase-login", async (req, res) => {
+  try {
+
+    const { firebaseToken } = req.body;
+
+    if (!firebaseToken) {
+      return res.json({
+        success: false,
+        message: "Firebase token required"
+      });
+    }
+
+    // Verify Firebase ID Token
+    const decodedToken =
+  await auth.verifyIdToken(firebaseToken);
+    const firebasePhone =
+      decodedToken.phone_number;
+
+    if (!firebasePhone) {
+      return res.json({
+        success: false,
+        message: "Phone number not found in Firebase account"
+      });
+    }
+
+    // Convert Firebase +91XXXXXXXXXX
+    // into normal 10 digit number
+    const phone =
+      firebasePhone.startsWith("+91")
+        ? firebasePhone.substring(3)
+        : firebasePhone;
+
+    // Find existing TutorCall student
+    const student =
+      await Student.findOne({
+        phone: {
+          $in: [
+            phone,
+            firebasePhone
+          ]
+        }
+      });
+
+    if (!student) {
+      return res.json({
+        success: false,
+        message: "Student not registered. Please register first."
+      });
+    }
+
+    // Create existing TutorCall JWT
+    const token =
+      jwt.sign(
+        { id: student._id },
+        JWT_SECRET,
+        { expiresIn: "7d" }
+      );
+
+    return res.json({
+      success: true,
+      message: "Firebase OTP login successful",
+
+      token,
+
+      student: {
+        _id: student._id,
+        name: student.name,
+        email: student.email,
+        phone: student.phone,
+        city: student.city
+      }
+    });
+
+  } catch (err) {
+
+    console.log("FIREBASE LOGIN ERROR");
+    console.error(err);
+
+    return res.status(401).json({
+      success: false,
+      message: "Firebase authentication failed"
+    });
+
+  }
+});
+// ---------------------------
 // ✔ ADD REVIEW (Student → Tutor) (protected)
 // ------------------------------------------
 router.post("/review", authStudent, async (req, res) => {

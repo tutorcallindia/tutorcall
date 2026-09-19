@@ -5,6 +5,12 @@ const router = express.Router();
 
 const Tutor = require("../models/tutor");
 const StudentRequest = require("../models/studentRequest");
+const Student = require("../models/student");
+const Booking = require("../models/booking");
+const Payment = require("../models/payment");
+const Review = require("../models/review");
+
+
 /* =========================================
               ADMIN LOGIN
 ========================================= */
@@ -338,6 +344,305 @@ console.log("ACTIVATE ROUTE HIT");
 
       success: false,
 
+      message: "Server Error"
+
+    });
+
+  }
+
+});
+/* =========================================
+        MASTER DASHBOARD DATA
+========================================= */
+
+router.get("/dashboard", async (req, res) => {
+
+  try {
+
+    // ================================
+    // BASIC COUNTS
+    // ================================
+
+    const totalStudents = await Student.countDocuments();
+
+    const totalTutors = await Tutor.countDocuments();
+
+    const totalBookings = await Booking.countDocuments();
+
+    const pendingBookings =
+      await Booking.countDocuments({
+        status: "Pending"
+      });
+
+    const acceptedBookings =
+      await Booking.countDocuments({
+        status: "Accepted"
+      });
+
+    const completedBookings =
+      await Booking.countDocuments({
+        status: "Completed"
+      });
+
+    const cancelledBookings =
+      await Booking.countDocuments({
+        status: "Cancelled"
+      });
+
+
+    // ================================
+    // TUTOR COUNTS
+    // ================================
+
+    const approvedTutors =
+      await Tutor.countDocuments({
+        isApproved: true
+      });
+
+    const blockedTutors =
+      await Tutor.countDocuments({
+        isBlocked: true
+      });
+
+    const subscribedTutors =
+      await Tutor.countDocuments({
+        isSubscribed: true
+      });
+
+
+    // ================================
+    // PAYMENT DATA
+    // ================================
+
+    const totalPayments =
+      await Payment.countDocuments({
+        status: "PAID"
+      });
+
+    const revenueResult =
+      await Payment.aggregate([
+
+        {
+          $match: {
+            status: "PAID"
+          }
+        },
+
+        {
+          $group: {
+            _id: null,
+            total: {
+              $sum: "$amount"
+            }
+          }
+        }
+
+      ]);
+
+    const totalRevenue =
+      revenueResult.length > 0
+        ? revenueResult[0].total
+        : 0;
+
+
+    // ================================
+    // REVIEWS
+    // ================================
+
+    const totalReviews =
+      await Review.countDocuments();
+
+
+    // ================================
+    // RECENT BOOKINGS
+    // ================================
+
+    const recentBookings =
+      await Booking.find()
+
+        .populate(
+          "studentId",
+          "name phone email"
+        )
+
+        .populate(
+          "tutorId",
+          "name phone email"
+        )
+
+        .sort({
+          createdAt: -1
+        })
+
+        .limit(10);
+
+
+    // ================================
+    // RESPONSE
+    // ================================
+
+    res.json({
+
+      success: true,
+
+      stats: {
+
+        totalStudents,
+
+        totalTutors,
+
+        totalBookings,
+
+        pendingBookings,
+
+        acceptedBookings,
+
+        completedBookings,
+
+        cancelledBookings,
+
+        approvedTutors,
+
+        blockedTutors,
+
+        subscribedTutors,
+
+        totalPayments,
+
+        totalRevenue,
+
+        totalReviews
+
+      },
+
+      recentBookings
+
+    });
+
+
+  } catch (err) {
+
+    console.error(
+      "MASTER DASHBOARD ERROR:",
+      err
+    );
+
+    res.status(500).json({
+
+      success: false,
+
+      message: "Failed to load dashboard data",
+
+      error: err.message
+
+    });
+
+  }
+
+});
+/* =========================================
+          MASTER - ALL TUTORS
+========================================= */
+
+router.get("/tutors", async (req, res) => {
+
+  try {
+
+    const tutors = await Tutor.find()
+      .select("-password")
+      .sort({ createdAt: -1 });
+
+    res.json({
+      success: true,
+      tutors
+    });
+
+  } catch (err) {
+
+    console.error("MASTER TUTORS ERROR:", err);
+
+    res.status(500).json({
+      success: false,
+      message: "Failed to load tutors"
+    });
+
+  }
+
+});
+
+/* =========================================
+          MASTER - ALL STUDENTS
+========================================= */
+
+router.get("/students", async (req, res) => {
+
+  try {
+
+    const students = await Student.find()
+      .select("-password")
+      .sort({ date: -1 });
+
+    res.json({
+      success: true,
+      students
+    });
+
+  } catch (err) {
+
+    console.error("MASTER STUDENTS ERROR:", err);
+
+    res.status(500).json({
+      success: false,
+      message: "Failed to load students"
+    });
+
+  }
+
+});
+
+
+/* =========================================
+       BLOCK / UNBLOCK STUDENT
+========================================= */
+
+router.put("/student/toggle-block/:id", async (req, res) => {
+
+  try {
+
+    const student = await Student.findById(req.params.id);
+
+    if (!student) {
+
+      return res.json({
+        success: false,
+        message: "Student not found"
+      });
+
+    }
+
+    student.isBlocked = !student.isBlocked;
+
+    await student.save();
+
+    res.json({
+
+      success: true,
+
+      message: student.isBlocked
+        ? "Student Blocked"
+        : "Student Unblocked",
+
+      isBlocked: student.isBlocked
+
+    });
+
+  } catch (err) {
+
+    console.error("STUDENT BLOCK ERROR:", err);
+
+    res.status(500).json({
+
+      success: false,
       message: "Server Error"
 
     });

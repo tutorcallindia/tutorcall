@@ -6,6 +6,7 @@ const router = express.Router();
 const Payment = require("../models/payment");
 const Booking = require("../models/booking");
 const Tutor = require("../models/tutor");
+const InvoiceRoutes = require("./invoiceRoutes");
 const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
   key_secret: process.env.RAZORPAY_KEY_SECRET
@@ -110,9 +111,9 @@ router.post("/verify", async (req, res) => {
 
 }
     // ✅ UPDATE BOOKING
-    const booking =
-await Booking.findById(bookingId);
-
+   const booking = await Booking.findById(bookingId)
+  .populate("studentId", "name phone email")
+  .populate("tutorId", "name phone email");
 if(!booking){
 
   return res.json({
@@ -135,6 +136,49 @@ booking.status = "Completed";
 
 await booking.save();
 
+
+/* ================= GENERATE INVOICE ================= */
+
+try {
+
+  await InvoiceRoutes.generateInvoice({
+
+    bookingId: booking._id,
+
+    studentName:
+      booking.studentId?.name || "Student",
+
+    studentPhone:
+      booking.studentId?.phone || "",
+
+    tutorName:
+      booking.tutorId?.name || "Tutor",
+
+    subject:
+      booking.subject || "Tuition",
+
+    mode:
+      booking.mode || "Online",
+
+    // Razorpay amount paise mein hota hai
+    amount:
+      Number(amount || 0) / 100
+
+  });
+
+  console.log(
+    "Invoice generated successfully for booking:",
+    booking._id
+  );
+
+} catch (invoiceError) {
+
+  console.error(
+    "Invoice generation failed:",
+    invoiceError
+  );
+
+}
     res.json({
       success: true,
       message: "Payment verified & booking completed"
@@ -146,4 +190,73 @@ await booking.save();
   }
 });
 
+
+// =========================================
+// MASTER - ALL PAYMENTS
+// =========================================
+
+router.get("/payments", async (req, res) => {
+
+  try {
+
+    const payments = await Payment.find()
+  .populate("tutorId", "name phone email")
+  .sort({ createdAt: -1 });
+
+    const totalPayments = await Payment.countDocuments({
+      status: "PAID"
+    });
+
+    const revenueResult = await Payment.aggregate([
+      {
+        $match: {
+          status: "PAID"
+        }
+      },
+      {
+        $group: {
+          _id: null,
+          total: {
+            $sum: "$amount"
+          }
+        }
+      }
+    ]);
+
+    const totalRevenue =
+      revenueResult.length > 0
+        ? revenueResult[0].total
+        : 0;
+
+    res.json({
+
+      success: true,
+
+      stats: {
+        totalPayments,
+        totalRevenue
+      },
+
+      payments
+
+    });
+
+  } catch (err) {
+
+    console.error(
+      "MASTER PAYMENTS ERROR:",
+      err
+    );
+
+    res.status(500).json({
+
+      success: false,
+
+      message: "Failed to load payments"
+
+    });
+
+  }
+
+});
 module.exports = router;

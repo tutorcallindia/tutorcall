@@ -33,6 +33,7 @@ const app =
 ================================ */
 
 app.use(cors());
+app.use(express.static(__dirname));
 
 app.use(express.json({ limit: "50mb" }));
 
@@ -141,7 +142,7 @@ if (bookingRoutes) {
 
 }
 app.use(
-  "/api/invoice",
+  "/api",
   invoiceRoutes
 );
 

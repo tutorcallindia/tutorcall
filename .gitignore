@@ -7,3 +7,5 @@ server/.env
 ai-realtime/.env
 
 *.log
+firebase-service-account.json
+.firebase/

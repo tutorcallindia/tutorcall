@@ -1,0 +1,1285 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>TutorCall | Payment Management</title>
+
+<style>
+
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+  font-family:Arial,Helvetica,sans-serif;
+}
+
+body{
+  background:#f4f6fa;
+  color:#111827;
+}
+
+/* ================================
+        LAYOUT
+================================ */
+
+.layout{
+  display:flex;
+  min-height:100vh;
+}
+
+/* ================================
+        SIDEBAR
+================================ */
+
+.sidebar{
+  width:250px;
+  background:#111827;
+  color:white;
+  min-height:100vh;
+  padding:28px 18px;
+  position:fixed;
+  left:0;
+  top:0;
+  bottom:0;
+  overflow-y:auto;
+}
+
+.logo{
+  font-size:30px;
+  font-weight:800;
+  text-align:center;
+  margin-bottom:35px;
+}
+
+.logo span{
+  color:#3b82f6;
+}
+
+.admin-box{
+  background:#1e293b;
+  border-radius:12px;
+  padding:15px;
+  margin-bottom:28px;
+}
+
+.admin-box strong{
+  display:block;
+  font-size:14px;
+  margin-bottom:5px;
+}
+
+.admin-box small{
+  color:#cbd5e1;
+}
+
+.menu-title{
+  color:#94a3b8;
+  font-size:12px;
+  margin:20px 14px 10px;
+  text-transform:uppercase;
+}
+
+.menu a{
+  display:block;
+  color:#e5e7eb;
+  text-decoration:none;
+  padding:13px 15px;
+  border-radius:10px;
+  margin-bottom:5px;
+  font-size:15px;
+}
+
+.menu a:hover{
+  background:#1e293b;
+}
+
+.menu a.active{
+  background:#2563eb;
+  color:white;
+}
+
+/* ================================
+        MAIN
+================================ */
+
+.main{
+  margin-left:250px;
+  width:calc(100% - 250px);
+  min-height:100vh;
+}
+
+/* ================================
+        HEADER
+================================ */
+
+.header{
+  background:white;
+  padding:25px 32px;
+  border-bottom:1px solid #e5e7eb;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.header h1{
+  font-size:28px;
+  margin-bottom:5px;
+}
+
+.header p{
+  color:#64748b;
+  font-size:14px;
+}
+
+.admin{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.admin-avatar{
+  width:42px;
+  height:42px;
+  background:#2563eb;
+  color:white;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:bold;
+}
+
+.admin-info strong{
+  display:block;
+  font-size:14px;
+}
+
+.admin-info small{
+  color:#64748b;
+}
+
+/* ================================
+        CONTENT
+================================ */
+
+.content{
+  padding:28px 32px;
+}
+
+/* ================================
+        STATS
+================================ */
+
+.stats{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:18px;
+  margin-bottom:25px;
+}
+
+.stat-card{
+  background:white;
+  border:1px solid #e2e8f0;
+  border-radius:15px;
+  padding:22px;
+  min-height:125px;
+}
+
+.stat-title{
+  color:#64748b;
+  font-size:14px;
+  margin-bottom:12px;
+}
+
+.stat-value{
+  font-size:30px;
+  font-weight:800;
+  color:#111827;
+}
+
+/* ================================
+        TOOLBAR
+================================ */
+
+.toolbar{
+  background:white;
+  border:1px solid #e2e8f0;
+  border-radius:15px;
+  padding:18px;
+  margin-bottom:20px;
+  display:flex;
+  gap:15px;
+  align-items:center;
+}
+
+.search{
+  flex:1;
+  padding:13px 15px;
+  border:1px solid #cbd5e1;
+  border-radius:9px;
+  font-size:14px;
+  outline:none;
+}
+
+.search:focus{
+  border-color:#2563eb;
+}
+
+.refresh{
+  border:none;
+  background:#2563eb;
+  color:white;
+  padding:13px 22px;
+  border-radius:9px;
+  cursor:pointer;
+  font-weight:600;
+}
+
+.refresh:hover{
+  background:#1d4ed8;
+}
+
+/* ================================
+        TABLE CARD
+================================ */
+
+.card{
+  background:white;
+  border:1px solid #e2e8f0;
+  border-radius:15px;
+  overflow:hidden;
+}
+
+.card-header{
+  padding:20px;
+  border-bottom:1px solid #e5e7eb;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.card-header h2{
+  font-size:18px;
+}
+
+.showing{
+  color:#64748b;
+  font-size:14px;
+}
+
+.table-wrap{
+  overflow-x:auto;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  min-width:1000px;
+}
+
+thead{
+  background:#f8fafc;
+}
+
+th{
+  text-align:left;
+  padding:15px;
+  font-size:12px;
+  color:#475569;
+  text-transform:uppercase;
+  border-bottom:1px solid #e2e8f0;
+}
+
+td{
+  padding:16px 15px;
+  border-bottom:1px solid #e5e7eb;
+  font-size:14px;
+  vertical-align:middle;
+}
+
+tbody tr:hover{
+  background:#f8fafc;
+}
+
+/* ================================
+        STATUS
+================================ */
+
+.status{
+  display:inline-block;
+  padding:6px 10px;
+  border-radius:20px;
+  font-size:12px;
+  font-weight:700;
+}
+
+.status-paid{
+  background:#dcfce7;
+  color:#15803d;
+}
+
+.status-failed{
+  background:#fee2e2;
+  color:#dc2626;
+}
+
+.status-pending{
+  background:#fef3c7;
+  color:#b45309;
+}
+
+.status-other{
+  background:#e2e8f0;
+  color:#475569;
+}
+
+/* ================================
+        IDs
+================================ */
+
+.id-text{
+  font-size:12px;
+  color:#475569;
+  max-width:180px;
+  word-break:break-all;
+}
+
+/* ================================
+        EMPTY / LOADING
+================================ */
+
+.message{
+  text-align:center;
+  padding:45px;
+  color:#64748b;
+}
+
+.error{
+  color:#dc2626;
+}
+
+/* ================================
+        MOBILE
+================================ */
+
+@media(max-width:900px){
+
+  .sidebar{
+    width:210px;
+  }
+
+  .main{
+    margin-left:210px;
+    width:calc(100% - 210px);
+  }
+
+  .stats{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+}
+
+@media(max-width:650px){
+
+  .sidebar{
+    position:relative;
+    width:100%;
+    min-height:auto;
+  }
+
+  .layout{
+    display:block;
+  }
+
+  .main{
+    margin-left:0;
+    width:100%;
+  }
+
+  .header{
+    padding:20px;
+  }
+
+  .content{
+    padding:20px;
+  }
+
+  .stats{
+    grid-template-columns:1fr;
+  }
+
+  .toolbar{
+    flex-direction:column;
+    align-items:stretch;
+  }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+<div class="layout">
+
+<!-- =================================
+            SIDEBAR
+================================= -->
+
+<aside class="sidebar">
+
+  <div class="logo">
+    Tutor<span>Call</span>
+  </div>
+
+  <div class="admin-box">
+    <strong>Super Administrator</strong>
+    <small>Full system access</small>
+  </div>
+
+  <div class="menu-title">Main</div>
+
+  <div class="menu">
+
+    <a href="/master-dashboard.html">
+      🏠 Dashboard
+    </a>
+
+    <a href="/master-students.html">
+      👨‍🎓 Students
+    </a>
+
+    <a href="/master-tutors.html">
+      🧑‍🏫 Tutors
+    </a>
+
+    <a href="#">
+      🏫 Institutes
+    </a>
+
+    <a href="/master-bookings.html">
+      📅 Bookings
+    </a>
+
+    <a href="/master-payments.html" class="active">
+      💳 Payments
+    </a>
+
+    <a href="#">
+      📄 Invoices
+    </a>
+
+  </div>
+
+
+  <div class="menu-title">
+    Management
+  </div>
+
+  <div class="menu">
+
+    <a href="#">
+      ⭐ Reviews
+    </a>
+
+    <a href="#">
+      📚 Study Material
+    </a>
+
+    <a href="#">
+      🛒 Marketplace
+    </a>
+
+    <a href="#">
+      📊 Analytics
+    </a>
+
+    <a href="#">
+      🔔 Notifications
+    </a>
+
+    <a href="#">
+      ⚙️ Settings
+    </a>
+
+  </div>
+
+</aside>
+
+
+<!-- =================================
+            MAIN
+================================= -->
+
+<main class="main">
+
+
+<!-- HEADER -->
+
+<header class="header">
+
+  <div>
+
+    <h1>Payment Management</h1>
+
+    <p>
+      View and monitor all TutorCall payments.
+    </p>
+
+  </div>
+
+
+  <div class="admin">
+
+    <div class="admin-avatar">
+      TC
+    </div>
+
+    <div class="admin-info">
+
+      <strong>Master Admin</strong>
+
+      <small>
+        Super Administrator
+      </small>
+
+    </div>
+
+  </div>
+
+</header>
+
+
+<!-- CONTENT -->
+
+<section class="content">
+
+
+<!-- =================================
+            STAT CARDS
+================================= -->
+
+<div class="stats">
+
+
+  <div class="stat-card">
+
+    <div class="stat-title">
+      Total Payments
+    </div>
+
+    <div
+      class="stat-value"
+      id="totalPayments"
+    >
+      0
+    </div>
+
+  </div>
+
+
+  <div class="stat-card">
+
+    <div class="stat-title">
+      Total Revenue
+    </div>
+
+    <div
+      class="stat-value"
+      id="totalRevenue"
+    >
+      ₹0
+    </div>
+
+  </div>
+
+
+  <div class="stat-card">
+
+    <div class="stat-title">
+      Paid Payments
+    </div>
+
+    <div
+      class="stat-value"
+      id="paidPayments"
+    >
+      0
+    </div>
+
+  </div>
+
+
+  <div class="stat-card">
+
+    <div class="stat-title">
+      Failed / Other
+    </div>
+
+    <div
+      class="stat-value"
+      id="otherPayments"
+    >
+      0
+    </div>
+
+  </div>
+
+
+</div>
+
+
+<!-- =================================
+            TOOLBAR
+================================= -->
+
+<div class="toolbar">
+
+  <input
+    type="text"
+    id="searchInput"
+    class="search"
+    placeholder="Search payment ID, order ID, tutor..."
+  >
+
+  <button
+    class="refresh"
+    onclick="loadPayments()"
+  >
+    🔄 Refresh
+  </button>
+
+</div>
+
+
+<!-- =================================
+            TABLE
+================================= -->
+
+<div class="card">
+
+  <div class="card-header">
+
+    <h2>
+      All Payments
+    </h2>
+
+    <span
+      class="showing"
+      id="showingCount"
+    >
+      Showing 0 payments
+    </span>
+
+  </div>
+
+
+  <div class="table-wrap">
+
+    <table>
+
+      <thead>
+
+        <tr>
+
+          <th>#</th>
+
+          <th>Tutor</th>
+
+          <th>Amount</th>
+
+          <th>Status</th>
+
+          <th>Payment ID</th>
+
+          <th>Order ID</th>
+
+          <th>Date</th>
+
+        </tr>
+
+      </thead>
+
+
+      <tbody id="paymentTableBody">
+
+        <tr>
+
+          <td
+            colspan="7"
+            class="message"
+          >
+            Loading payments...
+          </td>
+
+        </tr>
+
+      </tbody>
+
+    </table>
+
+  </div>
+
+</div>
+
+
+</section>
+
+</main>
+
+</div>
+
+
+<script>
+
+/* =========================================
+        MASTER PAYMENTS
+========================================= */
+
+let allPayments = [];
+
+
+/* =========================================
+        LOAD PAYMENTS
+========================================= */
+
+async function loadPayments(){
+
+  const tbody =
+    document.getElementById(
+      "paymentTableBody"
+    );
+
+  tbody.innerHTML = `
+    <tr>
+      <td colspan="7" class="message">
+        Loading payments...
+      </td>
+    </tr>
+  `;
+
+
+  try{
+
+    const response =
+      await fetch(
+        "/api/payment/payments"
+      );
+
+
+    const data =
+      await response.json();
+
+
+    console.log(
+      "MASTER PAYMENTS DATA:",
+      data
+    );
+
+
+    if(!data.success){
+
+      throw new Error(
+        data.message ||
+        "Failed to load payments"
+      );
+
+    }
+
+
+    allPayments =
+      data.payments || [];
+
+
+    updateStats(
+      allPayments,
+      data.stats || {}
+    );
+
+
+    renderPayments(
+      allPayments
+    );
+
+
+  }catch(error){
+
+    console.error(
+      "MASTER PAYMENTS ERROR:",
+      error
+    );
+
+
+    tbody.innerHTML = `
+      <tr>
+        <td
+          colspan="7"
+          class="message error"
+        >
+          Failed to load payments.
+          Please refresh the page.
+        </td>
+      </tr>
+    `;
+
+  }
+
+}
+
+
+/* =========================================
+        UPDATE STATS
+========================================= */
+
+function updateStats(
+  payments,
+  stats
+){
+
+  const paidCount =
+    payments.filter(
+      payment =>
+        String(
+          payment.status || ""
+        ).toUpperCase()
+        === "PAID"
+    ).length;
+
+
+  const otherCount =
+    payments.length -
+    paidCount;
+
+
+  document.getElementById(
+    "totalPayments"
+  ).innerText =
+    stats.totalPayments ??
+    paidCount;
+
+
+  document.getElementById(
+    "totalRevenue"
+  ).innerText =
+    "₹" +
+    formatAmount(
+      stats.totalRevenue || 0
+    );
+
+
+  document.getElementById(
+    "paidPayments"
+  ).innerText =
+    paidCount;
+
+
+  document.getElementById(
+    "otherPayments"
+  ).innerText =
+    otherCount;
+
+}
+
+
+/* =========================================
+        RENDER PAYMENTS
+========================================= */
+
+function renderPayments(
+  payments
+){
+
+  const tbody =
+    document.getElementById(
+      "paymentTableBody"
+    );
+
+
+  document.getElementById(
+    "showingCount"
+  ).innerText =
+    `Showing ${payments.length} payments`;
+
+
+  if(!payments.length){
+
+    tbody.innerHTML = `
+      <tr>
+        <td
+          colspan="7"
+          class="message"
+        >
+          No payment records found.
+        </td>
+      </tr>
+    `;
+
+    return;
+
+  }
+
+
+  tbody.innerHTML = "";
+
+
+  payments.forEach(
+    (payment,index) => {
+
+
+      const row =
+        document.createElement("tr");
+
+
+      const status =
+        payment.status ||
+        "UNKNOWN";
+
+
+      let statusClass =
+        "status-other";
+
+
+      if(
+        String(status)
+          .toUpperCase()
+          === "PAID"
+      ){
+
+        statusClass =
+          "status-paid";
+
+      }
+      else if(
+        String(status)
+          .toUpperCase()
+          === "FAILED"
+      ){
+
+        statusClass =
+          "status-failed";
+
+      }
+      else if(
+        String(status)
+          .toUpperCase()
+          === "PENDING"
+      ){
+
+        statusClass =
+          "status-pending";
+
+      }
+
+
+      const amount =
+        Number(
+          payment.amount || 0
+        );
+
+
+      /*
+        Current Payment model me
+        tutorId save ho raha hai.
+      */
+
+      const tutor =
+        payment.tutorId?.name ||
+        payment.tutorId ||
+        "—";
+
+
+      const paymentId =
+        payment.razorpay_payment_id ||
+        "—";
+
+
+      const orderId =
+        payment.razorpay_order_id ||
+        "—";
+
+
+      const date =
+        formatDate(
+          payment.createdAt
+        );
+
+
+      row.innerHTML = `
+
+        <td>
+          ${index + 1}
+        </td>
+
+        <td>
+          <strong>
+            ${escapeHtml(tutor)}
+          </strong>
+        </td>
+
+        <td>
+          <strong>
+            ₹${formatAmount(amount)}
+          </strong>
+        </td>
+
+        <td>
+
+          <span
+            class="status ${statusClass}"
+          >
+            ${escapeHtml(status)}
+          </span>
+
+        </td>
+
+        <td>
+
+          <div class="id-text">
+            ${escapeHtml(paymentId)}
+          </div>
+
+        </td>
+
+        <td>
+
+          <div class="id-text">
+            ${escapeHtml(orderId)}
+          </div>
+
+        </td>
+
+        <td>
+          ${escapeHtml(date)}
+        </td>
+
+      `;
+
+
+      tbody.appendChild(row);
+
+    }
+  );
+
+}
+
+
+/* =========================================
+        SEARCH
+========================================= */
+
+document
+  .getElementById("searchInput")
+  .addEventListener(
+    "input",
+    function(){
+
+      const search =
+        this.value
+          .toLowerCase()
+          .trim();
+
+
+      if(!search){
+
+        renderPayments(
+          allPayments
+        );
+
+        return;
+
+      }
+
+
+      const filtered =
+        allPayments.filter(
+          payment => {
+
+            const tutor =
+              payment.tutorId?.name ||
+              payment.tutorId ||
+              "";
+
+
+            const paymentId =
+              payment.razorpay_payment_id ||
+              "";
+
+
+            const orderId =
+              payment.razorpay_order_id ||
+              "";
+
+
+            const status =
+              payment.status ||
+              "";
+
+
+            return (
+
+              String(tutor)
+                .toLowerCase()
+                .includes(search)
+
+              ||
+
+              String(paymentId)
+                .toLowerCase()
+                .includes(search)
+
+              ||
+
+              String(orderId)
+                .toLowerCase()
+                .includes(search)
+
+              ||
+
+              String(status)
+                .toLowerCase()
+                .includes(search)
+
+            );
+
+          }
+        );
+
+
+      renderPayments(
+        filtered
+      );
+
+    }
+  );
+
+
+/* =========================================
+        FORMAT AMOUNT
+========================================= */
+
+function formatAmount(
+  amount
+){
+
+  return Number(
+    amount || 0
+  ).toLocaleString(
+    "en-IN"
+  );
+
+}
+
+
+/* =========================================
+        FORMAT DATE
+========================================= */
+
+function formatDate(
+  value
+){
+
+  if(!value){
+
+    return "—";
+
+  }
+
+
+  const date =
+    new Date(value);
+
+
+  if(
+    Number.isNaN(
+      date.getTime()
+    )
+  ){
+
+    return "—";
+
+  }
+
+
+  return date.toLocaleString(
+    "en-IN",
+    {
+      day:"2-digit",
+      month:"2-digit",
+      year:"numeric",
+      hour:"2-digit",
+      minute:"2-digit"
+    }
+  );
+
+}
+
+
+/* =========================================
+        HTML SAFETY
+========================================= */
+
+function escapeHtml(
+  value
+){
+
+  return String(
+    value ?? ""
+  )
+  .replace(
+    /&/g,
+    "&amp;"
+  )
+  .replace(
+    /</g,
+    "&lt;"
+  )
+  .replace(
+    />/g,
+    "&gt;"
+  )
+  .replace(
+    /"/g,
+    "&quot;"
+  )
+  .replace(
+    /'/g,
+    "&#039;"
+  );
+
+}
+
+
+/* =========================================
+        INITIAL LOAD
+========================================= */
+
+document.addEventListener(
+  "DOMContentLoaded",
+  () => {
+
+    loadPayments();
+
+  }
+);
+
+
+/* =========================================
+        AUTO REFRESH
+========================================= */
+
+setInterval(
+  loadPayments,
+  30000
+);
+
+</script>
+
+</body>
+
+</html>
