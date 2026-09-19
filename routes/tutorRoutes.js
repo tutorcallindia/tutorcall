@@ -36,6 +36,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 const authTutor = require("../middleware/authTutor");
+const { auth } = require("../server/firebaseAdmin");
 
 const twilio = require("twilio");
 
@@ -498,22 +499,22 @@ console.log("FILES =", req.files);
   try {
 
     const {
-      name,
-      phone,
-      email,
-      password,
-      city,
-      qualification,
-      experience,
-      classes,
-      subjects,
-      mode,
-      fees,address,
-latitude,
-longitude,
-     
-      
-    } = req.body;
+  name,
+  phone,
+  email,
+  password,
+  city,
+  qualification,
+  experience,
+  classes,
+  subjects,
+  mode,
+  fees,
+  address,
+  latitude,
+  longitude,
+  firebaseToken
+} = req.body;
     const photo =
   req.files?.photo?.[0]
     ? `/uploads/${req.files.photo[0].filename}`
@@ -532,6 +533,78 @@ longitude,
 
     }
 
+    // =========================================
+// FIREBASE PHONE VERIFICATION
+// =========================================
+
+if (!firebaseToken) {
+
+  return res.json({
+    success: false,
+    message: "Firebase verification required"
+  });
+
+}
+
+try {
+
+  const decodedToken =
+    await auth.verifyIdToken(firebaseToken);
+
+  const firebasePhone =
+    decodedToken.phone_number;
+
+  if (!firebasePhone) {
+
+    return res.json({
+      success: false,
+      message: "Phone number not found in Firebase"
+    });
+
+  }
+
+  // Convert Firebase +91XXXXXXXXXX
+  // to 10 digit number
+  const normalizedFirebasePhone =
+    firebasePhone.startsWith("+91")
+      ? firebasePhone.substring(3)
+      : firebasePhone;
+
+  const normalizedPhone =
+    phone.replace(/\D/g, "");
+
+  if (
+    normalizedFirebasePhone !==
+    normalizedPhone
+  ) {
+
+    return res.json({
+      success: false,
+      message: "Firebase verified phone does not match"
+    });
+
+  }
+
+  console.log(
+    "FIREBASE PHONE VERIFIED:",
+    normalizedFirebasePhone
+  );
+
+} catch (firebaseError) {
+
+  console.error(
+    "FIREBASE REGISTER VERIFICATION ERROR:",
+    firebaseError
+  );
+
+  return res.status(401).json({
+
+    success: false,
+    message: "Firebase authentication failed"
+
+  });
+
+}
     // EXISTING CHECK
 
     const existingTutor =

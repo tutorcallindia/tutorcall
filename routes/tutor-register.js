@@ -1,298 +1,488 @@
-console.log("Tutor JS Loaded");
+console.log("Tutor Firebase JS Loaded");
 
+let confirmationResult = null;
+let firebaseIdToken = "";
 let otpVerified = false;
 
-// SEND OTP
-document.getElementById("sendOtpBtn").addEventListener("click", async () => {
+const sendOtpBtn = document.getElementById("sendOtpBtn");
+const verifyOtpBtn = document.getElementById("verifyOtpBtn");
+const otpPhone = document.getElementById("otpPhone");
+const otpCode = document.getElementById("otpCode");
+const otpSection = document.getElementById("otpSection");
+const tutorForm = document.getElementById("tutorForm");
+const msg = document.getElementById("msg");
 
-    const phone = document.getElementById("otpPhone").value.trim();
 
-    if (phone.length !== 10) {
-        alert("Enter valid mobile number");
+// =====================================================
+// FIREBASE CONFIG
+// =====================================================
+// IMPORTANT:
+// Yahan EXACT wahi firebaseConfig use karo
+// jo working student-login.html / student-login.js me hai.
+
+const firebaseConfig = {
+    apiKey: "PASTE_SAME_API_KEY_FROM_STUDENT_LOGIN",
+    authDomain: "tutorcall-8ffad.firebaseapp.com",
+    projectId: "tutorcall-8ffad",
+    storageBucket: "tutorcall-8ffad.firebasestorage.app",
+    messagingSenderId: "PASTE_SAME_MESSAGING_SENDER_ID",
+    appId: "PASTE_SAME_APP_ID_FROM_STUDENT_LOGIN"
+};
+
+
+// Initialize Firebase only once
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}
+
+const auth = firebase.auth();
+
+
+// =====================================================
+// RECAPTCHA
+// =====================================================
+
+let recaptchaVerifier = null;
+
+window.addEventListener("load", async () => {
+
+    try {
+
+        recaptchaVerifier =
+            new firebase.auth.RecaptchaVerifier(
+                "recaptcha-container",
+                {
+                    size: "normal"
+                }
+            );
+
+        await recaptchaVerifier.render();
+
+        console.log("Firebase reCAPTCHA Ready");
+
+    } catch (error) {
+
+        console.error("reCAPTCHA Error:", error);
+
+    }
+
+});
+
+
+// =====================================================
+// SEND FIREBASE OTP
+// =====================================================
+
+sendOtpBtn.addEventListener("click", async () => {
+
+    const phone = otpPhone.value.trim();
+
+    if (!/^[0-9]{10}$/.test(phone)) {
+
+        alert("Enter valid 10 digit mobile number");
+
+        return;
+    }
+
+    if (!recaptchaVerifier) {
+
+        alert("reCAPTCHA is not ready. Please wait a moment.");
+
         return;
     }
 
     try {
 
-        const res = await fetch("/api/tutors/send-otp", {
+        sendOtpBtn.disabled = true;
 
-            method: "POST",
+        sendOtpBtn.innerText = "Sending OTP...";
 
-            headers: {
-                "Content-Type": "application/json"
-            },
+        const fullPhone = "+91" + phone;
 
-            body: JSON.stringify({ phone })
+        confirmationResult =
+            await auth.signInWithPhoneNumber(
+                fullPhone,
+                recaptchaVerifier
+            );
 
-        });
+        console.log("Firebase OTP Sent");
 
-        const data = await res.json();
+        alert("OTP sent successfully to your mobile number.");
 
-        alert(data.message);
+        otpCode.style.display = "block";
 
-    } catch (err) {
+        verifyOtpBtn.style.display = "block";
 
-        console.log(err);
+        otpPhone.readOnly = true;
 
-        alert("Failed to send OTP");
+        sendOtpBtn.innerText = "OTP Sent";
+
+    } catch (error) {
+
+        console.error("Firebase OTP Error:", error);
+
+        sendOtpBtn.disabled = false;
+
+        sendOtpBtn.innerText = "Send OTP";
+
+        alert(
+            error.message ||
+            "Failed to send OTP"
+        );
+
+        // Reset reCAPTCHA
+        try {
+
+            recaptchaVerifier.clear();
+
+            recaptchaVerifier =
+                new firebase.auth.RecaptchaVerifier(
+                    "recaptcha-container",
+                    {
+                        size: "normal"
+                    }
+                );
+
+            await recaptchaVerifier.render();
+
+        } catch (recaptchaError) {
+
+            console.error(recaptchaError);
+
+        }
 
     }
 
 });
 
 
-// VERIFY OTP
-document.getElementById("verifyOtpBtn").addEventListener("click", async () => {
+// =====================================================
+// VERIFY FIREBASE OTP
+// =====================================================
 
-    const phone = document.getElementById("otpPhone").value.trim();
+verifyOtpBtn.addEventListener("click", async () => {
 
-    const otp = document.getElementById("otpCode").value.trim();
+    const otp = otpCode.value.trim();
+
+    if (!confirmationResult) {
+
+        alert("Please request OTP first.");
+
+        return;
+    }
+
+    if (!/^[0-9]{6}$/.test(otp)) {
+
+        alert("Enter valid 6 digit OTP.");
+
+        return;
+    }
 
     try {
 
-        const res = await fetch("/api/tutors/verify-otp", {
+        verifyOtpBtn.disabled = true;
 
-            method: "POST",
+        verifyOtpBtn.innerText = "Verifying...";
 
-            headers: {
-                "Content-Type": "application/json"
-            },
 
-            body: JSON.stringify({
-                phone,
-                otp
-            })
+        // Firebase OTP verification
+        const result =
+            await confirmationResult.confirm(otp);
 
-        });
 
-        const data = await res.json();
+        // Get Firebase ID Token
+        firebaseIdToken =
+            await result.user.getIdToken(true);
 
-        if (data.success) {
 
-            otpVerified = true;
+        console.log("Firebase OTP Verified");
 
-            document.getElementById("otpSection").style.display = "none";
+        otpVerified = true;
 
-            document.getElementById("tutorForm").style.display = "grid";
 
-            document.getElementById("phone").value = phone;
+        // Put verified phone in registration form
+        document.getElementById("phone").value =
+            otpPhone.value.trim();
 
-            document.getElementById("phone").readOnly = true;
+        document.getElementById("phone").readOnly = true;
 
-            alert("OTP Verified Successfully");
 
-        } else {
+        // Hide OTP section
+        otpSection.style.display = "none";
 
-            alert(data.message);
 
-        }
+        // Show registration form
+        tutorForm.style.display = "grid";
 
-    } catch (err) {
 
-        console.log(err);
+        alert("Mobile Number Verified Successfully ✅");
 
-        alert("Verification Failed");
+
+    } catch (error) {
+
+        console.error("OTP Verification Error:", error);
+
+        verifyOtpBtn.disabled = false;
+
+        verifyOtpBtn.innerText = "Verify OTP";
+
+        alert(
+            error.message ||
+            "Invalid OTP"
+        );
 
     }
 
 });
 
-document
-    .getElementById("tutorForm")
 
-    .addEventListener(
+// =====================================================
+// TUTOR REGISTRATION
+// =====================================================
 
-        "submit",
+tutorForm.addEventListener("submit", async (e) => {
 
-        async (e) => {
+    e.preventDefault();
 
-            e.preventDefault();
 
-            if (!otpVerified) {
+    // OTP check
+    if (!otpVerified || !firebaseIdToken) {
 
-                alert("Please verify your mobile number first.");
+        alert(
+            "Please verify your mobile number first."
+        );
 
-                return;
+        return;
+    }
 
-            }
 
-            const msg =
-                document.getElementById("msg");
+    msg.style.color = "blue";
 
-            msg.style.color = "blue";
+    msg.innerHTML =
+        "Registering tutor...";
 
-            msg.innerHTML = "Registering...";
 
-            /* PHOTO */
+    try {
 
-            let photoBase64 = "";
+        // Get latest Firebase token
+        if (firebase.auth().currentUser) {
 
-            const photoInput =
-                document.getElementById("photo");
-
-            if (
-                photoInput.files.length > 0
-            ) {
-
-                const file =
-                    photoInput.files[0];
-
-                const reader =
-                    new FileReader();
-
-                reader.readAsDataURL(file);
-
-                photoBase64 = await new Promise((resolve, reject) => {
-
-                    reader.onload = () => resolve(reader.result);
-
-                    reader.onerror = reject;
-
-                });
-            }
-
-            /* DATA */
-
-            const tutorData = {
-
-                name:
-                    document.getElementById("name").value,
-
-                phone:
-                    document.getElementById("phone").value,
-
-                email:
-                    document.getElementById("email").value,
-
-                password:
-                    document.getElementById("password").value,
-
-                city:
-                    document.getElementById("city").value,
-
-                address:
-                    document.getElementById("address").value,
-
-                latitude:
-                    document.getElementById("latitude").value,
-
-                longitude:
-                    document.getElementById("longitude").value,
-
-                qualification:
-                    document.getElementById("qualification").value,
-
-                experience:
-                    document.getElementById("experience").value,
-
-                classes:
-                    document.getElementById("classes").value,
-
-                subjects:
-                    document.getElementById("subjects").value,
-
-                fees:
-                    document.getElementById("fees").value,
-
-                mode:
-                    document.getElementById("mode").value,
-
-                photo:
-                    photoBase64
-
-            };
-
-            try {
-
-                const response =
-                    await fetch(
-
-                        "http://localhost:3000/api/tutors/register",
-
-                        {
-
-                            method: "POST",
-
-                            headers: {
-
-                                "Content-Type":
-                                    "application/json"
-
-                            },
-
-                            body:
-                                JSON.stringify(tutorData)
-
-                        }
-
-                    );
-
-                const data =
-                    await response.json();
-
-                console.log(data);
-
-                /* SUCCESS */
-
-                if (data.success) {
-
-                    msg.style.color =
-                        "green";
-
-                    msg.innerHTML =
-                        "Tutor Registered Successfully ✅";
-
-                    alert(
-                        "Tutor Registered Successfully"
-                    );
-
-                    document
-                        .getElementById("tutorForm")
-                        .reset();
-
-                    setTimeout(() => {
-
-                        window.location.href =
-                            "tutor-login.html";
-
-                    }, 1000);
-
-                }
-
-                /* FAILED */
-
-                else {
-
-                    msg.style.color =
-                        "red";
-
-                    msg.innerHTML =
-                        data.message;
-
-                    alert(data.message);
-
-                }
-
-            }
-
-            /* ERROR */
-
-            catch (error) {
-
-                console.log(error);
-
-                msg.style.color =
-                    "red";
-
-                msg.innerHTML =
-                    "Server Error";
-
-                alert(
-                    "Server Error"
-                );
-
-            }
+            firebaseIdToken =
+                await firebase.auth().currentUser.getIdToken(true);
 
         }
 
-    );
+
+        // =================================================
+        // FORM DATA
+        // =================================================
+
+        const formData = new FormData();
+
+
+        formData.append(
+            "firebaseToken",
+            firebaseIdToken
+        );
+
+
+        formData.append(
+            "name",
+            document.getElementById("name").value.trim()
+        );
+
+        formData.append(
+            "phone",
+            document.getElementById("phone").value.trim()
+        );
+
+        formData.append(
+            "email",
+            document.getElementById("email").value.trim()
+        );
+
+        formData.append(
+            "password",
+            document.getElementById("password").value
+        );
+
+        formData.append(
+            "city",
+            document.getElementById("city").value.trim()
+        );
+
+        formData.append(
+            "address",
+            document.getElementById("address").value.trim()
+        );
+
+        formData.append(
+            "latitude",
+            document.getElementById("latitude").value
+        );
+
+        formData.append(
+            "longitude",
+            document.getElementById("longitude").value
+        );
+
+        formData.append(
+            "qualification",
+            document.getElementById("qualification").value.trim()
+        );
+
+        formData.append(
+            "experience",
+            document.getElementById("experience").value
+        );
+
+        formData.append(
+            "classes",
+            document.getElementById("classes").value.trim()
+        );
+
+        formData.append(
+            "subjects",
+            document.getElementById("subjects").value.trim()
+        );
+
+        formData.append(
+            "fees",
+            document.getElementById("fees").value
+        );
+
+        formData.append(
+            "mode",
+            document.getElementById("mode").value
+        );
+
+
+        // =================================================
+        // PHOTO
+        // =================================================
+
+        const photoInput =
+            document.getElementById("photo");
+
+
+        if (
+            photoInput &&
+            photoInput.files &&
+            photoInput.files.length > 0
+        ) {
+
+            formData.append(
+                "photo",
+                photoInput.files[0]
+            );
+
+        }
+
+
+        // =================================================
+        // SEND TO BACKEND
+        // =================================================
+
+        const response =
+            await fetch(
+                "/api/tutors/register",
+                {
+                    method: "POST",
+                    body: formData
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        console.log(
+            "Registration Response:",
+            data
+        );
+
+
+        // =================================================
+        // SUCCESS
+        // =================================================
+
+        if (data.success) {
+
+            msg.style.color = "green";
+
+            msg.innerHTML =
+                "Tutor Registered Successfully ✅";
+
+
+            alert(
+                "Tutor Registered Successfully ✅"
+            );
+
+
+            // Sign out Firebase user
+            try {
+
+                await auth.signOut();
+
+            } catch (logoutError) {
+
+                console.log(logoutError);
+
+            }
+
+
+            tutorForm.reset();
+
+
+            setTimeout(() => {
+
+                window.location.href =
+                    "tutor-login.html";
+
+            }, 1000);
+
+
+        }
+
+        // =================================================
+        // FAILED
+        // =================================================
+
+        else {
+
+            msg.style.color = "red";
+
+            msg.innerHTML =
+                data.message ||
+                "Registration failed.";
+
+            alert(
+                data.message ||
+                "Registration failed."
+            );
+
+        }
+
+
+    } catch (error) {
+
+        console.error(
+            "Registration Error:",
+            error
+        );
+
+
+        msg.style.color = "red";
+
+        msg.innerHTML =
+            "Server Error";
+
+
+        alert(
+            "Server Error. Please try again."
+        );
+
+    }
+
+});
