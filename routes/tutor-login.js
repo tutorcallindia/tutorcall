@@ -5,15 +5,13 @@ console.log("Tutor Firebase Login JS Loaded");
    FIREBASE CONFIG
    ========================================= */
 
-// YAHAN student-login.html wala SAME firebaseConfig paste karo
-
 const firebaseConfig = {
-  apiKey: "PASTE_SAME_API_KEY_FROM_STUDENT_LOGIN",
-  authDomain: "PASTE_SAME_AUTH_DOMAIN",
-  projectId: "tutorcall-8ffad",
-  storageBucket: "PASTE_SAME_STORAGE_BUCKET",
-  messagingSenderId: "PASTE_SAME_MESSAGING_SENDER_ID",
-  appId: "PASTE_SAME_APP_ID"
+    apiKey: "AIzaSyDhz8zisR0m01UuFcatuOoSuSWM7eHcyTg",
+    authDomain: "tutorcall-8ffad.firebaseapp.com",
+    projectId: "tutorcall-8ffad",
+    storageBucket: "tutorcall-8ffad.firebasestorage.app",
+    messagingSenderId: "1092526942662",
+    appId: "1:1092526942662:web:05a498f6a02d911ae9eac7"
 };
 
 
