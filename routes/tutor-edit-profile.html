@@ -73,7 +73,7 @@
   <button id="saveBtn" class="btn">Save Changes</button>
 
   <div id="msg" class="msg"></div>
-  <div style="margin-top:12px"><a href="tutor-dashboard.html" class="small">⬅ Back to Dashboard</a></div>
+  <div style="margin-top:12px"><a href="tutor-dashboard-v2.html" class="small">⬅ Back to Dashboard</a></div>
 </div>
 
 <script>
@@ -181,7 +181,7 @@
 
       setMsg("Profile updated successfully ✔", "green");
       // optionally redirect back to dashboard after 1s
-      setTimeout(() => window.location.href = "tutor-dashboard.html", 900);
+      setTimeout(() => window.location.href = "tutor-dashboard-v2.html", 900);
     } catch (err) {
       console.error(err);
       setMsg("Server error", "red");
