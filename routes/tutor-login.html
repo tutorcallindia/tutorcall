@@ -4,795 +4,225 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
   <title>Tutor Login</title>
 
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/12.9.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/12.9.0/firebase-auth-compat.js"></script>
+
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       font-family: Arial, sans-serif;
-      background: #f2f2f2;
+      background: linear-gradient(135deg, #fff0f8, #f3efff);
       display: flex;
       justify-content: center;
       align-items: center;
       min-height: 100vh;
       margin: 0;
+      padding: 20px;
     }
 
     .login-box {
-      width: 350px;
-      max-width: 90%;
+      width: 420px;
+      max-width: 100%;
       background: white;
-      padding: 25px;
-      border-radius: 10px;
-      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+      padding: 35px;
+      border-radius: 20px;
+      box-shadow: 0 10px 35px rgba(0, 0, 0, 0.10);
     }
 
     h2 {
       text-align: center;
-      margin-bottom: 20px;
-      color: #333;
+      margin: 0 0 8px;
+      color: #c84ed0;
+      font-size: 30px;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #666;
+      margin-bottom: 25px;
+      font-size: 14px;
+    }
+
+    label {
+      display: block;
+      font-weight: bold;
+      margin: 15px 0 7px;
+      color: #222;
     }
 
     input {
-      box-sizing: border-box;
       width: 100%;
-      padding: 12px;
-      margin: 8px 0;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      font-size: 15px;
+      padding: 14px;
+      border: 1px solid #f5b7dc;
+      border-radius: 10px;
+      font-size: 16px;
+      outline: none;
+    }
+
+    input:focus {
+      border-color: #9b5cff;
     }
 
     button {
-      box-sizing: border-box;
       width: 100%;
-      padding: 12px;
-      background: #007bff;
-      color: white;
+      padding: 14px;
+      margin-top: 15px;
       border: none;
-      border-radius: 5px;
+      border-radius: 10px;
       font-size: 16px;
-      margin-top: 10px;
+      font-weight: bold;
+      color: white;
       cursor: pointer;
+      background: linear-gradient(90deg, #f542a7, #7954ff);
     }
 
     button:hover {
-      background: #0069d9;
+      opacity: 0.92;
     }
 
-    .forgot-btn {
-      background: none;
-      color: #007bff;
-      border: none;
-      font-size: 14px;
-      margin-top: 12px;
-      padding: 5px;
-      cursor: pointer;
-    }
-
-    .forgot-btn:hover {
-      background: none;
-      color: #0056b3;
-    }
-
-    .back-btn {
-      background: #6c757d;
-    }
-
-    .back-btn:hover {
-      background: #545b62;
-    }
-
-    #msg,
-    #forgotMsg {
-      margin-top: 10px;
-      text-align: center;
-      font-size: 14px;
+    button:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
     }
 
     .hidden {
-      display: none;
+      display: none !important;
     }
 
-    .step-title {
-      text-align: center;
-      font-size: 18px;
-      font-weight: bold;
-      margin-bottom: 10px;
-      color: #333;
+    #recaptcha-container {
+      margin-top: 15px;
+      display: flex;
+      justify-content: center;
     }
 
-    .small-text {
+    .otp-info {
       text-align: center;
       color: #666;
-      font-size: 13px;
-      margin-bottom: 10px;
+      font-size: 14px;
+      margin-top: 15px;
+      line-height: 1.5;
+    }
+
+    #msg {
+      text-align: center;
+      margin-top: 18px;
+      font-size: 14px;
+      min-height: 20px;
+    }
+
+    .resend-btn {
+      background: #6655e8;
+    }
+
+    .back-btn {
+      background: #777;
+    }
+
+    .success-box {
+      text-align: center;
+      color: green;
+      font-weight: bold;
+      margin-top: 15px;
     }
   </style>
 </head>
 
 <body>
 
-  <!-- ================================
-          LOGIN BOX
-  ================================= -->
-
-  <div class="login-box" id="loginBox">
+  <div class="login-box">
 
     <h2>Tutor Login</h2>
 
-    <input
-      id="phone"
-      type="text"
-      placeholder="Enter Phone Number"
-      maxlength="10"
-    />
+    <div class="subtitle">
+      Login securely using mobile OTP
+    </div>
 
-    <input
-      id="password"
-      type="password"
-      placeholder="Enter Password"
-    />
+    <!-- PHONE -->
+    <div id="phoneSection">
 
-    <button onclick="loginTutor()">Login</button>
-
-    <button
-      type="button"
-      class="forgot-btn"
-      onclick="showForgotPassword()"
-    >
-      Forgot Password?
-    </button>
-
-    <p id="msg"></p>
-
-  </div>
-
-
-  <!-- ================================
-          FORGOT PASSWORD BOX
-  ================================= -->
-
-  <div class="login-box hidden" id="forgotBox">
-
-    <h2>Forgot Password</h2>
-
-
-    <!-- STEP 1 -->
-
-    <div id="step1">
-
-      <div class="step-title">
-        Enter Phone Number
-      </div>
-
-      <div class="small-text">
-        We will send OTP to your WhatsApp number.
-      </div>
+      <label for="phone">
+        Mobile Number
+      </label>
 
       <input
-        id="forgotPhone"
-        type="text"
-        placeholder="Enter Phone Number"
+        id="phone"
+        type="tel"
+        inputmode="numeric"
         maxlength="10"
+        placeholder="Enter 10 digit mobile number"
       />
 
-      <button onclick="sendForgotOTP()">
+      <button
+        type="button"
+        id="sendOtpBtn"
+      >
         Send OTP
       </button>
 
+      <div id="recaptcha-container"></div>
+
     </div>
 
 
-    <!-- STEP 2 -->
+    <!-- OTP -->
+    <div id="otpSection" class="hidden">
 
-    <div id="step2" class="hidden">
-
-      <div class="step-title">
-        Verify OTP
+      <div class="otp-info">
+        OTP has been sent to your mobile number.
       </div>
 
-      <div class="small-text">
-        Enter the OTP sent to your WhatsApp.
-      </div>
+      <label for="otpCode">
+        Enter OTP
+      </label>
 
       <input
-        id="forgotOtp"
-        type="text"
-        placeholder="Enter 6 Digit OTP"
+        id="otpCode"
+        type="tel"
+        inputmode="numeric"
         maxlength="6"
+        placeholder="Enter 6 digit OTP"
       />
 
-      <button onclick="verifyForgotOTP()">
+      <button
+        type="button"
+        id="verifyOtpBtn"
+      >
         Verify OTP
       </button>
 
-    </div>
-
-
-    <!-- STEP 3 -->
-
-    <div id="step3" class="hidden">
-
-      <div class="step-title">
-        Create New Password
-      </div>
-
-      <input
-        id="newPassword"
-        type="password"
-        placeholder="Enter New Password"
-      />
-
-      <input
-        id="confirmPassword"
-        type="password"
-        placeholder="Confirm New Password"
-      />
-
-      <button onclick="resetPassword()">
-        Reset Password
+      <button
+        type="button"
+        id="resendOtpBtn"
+        class="resend-btn"
+      >
+        Resend OTP
       </button>
 
     </div>
 
+
+    <div id="msg"></div>
 
     <button
       type="button"
       class="back-btn"
-      onclick="showLogin()"
+      onclick="window.location.href='tutor-register.html'"
     >
-      Back to Login
+      ← Back to Registration
     </button>
-
-    <p id="forgotMsg"></p>
 
   </div>
 
 
-  <!-- ================================
-              JAVASCRIPT
-  ================================= -->
-
-  <script>
-
-    const API_URL =
-  "http://localhost:3000/api/tutors";
-
-
-    /* =================================
-              LOGIN
-    ================================= */
-
-    async function loginTutor() {
-
-      const phone =
-        document.getElementById("phone").value.trim();
-
-      const password =
-        document.getElementById("password").value;
-
-      const msg =
-        document.getElementById("msg");
-
-      msg.innerText = "";
-
-      if (!phone || !password) {
-
-        msg.style.color = "red";
-
-        msg.innerText =
-          "Please fill all fields";
-
-        return;
-      }
-
-      try {
-
-        const res = await fetch(
-          API_URL + "/login",
-          {
-            method: "POST",
-
-            headers: {
-              "Content-Type":
-                "application/json"
-            },
-
-            body: JSON.stringify({
-              phone,
-              password
-            })
-          }
-        );
-
-        const data =
-          await res.json();
-
-        console.log(data);
-
-        if (data.success) {
-
-          msg.style.color = "green";
-
-          msg.innerText =
-            "Login Successful";
-
-          localStorage.setItem(
-            "tutorToken",
-            data.token
-          );
-
-          localStorage.setItem(
-            "tutorId",
-            data.tutor._id
-          );
-
-          localStorage.setItem(
-            "tutorData",
-            JSON.stringify(data.tutor)
-          );
-
-          setTimeout(() => {
-
-            window.location.href =
-              "/routes/tutor-dashboard-v2.html";
-
-          }, 700);
-
-        } else {
-
-          msg.style.color = "red";
-
-          msg.innerText =
-            data.message;
-
-        }
-
-      } catch (error) {
-
-        console.error(error);
-
-        msg.style.color = "red";
-
-        msg.innerText =
-          "Server Error";
-
-      }
-
-    }
-
-
-    /* =================================
-          SHOW FORGOT PASSWORD
-    ================================= */
-
-    function showForgotPassword() {
-
-      document
-        .getElementById("loginBox")
-        .classList.add("hidden");
-
-      document
-        .getElementById("forgotBox")
-        .classList.remove("hidden");
-
-      document
-        .getElementById("forgotMsg")
-        .innerText = "";
-
-      document
-        .getElementById("step1")
-        .classList.remove("hidden");
-
-      document
-        .getElementById("step2")
-        .classList.add("hidden");
-
-      document
-        .getElementById("step3")
-        .classList.add("hidden");
-
-    }
-
-
-    /* =================================
-              BACK TO LOGIN
-    ================================= */
-
-    function showLogin() {
-
-      document
-        .getElementById("forgotBox")
-        .classList.add("hidden");
-
-      document
-        .getElementById("loginBox")
-        .classList.remove("hidden");
-
-      document
-        .getElementById("forgotMsg")
-        .innerText = "";
-
-    }
-
-
-    /* =================================
-          STEP 1 - SEND OTP
-    ================================= */
-
-    async function sendForgotOTP() {
-
-      const phone =
-        document
-          .getElementById("forgotPhone")
-          .value
-          .trim();
-
-      const msg =
-        document.getElementById("forgotMsg");
-
-      msg.innerText = "";
-
-      if (!phone) {
-
-        msg.style.color = "red";
-
-        msg.innerText =
-          "Please enter phone number";
-
-        return;
-      }
-
-      if (!/^\d{10}$/.test(phone)) {
-
-        msg.style.color = "red";
-
-        msg.innerText =
-          "Enter valid 10 digit phone number";
-
-        return;
-      }
-
-      msg.style.color = "#333";
-
-      msg.innerText =
-        "Sending OTP...";
-
-      try {
-
-        const res = await fetch(
-          API_URL +
-          "/forgot-password/send-otp",
-          {
-
-            method: "POST",
-
-            headers: {
-              "Content-Type":
-                "application/json"
-            },
-
-            body: JSON.stringify({
-              phone
-            })
-
-          }
-        );
-
-        const data =
-          await res.json();
-
-        console.log(data);
-
-        if (data.success) {
-
-          msg.style.color = "green";
-
-          msg.innerText =
-            "OTP sent successfully";
-
-          document
-            .getElementById("step1")
-            .classList.add("hidden");
-
-          document
-            .getElementById("step2")
-            .classList.remove("hidden");
-
-        } else {
-
-          msg.style.color = "red";
-
-          msg.innerText =
-            data.message;
-
-        }
-
-      } catch (error) {
-
-        console.error(error);
-
-        msg.style.color = "red";
-
-        msg.innerText =
-          "Server Error";
-
-      }
-
-    }
-
-
-    /* =================================
-          STEP 2 - VERIFY OTP
-    ================================= */
-
-    async function verifyForgotOTP() {
-
-      const phone =
-        document
-          .getElementById("forgotPhone")
-          .value
-          .trim();
-
-      const otp =
-        document
-          .getElementById("forgotOtp")
-          .value
-          .trim();
-
-      const msg =
-        document.getElementById("forgotMsg");
-
-      if (!otp) {
-
-        msg.style.color = "red";
-
-        msg.innerText =
-          "Please enter OTP";
-
-        return;
-      }
-
-      if (!/^\d{6}$/.test(otp)) {
-
-        msg.style.color = "red";
-
-        msg.innerText =
-          "Enter valid 6 digit OTP";
-
-        return;
-      }
-
-      msg.style.color = "#333";
-
-      msg.innerText =
-        "Verifying OTP...";
-
-      try {
-
-        const res = await fetch(
-          API_URL +
-          "/forgot-password/verify-otp",
-          {
-
-            method: "POST",
-
-            headers: {
-              "Content-Type":
-                "application/json"
-            },
-
-            body: JSON.stringify({
-              phone,
-              otp
-            })
-
-          }
-        );
-
-        const data =
-          await res.json();
-
-        console.log(data);
-
-        if (data.success) {
-
-          msg.style.color = "green";
-
-          msg.innerText =
-            "OTP verified successfully";
-
-          document
-            .getElementById("step2")
-            .classList.add("hidden");
-
-          document
-            .getElementById("step3")
-            .classList.remove("hidden");
-
-        } else {
-
-          msg.style.color = "red";
-
-          msg.innerText =
-            data.message;
-
-        }
-
-      } catch (error) {
-
-        console.error(error);
-
-        msg.style.color = "red";
-
-        msg.innerText =
-          "Server Error";
-
-      }
-
-    }
-
-
-    /* =================================
-          STEP 3 - RESET PASSWORD
-    ================================= */
-
-    async function resetPassword() {
-
-      const phone =
-        document
-          .getElementById("forgotPhone")
-          .value
-          .trim();
-
-      const newPassword =
-        document
-          .getElementById("newPassword")
-          .value;
-
-      const confirmPassword =
-        document
-          .getElementById("confirmPassword")
-          .value;
-
-      const msg =
-        document.getElementById("forgotMsg");
-
-
-      if (!newPassword || !confirmPassword) {
-
-        msg.style.color = "red";
-
-        msg.innerText =
-          "Please fill both password fields";
-
-        return;
-      }
-
-
-      if (newPassword.length < 6) {
-
-        msg.style.color = "red";
-
-        msg.innerText =
-          "Password must be at least 6 characters";
-
-        return;
-      }
-
-
-      if (newPassword !== confirmPassword) {
-
-        msg.style.color = "red";
-
-        msg.innerText =
-          "Passwords do not match";
-
-        return;
-      }
-
-
-      msg.style.color = "#333";
-
-      msg.innerText =
-        "Resetting password...";
-
-
-      try {
-
-        const res = await fetch(
-          API_URL +
-          "/forgot-password/reset",
-          {
-
-            method: "POST",
-
-            headers: {
-              "Content-Type":
-                "application/json"
-            },
-
-            body: JSON.stringify({
-
-              phone,
-
-              newPassword
-
-            })
-
-          }
-        );
-
-        const data =
-          await res.json();
-
-        console.log(data);
-
-
-        if (data.success) {
-
-          msg.style.color = "green";
-
-          msg.innerText =
-            "Password reset successful!";
-
-          setTimeout(() => {
-
-            showLogin();
-
-            document
-              .getElementById("phone")
-              .value = phone;
-
-            document
-              .getElementById("password")
-              .value = "";
-
-          }, 1500);
-
-        } else {
-
-          msg.style.color = "red";
-
-          msg.innerText =
-            data.message;
-
-        }
-
-      } catch (error) {
-
-        console.error(error);
-
-        msg.style.color = "red";
-
-        msg.innerText =
-          "Server Error";
-
-      }
-
-    }
-
-
-    /* =================================
-          ENTER KEY - LOGIN
-    ================================= */
-
-    document
-      .getElementById("password")
-      .addEventListener(
-        "keypress",
-        function (e) {
-
-          if (e.key === "Enter") {
-
-            loginTutor();
-
-          }
-
-        }
-      );
-
-  </script>
+  <script src="tutor-login.js"></script>
 
 </body>
+
 </html>
