@@ -20,6 +20,9 @@ console.log("BEFORE Tutor");
 const Tutor = require("../models/tutor");
 console.log("AFTER Tutor");
 
+const fs = require("fs");
+const path = require("path");
+
 console.log("Multer loading");
 const multer = require("multer");
 
@@ -1202,5 +1205,144 @@ router.get("/:id", async (req, res) => {
 
 });
 
+/* =========================================
+   TUTOR PROFILE UPDATE
+========================================= */
+
+router.put("/update", authTutor, async (req, res) => {
+  try {
+    const tutorId = req.tutor._id;
+
+    const {
+      name,
+      phone,
+      email,
+      city,
+      qualification,
+      experience,
+      classes,
+      subjects,
+      mode,
+      fees,
+      photo
+    } = req.body;
+
+    const updateData = {
+      name,
+      phone,
+      email,
+      city,
+      qualification,
+      experience,
+      classes,
+      subjects,
+      mode,
+      fees
+    };
+
+    /*
+      PHOTO HANDLING
+
+      Frontend currently sends photo as Base64.
+      We convert Base64 -> actual image file
+      and save only /uploads/filename in MongoDB.
+    */
+
+    if (photo && photo.startsWith("data:image/")) {
+      const matches = photo.match(
+        /^data:image\/([a-zA-Z0-9+]+);base64,(.+)$/
+      );
+
+      if (matches) {
+        const extension =
+          matches[1] === "jpeg"
+            ? "jpg"
+            : matches[1];
+
+        const fileName =
+          Date.now() + "-tutor-photo." + extension;
+
+        const uploadDir = path.join(
+          __dirname,
+          "..",
+          "uploads"
+        );
+
+        if (!fs.existsSync(uploadDir)) {
+          fs.mkdirSync(uploadDir, {
+            recursive: true
+          });
+        }
+
+        const filePath = path.join(
+          uploadDir,
+          fileName
+        );
+
+        const imageBuffer = Buffer.from(
+          matches[2],
+          "base64"
+        );
+
+        fs.writeFileSync(
+          filePath,
+          imageBuffer
+        );
+
+        updateData.photo =
+          "/uploads/" + fileName;
+
+        console.log(
+          "TUTOR PHOTO SAVED =",
+          updateData.photo
+        );
+      }
+    } else if (
+      photo &&
+      photo.startsWith("/uploads/")
+    ) {
+      updateData.photo = photo;
+    }
+
+    const updatedTutor =
+      await Tutor.findByIdAndUpdate(
+        tutorId,
+        updateData,
+        {
+          new: true,
+          runValidators: true
+        }
+      );
+
+    if (!updatedTutor) {
+      return res.status(404).json({
+        success: false,
+        message: "Tutor not found"
+      });
+    }
+
+    console.log(
+      "TUTOR PROFILE UPDATED =",
+      updatedTutor._id
+    );
+
+    res.json({
+      success: true,
+      message: "Profile updated successfully",
+      tutor: updatedTutor
+    });
+
+  } catch (err) {
+    console.error(
+      "TUTOR UPDATE ERROR =>",
+      err
+    );
+
+    res.status(500).json({
+      success: false,
+      message: err.message
+    });
+  }
+});
 
 module.exports = router;
