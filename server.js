@@ -169,8 +169,8 @@ app.use(
   reviewRoutes
 );
 app.use(
-"/uploads",
-express.static("uploads")
+    "/uploads",
+    express.static(path.join(__dirname, "uploads"))
 );
 /* ===============================
             TEST
