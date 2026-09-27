@@ -83,14 +83,12 @@ function setupRecaptcha() {
   try {
 
     recaptchaVerifier =
-      new firebase.auth.RecaptchaVerifier(
-        "recaptcha-container",
-        {
-          size: "normal"
-        },
-        auth
-      );
-
+  new firebase.auth.RecaptchaVerifier(
+    "recaptcha-container",
+    {
+      size: "normal"
+    }
+  );
     recaptchaVerifier.render();
 
     console.log("reCAPTCHA ready");
