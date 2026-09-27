@@ -784,7 +784,186 @@ console.log("FOUND TUTOR =", tutor);
 
 });
 
+/* =========================================
+        FIREBASE OTP LOGIN
+========================================= */
 
+router.post("/firebase-login", async (req, res) => {
+
+  console.log("==== FIREBASE TUTOR LOGIN HIT ====");
+
+  try {
+
+    const { firebaseToken } = req.body;
+
+
+    // =========================================
+    // TOKEN CHECK
+    // =========================================
+
+    if (!firebaseToken) {
+
+      return res.json({
+        success: false,
+        message: "Firebase token required"
+      });
+
+    }
+
+
+    // =========================================
+    // VERIFY FIREBASE TOKEN
+    // =========================================
+
+    const decodedToken =
+      await auth.verifyIdToken(firebaseToken);
+
+
+    console.log(
+      "FIREBASE TUTOR UID =",
+      decodedToken.uid
+    );
+
+
+    // =========================================
+    // GET VERIFIED PHONE
+    // =========================================
+
+    const firebasePhone =
+      decodedToken.phone_number;
+
+
+    if (!firebasePhone) {
+
+      return res.json({
+        success: false,
+        message: "Phone number not found in Firebase account"
+      });
+
+    }
+
+
+    // =========================================
+    // NORMALIZE PHONE
+    // =========================================
+
+    const normalizedFirebasePhone =
+      firebasePhone.startsWith("+91")
+        ? firebasePhone.substring(3)
+        : firebasePhone;
+
+
+    console.log(
+      "FIREBASE PHONE =",
+      normalizedFirebasePhone
+    );
+
+
+    // =========================================
+    // FIND TUTOR
+    // =========================================
+
+    const tutor =
+      await Tutor.findOne({
+        phone: normalizedFirebasePhone
+      });
+
+
+    console.log(
+      "FIREBASE LOGIN TUTOR =",
+      tutor ? tutor._id : "NOT FOUND"
+    );
+
+
+    // =========================================
+    // TUTOR NOT FOUND
+    // =========================================
+
+    if (!tutor) {
+
+      return res.json({
+        success: false,
+        message:
+          "Tutor not registered. Please register first."
+      });
+
+    }
+
+
+    // =========================================
+    // BLOCK CHECK
+    // =========================================
+
+    if (tutor.isBlocked) {
+
+      return res.json({
+        success: false,
+        message:
+          "Account blocked by admin"
+      });
+
+    }
+
+
+    // =========================================
+    // CREATE JWT
+    // =========================================
+
+    const token =
+      jwt.sign(
+
+        {
+          tutorId: tutor._id
+        },
+
+        "TUTOR_SECRET_KEY",
+
+        {
+          expiresIn: "7d"
+        }
+
+      );
+
+
+    // =========================================
+    // SUCCESS
+    // =========================================
+
+    return res.json({
+
+      success: true,
+
+      message:
+        "Firebase OTP Login Successful",
+
+      token,
+
+      tutor
+
+    });
+
+
+  } catch (err) {
+
+    console.error(
+      "FIREBASE TUTOR LOGIN ERROR =>"
+    );
+
+    console.error(err);
+
+
+    return res.status(401).json({
+
+      success: false,
+
+      message:
+        "Firebase authentication failed"
+
+    });
+
+  }
+
+});
 router.post("/reset-password-temp", async (req, res) => {
 
   try {
